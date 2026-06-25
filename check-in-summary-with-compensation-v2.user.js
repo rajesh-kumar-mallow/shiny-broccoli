@@ -2,7 +2,7 @@
 // @name         Check-in summary with compensation V2
 // @namespace    https://hubble.mallow-tech.com
 // @version      2026.06.25.1
-// @author       You
+// @author       Neon Raven
 // @description  Work log summary with month filter, tooltips, and mini-modals
 // @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
 // @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
@@ -5483,6 +5483,57 @@
     removePreviousArtifacts();
     getOrCreateCard();
   };
+  const STORAGE_KEY = "hubble-theme";
+  const MODES = ["system", "dark", "light"];
+  const SWITCHER_ID = "hubble-theme-switcher";
+  function getStoredMode() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return MODES.includes(stored) ? stored : "system";
+  }
+  function applyTheme(mode) {
+    document.documentElement.dataset.hubbleTheme = mode;
+    const root2 = document.getElementById(SWITCHER_ID);
+    if (root2) {
+      root2.querySelectorAll("[data-mode]").forEach((btn) => {
+        btn.classList.toggle("hts-active", btn.dataset.mode === mode);
+      });
+    }
+  }
+  function setMode(mode) {
+    if (!MODES.includes(mode)) return;
+    localStorage.setItem(STORAGE_KEY, mode);
+    applyTheme(mode);
+  }
+  function ensureSwitcher() {
+    if (document.getElementById(SWITCHER_ID)) return;
+    const root2 = document.createElement("div");
+    root2.id = SWITCHER_ID;
+    root2.innerHTML = `
+    <button type="button" data-mode="system" title="System theme">Auto</button>
+    <button type="button" data-mode="dark" title="Dark Dracula">Dark</button>
+    <button type="button" data-mode="light" title="Light Dracula">Light</button>
+  `;
+    root2.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-mode]");
+      if (btn) setMode(btn.dataset.mode);
+    });
+    document.body.appendChild(root2);
+    applyTheme(getStoredMode());
+  }
+  function initThemeSwitcher() {
+    if (window.__hubbleThemeSwitcherInit) return;
+    window.__hubbleThemeSwitcherInit = true;
+    const boot = () => {
+      ensureSwitcher();
+      applyTheme(getStoredMode());
+    };
+    if (document.body) boot();
+    else document.addEventListener("DOMContentLoaded", boot);
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if (getStoredMode() === "system") applyTheme("system");
+    });
+  }
+  initThemeSwitcher();
   initDom();
   const card = document.getElementById("custom-work-log-summary-card");
   if (card) {
