@@ -1,13 +1,13 @@
-/*
+/* ==UserStyle==
 @name           Check-in summary with compensation V2 (styles)
 @namespace      https://hubble.mallow-tech.com
 @version        2026.06.25.1
 @description    Styles for Hubble work log summary card
 @updateURL      https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css
 @downloadURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css
-@match          https://hubble.mallow-tech.com/attendance/my-check-in-data*
-*/
+==/UserStyle== */
 
+@-moz-document url-prefix("https://hubble.mallow-tech.com/attendance/my-check-in-data") {
 /* ── Root ── */
 #custom-work-log-summary-card {
   position: relative;
@@ -1099,4 +1099,5 @@
   border: 1px solid #fecdd3;
   border-radius: 10px;
   padding: 10px 13px;
+}
 }
