@@ -12,17 +12,22 @@ const url = `${base}/${file}`;
 
 const css = readFileSync(join(root, "src/styles/work-log-summary.css"), "utf8");
 
-const header = `/*
+const header = `/* ==UserStyle==
 @name           Check-in summary with compensation V2 (styles)
 @namespace      https://hubble.mallow-tech.com
 @version        ${version}
 @description    Styles for Hubble work log summary card
 @updateURL      ${url}
 @downloadURL    ${url}
-@match          https://hubble.mallow-tech.com/attendance/my-check-in-data*
-*/
+==/UserStyle== */
+
+@-moz-document url-prefix("https://hubble.mallow-tech.com/attendance/my-check-in-data") {
+`;
+
+const footer = `
+}
 `;
 
 mkdirSync(join(root, "dist"), { recursive: true });
-writeFileSync(join(root, "dist", file), header + "\n" + css.trim() + "\n");
+writeFileSync(join(root, "dist", file), header + css.trim() + footer);
 console.log(`Wrote dist/${file} (@version ${version})`);
