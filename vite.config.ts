@@ -3,7 +3,8 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import monkey from "vite-plugin-monkey";
 import pkg from "./package.json" with { type: "json" };
 
-const PAGES_BASE = "https://rajesh-kumar-mallow.github.io/shiny-broccoli";
+const ARTIFACT_BASE =
+  "https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages";
 const SCRIPT_FILE = "check-in-summary-with-compensation-v2.user.js";
 
 export default defineConfig({
@@ -20,8 +21,8 @@ export default defineConfig({
         match: ["https://hubble.mallow-tech.com/attendance/my-check-in-data*"],
         grant: "none",
         tag: ["timesheet"],
-        updateURL: `${PAGES_BASE}/${SCRIPT_FILE}`,
-        downloadURL: `${PAGES_BASE}/${SCRIPT_FILE}`,
+        updateURL: `${ARTIFACT_BASE}/${SCRIPT_FILE}`,
+        downloadURL: `${ARTIFACT_BASE}/${SCRIPT_FILE}`,
       },
       build: {
         fileName: SCRIPT_FILE,

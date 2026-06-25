@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 const version = pkg.version;
-const base = "https://rajesh-kumar-mallow.github.io/shiny-broccoli";
+const base = "https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages";
 const file = "check-in-summary-with-compensation-v2.user.css";
 const url = `${base}/${file}`;
 

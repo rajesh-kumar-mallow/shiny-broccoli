@@ -19,4 +19,5 @@ export const CONFIG = {
   dayOffLabels: new Set(["Day Off", "Comp Off", "On Duty"]),
 } as const;
 
-export const PAGES_BASE = "https://rajesh-kumar-mallow.github.io/shiny-broccoli";
+export const ARTIFACT_BASE =
+  "https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages";
