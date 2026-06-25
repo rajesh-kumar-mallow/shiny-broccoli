@@ -1,0 +1,783 @@
+/* =========================================================
+   Dracula tokens — dark (explicit)
+   ========================================================= */
+html[data-hubble-theme="dark"] {
+  --dr-bg: #282a36;
+  --dr-bg-secondary: #313442;
+  --dr-bg-tertiary: #21222c;
+  --dr-border: #44475a;
+  --dr-selection: #6272a4;
+  --dr-fg: #f8f8f2;
+  --dr-comment: #6272a4;
+  --dr-cyan: #8be9fd;
+  --dr-purple: #bd93f9;
+  --dr-pink: #ff79c6;
+  --dr-green: #6abf95;
+  --dr-red: #d16d7e;
+  --dr-yellow: #d4b483;
+  color-scheme: dark;
+}
+
+/* =========================================================
+   Dracula tokens — light
+   ========================================================= */
+html[data-hubble-theme="light"] {
+  --dr-bg: #f8f8f2;
+  --dr-bg-secondary: #eff0eb;
+  --dr-bg-tertiary: #e4e5e0;
+  --dr-border: #c8c9c4;
+  --dr-selection: #6272a4;
+  --dr-fg: #282a36;
+  --dr-comment: #6272a4;
+  --dr-cyan: #0997b5;
+  --dr-purple: #7c4dff;
+  --dr-pink: #d63384;
+  --dr-green: #2d8a5e;
+  --dr-red: #c0395b;
+  --dr-yellow: #9a7b3c;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-hubble-theme="system"] {
+    --dr-bg: #282a36;
+    --dr-bg-secondary: #313442;
+    --dr-bg-tertiary: #21222c;
+    --dr-border: #44475a;
+    --dr-selection: #6272a4;
+    --dr-fg: #f8f8f2;
+    --dr-comment: #6272a4;
+    --dr-cyan: #8be9fd;
+    --dr-purple: #bd93f9;
+    --dr-pink: #ff79c6;
+    --dr-green: #6abf95;
+    --dr-red: #d16d7e;
+    --dr-yellow: #d4b483;
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-hubble-theme="system"] {
+    --dr-bg: #f8f8f2;
+    --dr-bg-secondary: #eff0eb;
+    --dr-bg-tertiary: #e4e5e0;
+    --dr-border: #c8c9c4;
+    --dr-selection: #6272a4;
+    --dr-fg: #282a36;
+    --dr-comment: #6272a4;
+    --dr-cyan: #0997b5;
+    --dr-purple: #7c4dff;
+    --dr-pink: #d63384;
+    --dr-green: #2d8a5e;
+    --dr-red: #c0395b;
+    --dr-yellow: #9a7b3c;
+    color-scheme: light;
+  }
+}
+
+html:not([data-hubble-theme]) {
+  color-scheme: light dark;
+}
+
+/* =========================================================
+   Theme switcher (injected by userscripts)
+   ========================================================= */
+#hubble-theme-switcher {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 999998;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--dr-bg-secondary);
+  border: 1px solid var(--dr-border);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--dr-bg-tertiary) 50%, transparent);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11px;
+}
+
+#hubble-theme-switcher button {
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 5px 8px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--dr-comment);
+  font-weight: 600;
+}
+
+#hubble-theme-switcher button:hover {
+  color: var(--dr-fg);
+  background: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+}
+
+#hubble-theme-switcher button.hts-active {
+  background: var(--dr-purple);
+  color: var(--dr-bg);
+  border-color: var(--dr-purple);
+}
+
+/* =========================================================
+   Checkout Hover Helper tooltip
+   ========================================================= */
+#checkout-hover-tooltip.cht-tooltip {
+  width: 370px;
+  padding: 0;
+  border-radius: 18px;
+  background: var(--dr-bg-secondary);
+  color: var(--dr-fg);
+  border: 1px solid var(--dr-border);
+  overflow: hidden;
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--dr-bg-tertiary) 40%, transparent);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+.cht-tooltip-body {
+  padding: 18px 18px 16px;
+}
+
+.cht-tooltip-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.cht-tooltip-title {
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 850;
+  color: var(--dr-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 255px;
+  letter-spacing: -0.35px;
+}
+
+.cht-tooltip-subtitle {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--dr-comment);
+  font-weight: 600;
+}
+
+.cht-tooltip-badge {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cht-status--pending .cht-tooltip-badge,
+.cht-status--pending .cht-tooltip-hero {
+  background: color-mix(in srgb, var(--dr-yellow) 15%, transparent);
+  color: var(--dr-yellow);
+  border: 1px solid color-mix(in srgb, var(--dr-yellow) 35%, transparent);
+}
+
+.cht-status--short .cht-tooltip-badge,
+.cht-status--short .cht-tooltip-hero {
+  background: color-mix(in srgb, var(--dr-red) 15%, transparent);
+  color: var(--dr-red);
+  border: 1px solid color-mix(in srgb, var(--dr-red) 35%, transparent);
+}
+
+.cht-status--ready .cht-tooltip-badge,
+.cht-status--ready .cht-tooltip-hero,
+.cht-status--completed .cht-tooltip-badge,
+.cht-status--completed .cht-tooltip-hero {
+  background: color-mix(in srgb, var(--dr-green) 15%, transparent);
+  color: var(--dr-green);
+  border: 1px solid color-mix(in srgb, var(--dr-green) 35%, transparent);
+}
+
+.cht-status--full-time-off .cht-tooltip-badge,
+.cht-status--full-time-off .cht-tooltip-hero {
+  background: color-mix(in srgb, var(--dr-comment) 15%, transparent);
+  color: var(--dr-comment);
+  border: 1px solid color-mix(in srgb, var(--dr-comment) 35%, transparent);
+}
+
+.cht-tooltip-hero {
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.cht-tooltip-hero-label {
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.cht-tooltip-hero-value {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.45px;
+}
+
+.cht-tooltip-chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.cht-chip {
+  background: var(--dr-bg);
+  border: 1px solid var(--dr-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.cht-chip--accent {
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg));
+  border-color: color-mix(in srgb, var(--dr-purple) 25%, transparent);
+}
+
+.cht-chip-label {
+  font-size: 11px;
+  color: var(--dr-comment);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.cht-chip-value {
+  font-size: 15px;
+  color: var(--dr-fg);
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.cht-work-mode-wrap {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cht-work-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  border: 1px solid var(--dr-border);
+  background: var(--dr-bg);
+  color: var(--dr-fg);
+}
+
+.cht-work-mode--wfo {
+  color: var(--dr-green);
+  border-color: color-mix(in srgb, var(--dr-green) 35%, transparent);
+}
+.cht-work-mode--wfh {
+  color: var(--dr-cyan);
+  border-color: color-mix(in srgb, var(--dr-cyan) 35%, transparent);
+}
+.cht-work-mode--hybrid {
+  color: var(--dr-comment);
+}
+
+.cht-work-mode-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.cht-dayoff {
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dr-green) 12%, var(--dr-bg)) 0%,
+    color-mix(in srgb, var(--dr-cyan) 10%, var(--dr-bg)) 52%,
+    color-mix(in srgb, var(--dr-pink) 8%, var(--dr-bg)) 100%
+  );
+}
+
+.cht-dayoff-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cht-dayoff-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: var(--dr-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--dr-bg-tertiary) 30%, transparent);
+}
+
+.cht-dayoff-subtitle {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--dr-green);
+  font-weight: 700;
+}
+
+.cht-dayoff-card {
+  border-radius: 18px;
+  padding: 18px 16px;
+  background: var(--dr-bg-secondary);
+  border: 1px solid color-mix(in srgb, var(--dr-green) 22%, transparent);
+  text-align: center;
+}
+
+.cht-dayoff-title {
+  font-size: 24px;
+  line-height: 1.15;
+  font-weight: 950;
+  color: var(--dr-green);
+  letter-spacing: -0.5px;
+}
+
+.cht-dayoff-message {
+  margin-top: 7px;
+  color: var(--dr-comment);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+/* =========================================================
+       Hubble Dracula Theme
+       ========================================================= */
+/* =========================================================
+       Global
+       ========================================================= */
+html,
+body,
+#app,
+.wrapper,
+.content-wrapper,
+.main-content,
+.content-page,
+.modal,
+.bg-light-violet,
+.daterangepicker,
+.daterangepicker .calendar-table,
+.bg-mild-blue-hover:hover,
+table.dataTable tbody tr:hover,
+table.dataTable.display tbody tr.odd > .sorting_1,
+table.dataTable.display tbody tr.even > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.odd > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.even > .sorting_1 {
+  background: var(--dr-bg) !important;
+  color: var(--dr-fg) !important;
+}
+
+html {
+  color: var(--dr-fg) !important;
+}
+
+* {
+  border-color: var(--dr-border);
+}
+
+/* =========================================================
+       Containers
+       ========================================================= */
+.bg-white,
+.bg-light,
+.bg-mild-gray,
+.bg-mild-white,
+.bg-slate-100,
+.card,
+.panel,
+.box,
+.widget,
+.modal-content,
+.dropdown-menu,
+.list-group-item,
+.table,
+.table-responsive,
+.content,
+.container,
+.container-fluid,
+.am-placeholder,
+input,
+textarea,
+select,
+.form-control,
+#taskModalTimesheet,
+#moduleModalTimesheet {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+/* =========================================================
+       Headers / Nav
+       ========================================================= */
+.card-header,
+.card-footer,
+.modal-header,
+.modal-footer,
+.dropdown-header,
+.navbar,
+.topbar,
+.header,
+.sidebar,
+.main-sidebar,
+aside,
+.sidebar-wrapper,
+thead {
+  background: var(--dr-bg-tertiary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+/* =========================================================
+       Sidebar
+       ========================================================= */
+.sidebar a,
+.main-sidebar a,
+aside a {
+  color: var(--dr-fg) !important;
+}
+
+.sidebar a:hover,
+.sidebar .active,
+.main-sidebar .active,
+.nav-tab {
+  background: var(--dr-border) !important;
+  color: var(--dr-cyan) !important;
+}
+
+/* =========================================================
+       Text
+       ========================================================= */
+.text-dark-black,
+.text-dark-black-50,
+.text-gray-800,
+.text-dark-blue,
+.text-dark-black\/50,
+.placeholder-dark-black::placeholder,
+textarea::placeholder {
+  color: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       Tables
+       ========================================================= */
+table,
+.table {
+  background: var(--dr-bg) !important;
+  color: var(--dr-fg) !important;
+}
+
+table th,
+table td,
+.table th,
+.table td,
+.table-with-no-border.no-footer,
+.table-with-no-border thead th,
+.table-with-no-border tbody td {
+  border-color: var(--dr-border) !important;
+  color: var(--dr-fg) !important;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background: var(--dr-bg-secondary) !important;
+}
+
+.table-hover tbody tr:hover,
+table.dataTable tbody tr:hover,
+.hover\:bg-mild-gray:hover,
+div > .bg-mild-blue-hover:hover,
+.multi-select .list-option.focused,
+.multi-select .list-option.selected,
+.time-dropdown {
+  background: var(--dr-border) !important;
+  color: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       Inputs
+       ========================================================= */
+input,
+textarea,
+select,
+.form-control {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border: 1px solid var(--dr-border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--dr-comment) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-purple) !important;
+  box-shadow: 0 0 0 1px var(--dr-purple) !important;
+}
+
+/* =========================================================
+       Buttons
+       ========================================================= */
+.btn-primary,
+.daterangepicker .ranges li.active {
+  background: var(--dr-purple) !important;
+  border-color: var(--dr-purple) !important;
+  color: var(--dr-bg) !important;
+}
+
+.btn-success {
+  background: var(--dr-green) !important;
+  border-color: var(--dr-green) !important;
+  color: var(--dr-fg) !important;
+}
+
+.btn-danger {
+  background: var(--dr-red) !important;
+  border-color: var(--dr-red) !important;
+  color: var(--dr-fg) !important;
+}
+
+.btn-warning {
+  background: var(--dr-yellow) !important;
+  border-color: var(--dr-yellow) !important;
+  color: var(--dr-bg) !important;
+}
+
+.btn-secondary {
+  background: var(--dr-border) !important;
+  border-color: var(--dr-selection) !important;
+  color: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       Alerts & Badges
+       ========================================================= */
+.alert-success,
+.bg-mild-green-10,
+.bg-mild-green\/10,
+.bg-maroon-10 {
+  background: rgba(106, 191, 149, 0.15) !important;
+  color: var(--dr-green) !important;
+}
+
+.alert-danger,
+.bg-dark-red-10,
+.bg-dark-red\/10 {
+  background: rgba(209, 109, 126, 0.15) !important;
+  color: var(--dr-red) !important;
+}
+
+.alert-warning,
+.bg-warning-10 {
+  background: rgba(212, 180, 131, 0.15) !important;
+  color: var(--dr-yellow) !important;
+}
+
+.bg-dark-blue-10,
+.bg-dark-blue\/10,
+.bg-primary-blue-10 {
+  background: rgba(139, 233, 253, 0.15) !important;
+  color: var(--dr-cyan) !important;
+}
+
+/* =========================================================
+       Links
+       ========================================================= */
+a {
+  color: var(--dr-cyan) !important;
+}
+
+a:hover {
+  color: var(--dr-pink) !important;
+}
+
+/* =========================================================
+       Date Range Picker
+       ========================================================= */
+.daterangepicker,
+.daterangepicker .calendar-table,
+.daterangepicker .drp-buttons,
+.daterangepicker.show-ranges.ltr .drp-calendar.left {
+  background: var(--dr-bg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+.daterangepicker td.off,
+.daterangepicker td.off.end-date,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.daterangepicker .ranges li:hover {
+  background: var(--dr-bg-secondary) !important;
+}
+
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
+  background: var(--dr-purple) !important;
+}
+
+.daterangepicker .calendar-table .next span,
+.daterangepicker .calendar-table .prev span {
+  border-color: var(--dr-fg) !important;
+}
+
+.daterangepicker:after,
+.daterangepicker:before {
+  border-bottom-color: var(--dr-border) !important;
+}
+
+/* =========================================================
+       SVG / Charts
+       ========================================================= */
+svg path,
+svg rect,
+#user path,
+#tracker-table svg path {
+  fill: var(--dr-fg) !important;
+  stroke: var(--dr-fg) !important;
+}
+
+div rect {
+  fill: var(--dr-bg) !important;
+}
+
+div g {
+  fill: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       DataTables Pagination
+       ========================================================= */
+.page-link,
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  background: var(--dr-bg-tertiary) !important;
+  border-color: var(--dr-border) !important;
+  color: var(--dr-cyan) !important;
+}
+
+.page-item.active .page-link,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--dr-purple) !important;
+  color: var(--dr-bg) !important;
+}
+
+/* =========================================================
+       Loader
+       ========================================================= */
+.page-loader {
+  background: rgb(40 42 54 / 70%) !important;
+}
+
+.gooey {
+  background: var(--dr-bg-secondary) !important;
+  border-radius: 10px;
+}
+
+.page-loader .gooey .dot,
+.page-loader .gooey .dots span {
+  background: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       Misc Existing Fixes
+       ========================================================= */
+.content-page .change_groupBy_view .bg-white > div:first-child {
+  border-bottom: 1px solid var(--dr-border);
+}
+
+.timesheet-header-shadow > div {
+  border-left: 1px solid var(--dr-border);
+  border-bottom: 1px solid var(--dr-border);
+}
+
+.border-b.bg-slate-100 {
+  border: none;
+}
+
+.bg-wild-blue-yonder {
+  background: var(--dr-bg) !important;
+}
+
+.content-page .bg-mild-violet .w-full .text-center p {
+  color: var(--dr-fg) !important;
+}
+
+/* =========================================================
+       White Background Catchers
+       ========================================================= */
+[style*="background:#fff"],
+[style*="background-color:#fff"],
+[style*="background:white"],
+[style*="background-color:white"],
+[style*="background: #fff"],
+[style*="background-color: #fff"],
+[style*="background: white"],
+[style*="background-color: white"] {
+  background: var(--dr-bg-secondary) !important;
+}
+
+/* =========================================================
+       Utility Catchers
+       ========================================================= */
+[class*="bg-white"] {
+  background: var(--dr-bg-secondary) !important;
+}
+
+[class*="text-dark"] {
+  color: var(--dr-fg) !important;
+}
+
+[class*="border"] {
+  border-color: var(--dr-border) !important;
+}
+
+/* =========================================================
+       Scrollbars
+       ========================================================= */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dr-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dr-selection);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dr-purple);
+}

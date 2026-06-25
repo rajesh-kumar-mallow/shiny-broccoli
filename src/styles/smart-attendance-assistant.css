@@ -1,0 +1,558 @@
+#advanced-attendance-widget {
+  --aw-btn-bg: color-mix(in srgb, var(--dr-bg-secondary) 92%, transparent);
+  --aw-btn-border: color-mix(in srgb, var(--dr-border) 80%, transparent);
+  --aw-btn-shadow: 0 8px 32px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent);
+  --aw-btn-glow: radial-gradient(
+    ellipse 120% 100% at 0% 50%,
+    color-mix(in srgb, var(--dr-purple) 25%, transparent) 0%,
+    transparent 65%
+  );
+  --aw-panel-bg: color-mix(in srgb, var(--dr-bg-secondary) 94%, transparent);
+  --aw-panel-border: color-mix(in srgb, var(--dr-border) 70%, transparent);
+  --aw-panel-shadow: 0 40px 80px color-mix(in srgb, var(--dr-bg-tertiary) 55%, transparent);
+  --aw-header-bg: linear-gradient(145deg, var(--dr-bg-secondary) 0%, var(--dr-bg-tertiary) 100%);
+  --aw-aurora1:
+    radial-gradient(
+      ellipse 130% 90% at 5% -10%,
+      color-mix(in srgb, var(--dr-purple) 35%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 110% at 95% 110%,
+      color-mix(in srgb, var(--dr-cyan) 22%, transparent) 0%,
+      transparent 55%
+    );
+  --aw-grid: color-mix(in srgb, var(--dr-fg) 2.5%, transparent);
+  --aw-label-color: color-mix(in srgb, var(--dr-purple) 50%, transparent);
+  --aw-time-color: var(--dr-fg);
+  --aw-ampm-color: color-mix(in srgb, var(--dr-fg) 35%, transparent);
+  --aw-badge-color: color-mix(in srgb, var(--dr-cyan) 80%, transparent);
+  --aw-badge-bg: color-mix(in srgb, var(--dr-cyan) 8%, transparent);
+  --aw-badge-border: color-mix(in srgb, var(--dr-cyan) 18%, transparent);
+  --aw-prog-track: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-prog-label: color-mix(in srgb, var(--dr-fg) 22%, transparent);
+  --aw-body-bg: color-mix(in srgb, var(--dr-bg) 50%, transparent);
+  --aw-stat-bg: color-mix(in srgb, var(--dr-fg) 2.5%, transparent);
+  --aw-stat-border: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-stat-bg-hover: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+  --aw-stat-border-h: color-mix(in srgb, var(--dr-fg) 12%, transparent);
+  --aw-stat-label: color-mix(in srgb, var(--dr-fg) 25%, transparent);
+  --aw-stat-value: var(--dr-fg);
+  --aw-stat-sub: color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  --aw-tl-bg: color-mix(in srgb, var(--dr-fg) 2%, transparent);
+  --aw-tl-border: color-mix(in srgb, var(--dr-fg) 5%, transparent);
+  --aw-tl-axis: color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  --aw-tl-rem: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-tl-labels: color-mix(in srgb, var(--dr-fg) 18%, transparent);
+  --aw-footer-bg: color-mix(in srgb, var(--dr-bg-tertiary) 50%, transparent);
+  --aw-footer-border: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+  --aw-clock-color: color-mix(in srgb, var(--dr-fg) 38%, transparent);
+  --aw-req-color: color-mix(in srgb, var(--dr-purple) 45%, transparent);
+  --aw-req-bg: color-mix(in srgb, var(--dr-purple) 8%, transparent);
+  --aw-req-border: color-mix(in srgb, var(--dr-purple) 14%, transparent);
+  --aw-done-text: var(--dr-cyan);
+  --aw-done-icon-bg: color-mix(in srgb, var(--dr-cyan) 12%, transparent);
+  --aw-done-icon-bdr: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
+  --aw-live-dot: var(--dr-cyan);
+  --aw-live-ring: color-mix(in srgb, var(--dr-cyan) 30%, transparent);
+}
+
+#attendance-toggle-btn {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 999999;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  background: var(--aw-btn-bg);
+  border: 1px solid var(--aw-btn-border);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  font-family: "SF Pro Display", "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--aw-btn-shadow);
+  user-select: none;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  overflow: hidden;
+}
+
+#attendance-toggle-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--aw-btn-glow);
+  pointer-events: none;
+}
+
+#attendance-toggle-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(96, 64, 255, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+#attendance-toggle-btn svg {
+  flex-shrink: 0;
+  color: rgba(120, 200, 255, 0.8);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget #attendance-toggle-btn svg {
+  color: rgba(80, 60, 200, 0.7);
+}
+
+#attendance-btn-time {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(90deg, #a090ff, #40e8d0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget #attendance-btn-time {
+  background: linear-gradient(90deg, #6040cc, #008878);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ── PANEL ──────────────────────────────────── */
+
+#attendance-panel {
+  position: fixed;
+  width: 340px;
+  z-index: 999999;
+  display: none;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--aw-panel-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--aw-panel-border);
+  box-shadow: var(--aw-panel-shadow);
+  font-family: "SF Pro Display", "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  animation: awSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes awSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── HEADER ─────────────────────────────────── */
+
+.aw-header {
+  padding: 26px 24px 22px;
+  position: relative;
+  overflow: hidden;
+  background: var(--aw-header-bg);
+}
+
+.aw-header-aurora {
+  position: absolute;
+  inset: 0;
+  background: var(--aw-aurora1);
+  pointer-events: none;
+}
+
+.aw-header-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--aw-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--aw-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.1));
+}
+
+.aw-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--aw-label-color);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.aw-checkout-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.aw-checkout-time {
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--aw-time-color);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.aw-checkout-ampm {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--aw-ampm-color);
+  letter-spacing: 1px;
+  align-self: flex-end;
+  padding-bottom: 5px;
+}
+
+.aw-checkin-badge {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  font-size: 11px;
+  color: var(--aw-badge-color);
+  background: var(--aw-badge-bg);
+  border: 1px solid var(--aw-badge-border);
+  border-radius: 8px;
+  padding: 5px 11px;
+  letter-spacing: 0.5px;
+}
+
+/* ── PROGRESS ───────────────────────────────── */
+
+.aw-progress-wrap {
+  position: relative;
+}
+
+.aw-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--aw-prog-label);
+  margin-bottom: 7px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.aw-progress-track {
+  height: 5px;
+  background: var(--aw-prog-track);
+  border-radius: 999px;
+  position: relative;
+  overflow: visible;
+}
+
+.aw-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6040ff, #40e8d0);
+  box-shadow:
+    0 0 14px rgba(96, 64, 255, 0.7),
+    0 0 6px rgba(64, 232, 208, 0.5);
+  position: relative;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-progress-fill {
+  box-shadow:
+    0 0 10px rgba(96, 64, 255, 0.3),
+    0 0 4px rgba(0, 180, 160, 0.3);
+}
+
+.aw-progress-dot {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #40e8d0;
+  box-shadow:
+    0 0 10px rgba(64, 232, 208, 0.9),
+    0 0 0 2.5px rgba(13, 12, 22, 0.95);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-progress-dot {
+  background: #008878;
+  box-shadow:
+    0 0 8px rgba(0, 180, 160, 0.6),
+    0 0 0 2.5px rgba(248, 248, 252, 0.95);
+}
+
+/* ── BODY ───────────────────────────────────── */
+
+.aw-body {
+  padding: 18px;
+  background: var(--aw-body-bg);
+}
+
+/* ── STAT CARDS ─────────────────────────────── */
+
+.aw-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.aw-stat {
+  background: var(--aw-stat-bg);
+  border: 1px solid var(--aw-stat-border);
+  border-radius: 16px;
+  padding: 14px 12px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.aw-stat:hover {
+  background: var(--aw-stat-bg-hover);
+  border-color: var(--aw-stat-border-h);
+}
+
+.aw-stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--aw-stat-label);
+  margin-bottom: 9px;
+}
+
+.aw-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--aw-stat-value);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.aw-stat-sub {
+  font-size: 10px;
+  color: var(--aw-stat-sub);
+  margin-top: 3px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+}
+
+.aw-stat-glow {
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  opacity: 0.18;
+  pointer-events: none;
+  filter: blur(12px);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
+  opacity: 0.1;
+}
+
+.aw-stat:nth-child(1) .aw-stat-glow {
+  background: #6040ff;
+}
+.aw-stat:nth-child(2) .aw-stat-glow {
+  background: #40e8d0;
+}
+.aw-stat:nth-child(3) .aw-stat-glow {
+  background: #ff6080;
+}
+
+.aw-stat:nth-child(2) .aw-stat-value {
+  color: #40e8d0;
+}
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat:nth-child(2) .aw-stat-value {
+  color: #008878;
+}
+.aw-stat:nth-child(3) .aw-stat-value {
+  color: rgba(255, 100, 128, 0.9);
+}
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat:nth-child(3) .aw-stat-value {
+  color: rgba(210, 60, 80, 0.85);
+}
+
+/* ── TIMELINE BAR ───────────────────────────── */
+
+.aw-timeline {
+  background: var(--aw-tl-bg);
+  border: 1px solid var(--aw-tl-border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aw-tl-axis {
+  font-size: 9px;
+  color: var(--aw-tl-axis);
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+.aw-tl-inner {
+  flex: 1;
+}
+
+.aw-tl-segs {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.aw-tl-seg {
+  border-radius: 999px;
+  height: 100%;
+}
+
+.aw-tl-work {
+  background: linear-gradient(90deg, #6040ff, #7856ff);
+  box-shadow: 0 0 8px rgba(96, 64, 255, 0.5);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-tl-work {
+  box-shadow: 0 0 6px rgba(96, 64, 255, 0.25);
+}
+
+.aw-tl-break {
+  background: rgba(255, 200, 60, 0.45);
+  border: 1px solid rgba(255, 200, 60, 0.2);
+  flex-shrink: 0;
+}
+
+.aw-tl-rem {
+  background: var(--aw-tl-rem);
+}
+
+.aw-tl-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  color: var(--aw-tl-labels);
+  margin-top: 7px;
+}
+
+/* ── FOOTER ─────────────────────────────────── */
+
+.aw-footer {
+  padding: 13px 18px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--aw-footer-bg);
+  border-top: 1px solid var(--aw-footer-border);
+}
+
+.aw-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aw-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--aw-live-dot);
+  position: relative;
+}
+
+.aw-live-dot::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--aw-live-ring);
+  animation: aw-pulse 2s ease-in-out infinite;
+}
+
+@keyframes aw-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+#aw-live-clock {
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--aw-clock-color);
+  letter-spacing: 1px;
+}
+
+.aw-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aw-req-chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--aw-req-color);
+  background: var(--aw-req-bg);
+  border: 1px solid var(--aw-req-border);
+  border-radius: 8px;
+  padding: 5px 11px;
+}
+
+/* ── DONE STATE ─────────────────────────────── */
+
+.aw-done-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 0 6px;
+}
+
+.aw-done-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--aw-done-icon-bg);
+  border: 1px solid var(--aw-done-icon-bdr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--aw-done-text);
+}
+
+.aw-done-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--aw-done-text);
+  letter-spacing: 0.5px;
+}

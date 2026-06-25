@@ -5,4 +5,5 @@ interface Window {
   moment?: {
     (text: string, formats: string[], strict: boolean): { isValid(): boolean; toDate(): Date };
   };
+  __hubbleThemeSwitcherInit?: boolean;
 }

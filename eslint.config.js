@@ -42,4 +42,19 @@ export default ts.config(
       },
     },
   },
+  {
+    files: ["src/userscripts/**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        moment: "readonly",
+        $: "readonly",
+        jQuery: "readonly",
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+    },
+  },
 );

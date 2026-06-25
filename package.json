@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:userscript": "vite build",
-    "build:stylus": "node scripts/build-stylus.mjs",
+    "dev:local": "node scripts/dev-local.mjs",
+    "build:local": "HUBBLE_LOCAL_DEV=1 node scripts/build-userscripts.mjs && HUBBLE_LOCAL_DEV=1 node scripts/build-usercss.mjs",
+    "build:userscript": "node scripts/build-userscripts.mjs",
+    "build:stylus": "node scripts/build-usercss.mjs",
     "build": "npm run build:userscript && npm run build:stylus",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint .",
