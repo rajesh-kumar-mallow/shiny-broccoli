@@ -1,0 +1,1092 @@
+/* ── Root ── */
+#custom-work-log-summary-card {
+  position: relative;
+  margin: 0 0 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: #1e293b;
+}
+#custom-work-log-summary-card * {
+  box-sizing: border-box;
+}
+
+/* ── Card shell ── */
+#custom-work-log-summary-card .wls-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Status accent bar ── */
+#custom-work-log-summary-card .wls-accent {
+  height: 3px;
+}
+#custom-work-log-summary-card .accent-good {
+  background: linear-gradient(90deg, #22c55e, #86efac);
+}
+#custom-work-log-summary-card .accent-warn {
+  background: linear-gradient(90deg, #f59e0b, #fcd34d);
+}
+#custom-work-log-summary-card .accent-mismatch {
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+#custom-work-log-summary-card .accent-bad {
+  background: linear-gradient(90deg, #ef4444, #fca5a5);
+}
+#custom-work-log-summary-card .accent-muted {
+  background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+}
+
+/* ── Top row (always visible) ── */
+#custom-work-log-summary-card .wls-top-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+  min-height: 46px;
+}
+#custom-work-log-summary-card .wls-top-row:hover {
+  background: #f8fafc;
+}
+
+#custom-work-log-summary-card .wls-chevron {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #94a3b8;
+  transition: transform 0.25s ease;
+}
+#custom-work-log-summary-card.wls-expanded .wls-chevron {
+  transform: rotate(180deg);
+}
+
+#custom-work-log-summary-card .wls-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+/* ── Status badge ── */
+#custom-work-log-summary-card .wls-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#custom-work-log-summary-card .badge-good {
+  background: #dcfce7;
+  color: #15803d;
+}
+#custom-work-log-summary-card .badge-warn {
+  background: #fef9c3;
+  color: #a16207;
+}
+#custom-work-log-summary-card .badge-mismatch {
+  background: #ffedd5;
+  color: #c2410c;
+}
+#custom-work-log-summary-card .badge-bad {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+#custom-work-log-summary-card .badge-muted {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* ── Month picker ── */
+#custom-work-log-summary-card .wls-month-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 3px 5px;
+}
+#custom-work-log-summary-card .wls-month-btn {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 7px;
+  background: transparent;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 9px;
+  font-family: inherit;
+  transition: all 0.14s;
+  white-space: nowrap;
+  position: relative;
+}
+#custom-work-log-summary-card .wls-month-btn:hover {
+  background: #fff;
+  color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+#custom-work-log-summary-card .wls-month-btn.active {
+  background: #fff;
+  color: #4f46e5;
+  font-weight: 800;
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.18);
+}
+/* dot indicator on active month */
+#custom-work-log-summary-card .wls-month-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #6366f1;
+}
+/* Past-month badge styling — slightly faded */
+#custom-work-log-summary-card .wls-month-btn.past {
+  color: #94a3b8;
+}
+#custom-work-log-summary-card .wls-month-btn.past:hover {
+  color: #475569;
+}
+
+/* ── Inline stats (collapsed only) ── */
+#custom-work-log-summary-card .wls-inline-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  margin-left: 2px;
+}
+#custom-work-log-summary-card.wls-expanded .wls-inline-stats {
+  display: none;
+}
+
+#custom-work-log-summary-card .wls-stat-sep {
+  color: #cbd5e1;
+  font-size: 14px;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+#custom-work-log-summary-card .wls-stat {
+  font-size: 13px;
+  color: #64748b;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.12s;
+  border-bottom: 1.5px dashed transparent;
+}
+#custom-work-log-summary-card .wls-stat:hover {
+  background: #f1f5f9;
+  border-bottom-color: #6366f1;
+}
+#custom-work-log-summary-card .wls-stat strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+#custom-work-log-summary-card .wls-stat-warn strong {
+  color: #b45309;
+}
+#custom-work-log-summary-card .wls-stat-bad strong {
+  color: #b91c1c;
+}
+#custom-work-log-summary-card .wls-stat-good strong {
+  color: #15803d;
+}
+#custom-work-log-summary-card .wls-stat-purple strong {
+  color: #7c3aed;
+}
+
+/* ── Top-right cluster ── */
+#custom-work-log-summary-card .wls-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+#custom-work-log-summary-card .wls-range {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── Buttons ── */
+#custom-work-log-summary-card .wls-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  font-family: inherit;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+#custom-work-log-summary-card .wls-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+#custom-work-log-summary-card .wls-btn-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.28);
+}
+#custom-work-log-summary-card .wls-btn-primary:hover {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+
+/* ── Expandable body ── */
+#custom-work-log-summary-card .wls-expandable {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#custom-work-log-summary-card.wls-expanded .wls-expandable {
+  max-height: 900px;
+}
+
+#custom-work-log-summary-card .wls-expandable-inner {
+  padding: 0 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#custom-work-log-summary-card .wls-body-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0 14px;
+}
+#custom-work-log-summary-card .wls-expandable .wls-body-divider {
+  display: none;
+}
+#custom-work-log-summary-card.wls-expanded .wls-expandable .wls-body-divider {
+  display: block;
+}
+
+/* ── Metric grid ── */
+#custom-work-log-summary-card .wls-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+#custom-work-log-summary-card .wls-block {
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid;
+}
+#custom-work-log-summary-card .wls-block-comp {
+  background: #fdf8ff;
+  border-color: #e9d5ff;
+}
+#custom-work-log-summary-card .wls-block-ts {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+#custom-work-log-summary-card .wls-block-hd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+#custom-work-log-summary-card .wls-block-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+#custom-work-log-summary-card .icon-comp {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+#custom-work-log-summary-card .icon-ts {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+#custom-work-log-summary-card .wls-block-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#custom-work-log-summary-card .wls-big {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+#custom-work-log-summary-card .wls-big-c {
+  color: #9333ea;
+}
+#custom-work-log-summary-card .wls-big-t {
+  color: #0284c7;
+}
+#custom-work-log-summary-card .wls-big-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: #94a3b8;
+}
+#custom-work-log-summary-card .wls-block-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* ── Progress bar ── */
+#custom-work-log-summary-card .wls-prog-wrap {
+  margin-top: 9px;
+}
+#custom-work-log-summary-card .wls-prog-track {
+  height: 5px;
+  background: #e0f2fe;
+  border-radius: 999px;
+  overflow: hidden;
+}
+#custom-work-log-summary-card .wls-prog-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.9s cubic-bezier(0.22, 0.68, 0, 1.2);
+}
+#custom-work-log-summary-card .prog-ok {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+#custom-work-log-summary-card .prog-over {
+  background: linear-gradient(90deg, #f59e0b, #fcd34d);
+}
+#custom-work-log-summary-card .prog-low {
+  background: linear-gradient(90deg, #6366f1, #a5b4fc);
+}
+#custom-work-log-summary-card .wls-prog-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* ── Chips ── */
+#custom-work-log-summary-card .wls-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+#custom-work-log-summary-card .wls-chip {
+  font-size: 12px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    filter 0.12s,
+    transform 0.1s;
+  border: 1px solid;
+}
+#custom-work-log-summary-card .wls-chip:hover {
+  filter: brightness(0.95);
+  transform: scale(1.03);
+}
+#custom-work-log-summary-card .chip-purple {
+  background: #faf5ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
+#custom-work-log-summary-card .chip-pink {
+  background: #fdf2f8;
+  color: #be185d;
+  border-color: #fbcfe8;
+}
+#custom-work-log-summary-card .chip-blue {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+#custom-work-log-summary-card .chip-sky {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+#custom-work-log-summary-card .chip-green {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+#custom-work-log-summary-card .chip-red {
+  background: #fff1f2;
+  color: #be123c;
+  border-color: #fecdd3;
+}
+#custom-work-log-summary-card .chip-amber {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+#custom-work-log-summary-card .chip-slate {
+  background: #f8fafc;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+/* ── Summary panel ── */
+#custom-work-log-summary-card .wls-summary {
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #374151;
+  border-left: 3px solid transparent;
+}
+#custom-work-log-summary-card .summary-good {
+  background: #f0fdf4;
+  border-left-color: #22c55e;
+}
+#custom-work-log-summary-card .summary-warn {
+  background: #fefce8;
+  border-left-color: #f59e0b;
+}
+#custom-work-log-summary-card .summary-mismatch {
+  background: #fff7ed;
+  border-left-color: #f97316;
+}
+#custom-work-log-summary-card .summary-bad {
+  background: #fff1f2;
+  border-left-color: #ef4444;
+}
+#custom-work-log-summary-card .summary-muted {
+  background: #f5f3ff;
+  border-left-color: #8b5cf6;
+}
+#custom-work-log-summary-card .wls-summary-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+#custom-work-log-summary-card .slabel-good {
+  color: #15803d;
+}
+#custom-work-log-summary-card .slabel-warn {
+  color: #a16207;
+}
+#custom-work-log-summary-card .slabel-mismatch {
+  color: #c2410c;
+}
+#custom-work-log-summary-card .slabel-bad {
+  color: #b91c1c;
+}
+#custom-work-log-summary-card .slabel-muted {
+  color: #6d28d9;
+}
+#custom-work-log-summary-card .wls-summary strong {
+  font-weight: 700;
+  color: #111827;
+}
+#custom-work-log-summary-card .wls-summary em {
+  font-style: normal;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ── Expanded actions ── */
+#custom-work-log-summary-card .wls-exp-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+/* ── Loading / error ── */
+#custom-work-log-summary-card .wls-loading {
+  font-size: 13px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+#custom-work-log-summary-card .wls-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: wls-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes wls-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#custom-work-log-summary-card .wls-error-box {
+  font-size: 13px;
+  color: #b91c1c;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 10px 14px;
+}
+
+/* ── Hoverable duration ── */
+#custom-work-log-summary-card .wls-dur {
+  cursor: pointer;
+  border-bottom: 1.5px dashed rgba(0, 0, 0, 0.2);
+  padding: 0 1px;
+  border-radius: 2px;
+  transition: background 0.1s;
+}
+#custom-work-log-summary-card .wls-dur:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-bottom-color: #6366f1;
+}
+
+/* ── Full details modal ── */
+#custom-work-log-summary-card .wls-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#custom-work-log-summary-card .wls-modal-backdrop[hidden] {
+  display: none;
+}
+#custom-work-log-summary-card .wls-modal {
+  width: min(1080px, calc(100vw - 40px));
+  max-height: min(800px, calc(100vh - 40px));
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+}
+#custom-work-log-summary-card .wls-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+#custom-work-log-summary-card .wls-modal-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+}
+#custom-work-log-summary-card .wls-modal-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+#custom-work-log-summary-card .wls-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 11px;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+#custom-work-log-summary-card .wls-close-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+#custom-work-log-summary-card .wls-modal-body {
+  padding: 16px 18px 20px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── KPI strip ── */
+#custom-work-log-summary-card .wls-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+#custom-work-log-summary-card .wls-kpi {
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid;
+}
+#custom-work-log-summary-card .kpi-purple {
+  background: #faf5ff;
+  border-color: #ddd6fe;
+}
+#custom-work-log-summary-card .kpi-blue {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+#custom-work-log-summary-card .kpi-green {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+#custom-work-log-summary-card .kpi-amber {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+#custom-work-log-summary-card .kpi-slate {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+#custom-work-log-summary-card .wls-kpi-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+#custom-work-log-summary-card .wls-kpi-value {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.3px;
+}
+
+/* ── Insights ── */
+#custom-work-log-summary-card .wls-insight-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+#custom-work-log-summary-card .wls-insight {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.55;
+}
+#custom-work-log-summary-card .wls-insight b {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* ── Section label ── */
+#custom-work-log-summary-card .wls-section-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Tables ── */
+#custom-work-log-summary-card .wls-table-wrap {
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  overflow: auto;
+}
+#custom-work-log-summary-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+#custom-work-log-summary-card th,
+#custom-work-log-summary-card td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f8fafc;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+}
+#custom-work-log-summary-card th {
+  color: #94a3b8;
+  background: #fafafa;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+}
+#custom-work-log-summary-card tr:last-child td {
+  border-bottom: none;
+}
+#custom-work-log-summary-card tr:hover td {
+  background: #fafeff;
+}
+#custom-work-log-summary-card .t-ok {
+  color: #15803d;
+  font-weight: 700;
+}
+#custom-work-log-summary-card .t-bad {
+  color: #b91c1c;
+  font-weight: 700;
+}
+#custom-work-log-summary-card .t-skip {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+#custom-work-log-summary-card .wls-modal-divider {
+  height: 1px;
+  background: #f1f5f9;
+}
+#custom-work-log-summary-card .wls-empty {
+  font-size: 13px;
+  color: #cbd5e1;
+  padding: 8px 2px;
+  font-style: italic;
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  #custom-work-log-summary-card .wls-main {
+    grid-template-columns: 1fr;
+  }
+  #custom-work-log-summary-card .wls-kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-insight-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-inline-stats .wls-stat:nth-child(n + 8) {
+    display: none;
+  }
+}
+@media (max-width: 700px) {
+  #custom-work-log-summary-card .wls-top-row {
+    flex-wrap: wrap;
+  }
+  #custom-work-log-summary-card .wls-inline-stats {
+    display: none !important;
+  }
+  #custom-work-log-summary-card .wls-kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-insight-row {
+    grid-template-columns: 1fr;
+  }
+  #custom-work-log-summary-card .wls-month-picker {
+    overflow-x: auto;
+  }
+}
+
+/* ── Light-themed popover ── */
+#wls-popover-el {
+  position: fixed;
+  z-index: 99999;
+  background: #fff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  max-width: 250px;
+  min-width: 170px;
+  transition: opacity 0.1s;
+}
+#wls-popover-el[hidden] {
+  display: none;
+}
+#wls-popover-el .pop-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 7px;
+  font-size: 13px;
+}
+#wls-popover-el .pop-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+#wls-popover-el .pop-row:last-of-type {
+  border-bottom: none;
+}
+#wls-popover-el .pop-lbl {
+  color: #64748b;
+}
+#wls-popover-el .pop-val {
+  color: #1e293b;
+  font-weight: 700;
+  text-align: right;
+}
+#wls-popover-el .pop-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 6px;
+}
+#wls-popover-el .pop-hint {
+  margin-top: 5px;
+  font-size: 11px;
+  color: #a5b4fc;
+  font-weight: 600;
+}
+
+/* ── Mini-modal ── */
+#wls-mini-modal-el {
+  display: none;
+}
+#wls-mini-modal-el.wls-mm-open {
+  display: block;
+}
+#wls-mini-modal-el .wmm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#wls-mini-modal-el .wmm-box {
+  background: #fff;
+  border-radius: 14px;
+  width: min(680px, calc(100vw - 40px));
+  max-height: min(580px, calc(100vh - 40px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.18);
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  color: #1e293b;
+}
+#wls-mini-modal-el .wmm-box * {
+  box-sizing: border-box;
+}
+#wls-mini-modal-el .wmm-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+#wls-mini-modal-el .wmm-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+}
+#wls-mini-modal-el .wmm-sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+#wls-mini-modal-el .wmm-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e2e8f0;
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  font-family: inherit;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+#wls-mini-modal-el .wmm-close:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+#wls-mini-modal-el .wmm-body {
+  padding: 14px 16px 18px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#wls-mini-modal-el .wls-table-wrap {
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  overflow: auto;
+}
+#wls-mini-modal-el table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+#wls-mini-modal-el th,
+#wls-mini-modal-el td {
+  padding: 8px 11px;
+  border-bottom: 1px solid #f8fafc;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+}
+#wls-mini-modal-el th {
+  color: #94a3b8;
+  background: #fafafa;
+  font-weight: 700;
+  font-size: 12px;
+}
+#wls-mini-modal-el tr:last-child td {
+  border-bottom: none;
+}
+#wls-mini-modal-el tr:hover td {
+  background: #fafeff;
+}
+#wls-mini-modal-el .t-ok {
+  color: #15803d;
+  font-weight: 700;
+}
+#wls-mini-modal-el .t-bad {
+  color: #b91c1c;
+  font-weight: 700;
+}
+#wls-mini-modal-el .t-skip {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+#wls-mini-modal-el .wls-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 4px;
+}
+#wls-mini-modal-el .wls-kpi {
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid;
+}
+#wls-mini-modal-el .kpi-purple {
+  background: #faf5ff;
+  border-color: #ddd6fe;
+}
+#wls-mini-modal-el .kpi-blue {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+#wls-mini-modal-el .kpi-green {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+#wls-mini-modal-el .kpi-amber {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+#wls-mini-modal-el .kpi-slate {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+#wls-mini-modal-el .kpi-red {
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+#wls-mini-modal-el .wls-kpi-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+#wls-mini-modal-el .wls-kpi-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+}
+#wls-mini-modal-el .wls-section-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#wls-mini-modal-el .wls-empty {
+  font-size: 13px;
+  color: #cbd5e1;
+  padding: 8px 2px;
+  font-style: italic;
+}
+#wls-mini-modal-el .wls-error-box {
+  font-size: 13px;
+  color: #b91c1c;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 10px;
+  padding: 10px 13px;
+}
