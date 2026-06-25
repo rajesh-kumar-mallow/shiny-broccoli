@@ -4,8 +4,8 @@
 // @version      2026.06.25.1
 // @author       You
 // @description  Work log summary with month filter, tooltips, and mini-modals
-// @downloadURL  https://rajesh-kumar-mallow.github.io/shiny-broccoli/check-in-summary-with-compensation-v2.user.js
-// @updateURL    https://rajesh-kumar-mallow.github.io/shiny-broccoli/check-in-summary-with-compensation-v2.user.js
+// @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
+// @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
 // @match        https://hubble.mallow-tech.com/attendance/my-check-in-data*
 // @tag          timesheet
 // @grant        none
