@@ -67,7 +67,7 @@
   padding: 12px 18px;
   background: var(--aw-btn-bg);
   border: 1px solid var(--aw-btn-border);
-  color: white;
+  color: var(--dr-fg);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -96,37 +96,27 @@
 
 #attendance-toggle-btn:hover {
   transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: color-mix(in srgb, var(--dr-fg) 18%, transparent);
   box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.45),
-    0 0 24px rgba(96, 64, 255, 0.2),
-    0 1px 0 rgba(255, 255, 255, 0.12) inset;
+    0 14px 40px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent),
+    0 0 24px color-mix(in srgb, var(--dr-purple) 20%, transparent),
+    0 1px 0 color-mix(in srgb, var(--dr-fg) 12%, transparent) inset;
 }
 
 #attendance-toggle-btn svg {
   flex-shrink: 0;
-  color: rgba(120, 200, 255, 0.8);
-}
-
-html[data-hubble-theme="light"] #advanced-attendance-widget #attendance-toggle-btn svg {
-  color: rgba(80, 60, 200, 0.7);
+  color: color-mix(in srgb, var(--dr-cyan) 80%, transparent);
 }
 
 #attendance-btn-time {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.3px;
-  background: linear-gradient(90deg, #a090ff, #40e8d0);
+  background: linear-gradient(90deg, var(--dr-purple), var(--dr-cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
-}
-
-html[data-hubble-theme="light"] #advanced-attendance-widget #attendance-btn-time {
-  background: linear-gradient(90deg, #6040cc, #008878);
-  -webkit-background-clip: text;
-  background-clip: text;
 }
 
 /* ── PANEL ──────────────────────────────────── */
@@ -262,18 +252,12 @@ html[data-hubble-theme="light"] #advanced-attendance-widget #attendance-btn-time
 .aw-progress-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #6040ff, #40e8d0);
+  background: linear-gradient(90deg, var(--dr-purple), var(--dr-cyan));
   box-shadow:
-    0 0 14px rgba(96, 64, 255, 0.7),
-    0 0 6px rgba(64, 232, 208, 0.5);
+    0 0 14px color-mix(in srgb, var(--dr-purple) 70%, transparent),
+    0 0 6px color-mix(in srgb, var(--dr-cyan) 50%, transparent);
   position: relative;
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-progress-fill {
-  box-shadow:
-    0 0 10px rgba(96, 64, 255, 0.3),
-    0 0 4px rgba(0, 180, 160, 0.3);
 }
 
 .aw-progress-dot {
@@ -284,17 +268,10 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-progress-fill {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #40e8d0;
+  background: var(--dr-cyan);
   box-shadow:
-    0 0 10px rgba(64, 232, 208, 0.9),
-    0 0 0 2.5px rgba(13, 12, 22, 0.95);
-}
-
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-progress-dot {
-  background: #008878;
-  box-shadow:
-    0 0 8px rgba(0, 180, 160, 0.6),
-    0 0 0 2.5px rgba(248, 248, 252, 0.95);
+    0 0 10px color-mix(in srgb, var(--dr-cyan) 85%, transparent),
+    0 0 0 2.5px color-mix(in srgb, var(--dr-bg-secondary) 95%, transparent);
 }
 
 /* ── BODY ───────────────────────────────────── */
@@ -371,26 +348,20 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
 }
 
 .aw-stat:nth-child(1) .aw-stat-glow {
-  background: #6040ff;
+  background: var(--dr-purple);
 }
 .aw-stat:nth-child(2) .aw-stat-glow {
-  background: #40e8d0;
+  background: var(--dr-cyan);
 }
 .aw-stat:nth-child(3) .aw-stat-glow {
-  background: #ff6080;
+  background: var(--dr-pink);
 }
 
 .aw-stat:nth-child(2) .aw-stat-value {
-  color: #40e8d0;
-}
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat:nth-child(2) .aw-stat-value {
-  color: #008878;
+  color: var(--dr-cyan);
 }
 .aw-stat:nth-child(3) .aw-stat-value {
-  color: rgba(255, 100, 128, 0.9);
-}
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat:nth-child(3) .aw-stat-value {
-  color: rgba(210, 60, 80, 0.85);
+  color: var(--dr-pink);
 }
 
 /* ── TIMELINE BAR ───────────────────────────── */
@@ -429,17 +400,17 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat:nth-child(3
 }
 
 .aw-tl-work {
-  background: linear-gradient(90deg, #6040ff, #7856ff);
-  box-shadow: 0 0 8px rgba(96, 64, 255, 0.5);
-}
-
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-tl-work {
-  box-shadow: 0 0 6px rgba(96, 64, 255, 0.25);
+  background: linear-gradient(
+    90deg,
+    var(--dr-purple),
+    color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan))
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, var(--dr-purple) 45%, transparent);
 }
 
 .aw-tl-break {
-  background: rgba(255, 200, 60, 0.45);
-  border: 1px solid rgba(255, 200, 60, 0.2);
+  background: color-mix(in srgb, var(--dr-yellow) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-yellow) 20%, transparent);
   flex-shrink: 0;
 }
 

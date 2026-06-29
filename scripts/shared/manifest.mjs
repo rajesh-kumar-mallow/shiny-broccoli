@@ -20,6 +20,21 @@ export const SVELTE_SCRIPT = {
 
 export const PLAIN_SCRIPTS = [
   {
+    entry: "src/userscripts/theme-host.js",
+    fileName: "hubble-theme-host.user.js",
+    userscript: {
+      name: "Hubble Dracula Theme Host",
+      namespace: "https://hubble.mallow-tech.com",
+      version: "1.0.0",
+      description: "Applies saved Dracula theme (Auto/Dark/Light) on all Hubble pages",
+      author: "Neon Raven",
+      match: ["*://hubble.mallow-tech.com/*"],
+      "run-at": "document-start",
+      grant: "none",
+      tag: ["theme"],
+    },
+  },
+  {
     entry: "src/userscripts/checkout-hover-helper.js",
     fileName: "hubble-checkout-hover-helper.user.js",
     userscript: {

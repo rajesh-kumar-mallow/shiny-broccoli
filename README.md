@@ -4,12 +4,13 @@ Tampermonkey + Stylus extensions for [Hubble](https://hubble.mallow-tech.com): w
 
 ## Install
 
-Install **Tampermonkey** scripts you need, plus **Stylus** userstyles. Always install `hubble-theme.user.css` for the Dracula theme and theme switcher styling.
+Install **Tampermonkey** scripts you need, plus **Stylus** userstyles. Always install `hubble-theme.user.css` for the Dracula theme and `hubble-theme-host.user.js` so theme tokens apply on every Hubble page (including Projects).
 
 ### Tampermonkey (userscripts)
 
 | Script                                | Install                                                                                                                                                                                         |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hubble Dracula Theme Host (required)  | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme-host.user.js)                     |
 | Check-in summary with compensation V2 | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js) |
 | Hubble Checkout Hover Helper          | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js)          |
 | Hubble Smart Attendance Assistant     | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js)     |
@@ -26,14 +27,16 @@ Install **Tampermonkey** scripts you need, plus **Stylus** userstyles. Always in
 
 | Feature           | Tampermonkey                                    | Stylus                                                                     |
 | ----------------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
+| Dracula theme     | `hubble-theme-host.user.js`                     | `hubble-theme.user.css`                                                    |
 | Work log summary  | `check-in-summary-with-compensation-v2.user.js` | `hubble-theme.user.css` + `check-in-summary-with-compensation-v2.user.css` |
 | Checkout hover    | `hubble-checkout-hover-helper.user.js`          | `hubble-theme.user.css`                                                    |
 | Attendance widget | `hubble-smart-attendance-assistant.user.js`     | `hubble-theme.user.css` + `hubble-smart-attendance-assistant.user.css`     |
 
-A floating **Auto / Dark / Light** theme switcher appears when any userscript is active. Choice is saved in `localStorage` (`hubble-theme`).
+A floating **Auto / Dark / Light** theme switcher appears when `hubble-theme-host.user.js` (or another userscript that bundles the switcher) is active. Choice is saved in `localStorage` (`hubble-theme`).
 
 ## Raw URLs (auto-update)
 
+- https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme-host.user.js
 - https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
 - https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js
 - https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js

@@ -8,6 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { createServer } from "node:http";
+import { createServer as createNetServer } from "node:net";
 import { networkInterfaces } from "node:os";
 import { dirname, extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,8 +27,35 @@ const root = join(__dirname, "..");
 const distDir = join(root, "dist");
 
 process.env.HUBBLE_LOCAL_DEV = "1";
-process.env.HUBBLE_DEV_PORT = String(getDevPort());
 process.env.HUBBLE_DEV_HOST = getDevHost();
+
+function isPortAvailable(port) {
+  return new Promise((resolve) => {
+    const probe = createNetServer();
+    probe.once("error", () => resolve(false));
+    probe.once("listening", () => {
+      probe.close(() => resolve(true));
+    });
+    probe.listen(port, "0.0.0.0");
+  });
+}
+
+async function resolveDevPort() {
+  const start = getDevPort();
+  for (let offset = 0; offset < 20; offset++) {
+    const port = start + offset;
+    if (await isPortAvailable(port)) {
+      if (offset > 0) {
+        console.warn(`[local] Port ${start} is in use, using ${port} instead`);
+      }
+      return port;
+    }
+  }
+  throw new Error(`[local] No free port found near ${start}`);
+}
+
+const chosenPort = await resolveDevPort();
+process.env.HUBBLE_DEV_PORT = String(chosenPort);
 
 const MIME = {
   ".js": "text/javascript; charset=utf-8",
@@ -168,8 +196,7 @@ function writeInstallPage() {
   writeFileSync(join(distDir, "index.html"), html);
 }
 
-function startStaticServer() {
-  const port = getDevPort();
+function startStaticServer(port) {
   const server = createServer((req, res) => {
     const pathname = decodeURIComponent((req.url ?? "/").split("?")[0]);
     const relPath = pathname === "/" ? "index.html" : pathname.replace(/^\//, "");
@@ -194,16 +221,29 @@ function startStaticServer() {
     createReadStream(filePath).pipe(res);
   });
 
-  server.listen(port, "0.0.0.0", () => {
-    const base = getArtifactBase();
-    const lanIp = getLanIp();
-    console.log("\n[local] Install page:");
-    console.log(`  ${base}/`);
-    if (lanIp) console.log(`  http://${lanIp}:${port}/`);
-    console.log("\n[local] Watching src/ for changes (poll every 1.5s)…\n");
-  });
+  return new Promise((resolve, reject) => {
+    server.once("error", (error) => {
+      if (error.code === "EADDRINUSE") {
+        reject(
+          new Error(
+            `[local] Port ${port} became unavailable. Stop the other dev:local task and retry.`,
+          ),
+        );
+        return;
+      }
+      reject(error);
+    });
 
-  return server;
+    server.listen(port, "0.0.0.0", () => {
+      const base = getArtifactBase();
+      const lanIp = getLanIp();
+      console.log("\n[local] Install page:");
+      console.log(`  ${base}/`);
+      if (lanIp) console.log(`  http://${lanIp}:${port}/`);
+      console.log("\n[local] Watching src/ for changes (poll every 1.5s)…\n");
+      resolve(server);
+    });
+  });
 }
 
 function listSourceFiles(dir, acc = []) {
@@ -248,7 +288,7 @@ function startPolling(onChange) {
 }
 
 await runBuild("Initial build");
-startStaticServer();
+await startStaticServer(chosenPort);
 
 const rebuild = debounce(async () => {
   try {

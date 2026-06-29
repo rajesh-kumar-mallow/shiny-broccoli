@@ -6,4 +6,5 @@ interface Window {
     (text: string, formats: string[], strict: boolean): { isValid(): boolean; toDate(): Date };
   };
   __hubbleThemeSwitcherInit?: boolean;
+  __hubbleTimelineThemeInit?: boolean;
 }

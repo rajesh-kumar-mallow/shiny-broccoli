@@ -48,13 +48,18 @@ function ensureSwitcher() {
   applyTheme(getStoredMode());
 }
 
+import { initTimelineTheme } from "./timeline-theme.js";
+
 export function initThemeSwitcher() {
   if (window.__hubbleThemeSwitcherInit) return;
   window.__hubbleThemeSwitcherInit = true;
 
+  applyTheme(getStoredMode());
+
   const boot = () => {
     ensureSwitcher();
     applyTheme(getStoredMode());
+    initTimelineTheme();
   };
 
   if (document.body) boot();
