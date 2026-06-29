@@ -733,7 +733,7 @@ a:hover {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-#my-checkin-detail svg line.htl-grid,
+/* #my-checkin-detail svg line.htl-grid,
 #checkin-detail svg line.htl-grid,
 #all-checkin-detail svg line.htl-grid,
 #all-check-in-detail svg line.htl-grid,
@@ -742,7 +742,7 @@ a:hover {
 #all-checkin-detail svg path.htl-grid,
 #all-check-in-detail svg path.htl-grid {
   stroke: var(--dr-border) !important;
-}
+} */
 
 #my-checkin-detail svg rect.htl-row-bg,
 #checkin-detail svg rect.htl-row-bg,
