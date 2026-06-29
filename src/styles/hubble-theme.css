@@ -935,7 +935,7 @@ a:hover {
   border-radius: 18px;
   padding: 18px;
   min-height: 240px;
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
   box-shadow:
     0 4px 12px rgb(0 0 0 / 15%),
     0 12px 24px rgb(0 0 0 / 10%);
@@ -1053,7 +1053,7 @@ a:hover {
   background: var(--dr-bg);
   border: 1px solid var(--dr-border);
   border-radius: 12px;
-  transition: 0.2s;
+  /* transition: 0.2s; */
 }
 
 #all-cards-table tbody td:nth-child(9) a div {
@@ -1097,7 +1097,7 @@ a:hover {
   border: 1px solid var(--dr-border) !important;
   border-radius: 18px;
   padding: 18px;
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
   box-shadow:
     0 4px 12px rgb(0 0 0 / 15%),
     0 12px 24px rgb(0 0 0 / 10%);
