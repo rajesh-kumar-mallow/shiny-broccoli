@@ -9,8 +9,29 @@
 
 @-moz-document domain("hubble.mallow-tech.com") {
 /* =========================================================
-   Dracula tokens — dark (explicit)
-   ========================================================= */
+    Dracula tokens — always defined on html (no JS required)
+    ========================================================= */
+html {
+  --dr-bg: #282a36;
+  --dr-bg-secondary: #313442;
+  --dr-bg-tertiary: #21222c;
+  --dr-border: #44475a;
+  --dr-selection: #6272a4;
+  --dr-fg: #f8f8f2;
+  --dr-comment: #6272a4;
+  --dr-cyan: #8be9fd;
+  --dr-purple: #bd93f9;
+  --dr-pink: #ff79c6;
+  --dr-green: #6abf95;
+  --dr-red: #d16d7e;
+  --dr-yellow: #d4b483;
+  --dr-orange: #ffb86c;
+  color-scheme: dark;
+}
+
+/* =========================================================
+    Dracula tokens — dark (explicit)
+    ========================================================= */
 html[data-hubble-theme="dark"] {
   --dr-bg: #282a36;
   --dr-bg-secondary: #313442;
@@ -25,12 +46,13 @@ html[data-hubble-theme="dark"] {
   --dr-green: #6abf95;
   --dr-red: #d16d7e;
   --dr-yellow: #d4b483;
+  --dr-orange: #ffb86c;
   color-scheme: dark;
 }
 
 /* =========================================================
-   Dracula tokens — light
-   ========================================================= */
+    Dracula tokens — light
+    ========================================================= */
 html[data-hubble-theme="light"] {
   --dr-bg: #f8f8f2;
   --dr-bg-secondary: #eff0eb;
@@ -45,10 +67,12 @@ html[data-hubble-theme="light"] {
   --dr-green: #2d8a5e;
   --dr-red: #c0395b;
   --dr-yellow: #9a7b3c;
+  --dr-orange: #e67e22;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
+  html:not([data-hubble-theme]),
   html[data-hubble-theme="system"] {
     --dr-bg: #282a36;
     --dr-bg-secondary: #313442;
@@ -63,11 +87,13 @@ html[data-hubble-theme="light"] {
     --dr-green: #6abf95;
     --dr-red: #d16d7e;
     --dr-yellow: #d4b483;
+    --dr-orange: #ffb86c;
     color-scheme: dark;
   }
 }
 
 @media (prefers-color-scheme: light) {
+  html:not([data-hubble-theme]),
   html[data-hubble-theme="system"] {
     --dr-bg: #f8f8f2;
     --dr-bg-secondary: #eff0eb;
@@ -82,17 +108,14 @@ html[data-hubble-theme="light"] {
     --dr-green: #2d8a5e;
     --dr-red: #c0395b;
     --dr-yellow: #9a7b3c;
+    --dr-orange: #e67e22;
     color-scheme: light;
   }
 }
 
-html:not([data-hubble-theme]) {
-  color-scheme: light dark;
-}
-
 /* =========================================================
-   Theme switcher (injected by userscripts)
-   ========================================================= */
+    Theme switcher (injected by userscripts)
+    ========================================================= */
 #hubble-theme-switcher {
   position: fixed;
   bottom: 16px;
@@ -131,8 +154,8 @@ html:not([data-hubble-theme]) {
 }
 
 /* =========================================================
-   Checkout Hover Helper tooltip
-   ========================================================= */
+    Checkout Hover Helper tooltip
+    ========================================================= */
 #checkout-hover-tooltip.cht-tooltip {
   width: 370px;
   padding: 0;
@@ -301,10 +324,12 @@ html:not([data-hubble-theme]) {
   color: var(--dr-green);
   border-color: color-mix(in srgb, var(--dr-green) 35%, transparent);
 }
+
 .cht-work-mode--wfh {
   color: var(--dr-cyan);
   border-color: color-mix(in srgb, var(--dr-cyan) 35%, transparent);
 }
+
 .cht-work-mode--hybrid {
   color: var(--dr-comment);
 }
@@ -377,11 +402,8 @@ html:not([data-hubble-theme]) {
 }
 
 /* =========================================================
-       Hubble Dracula Theme
-       ========================================================= */
-/* =========================================================
-       Global
-       ========================================================= */
+        Hubble Dracula Theme - Global
+        ========================================================= */
 html,
 body,
 #app,
@@ -412,8 +434,8 @@ html {
 }
 
 /* =========================================================
-       Containers
-       ========================================================= */
+        Containers
+        ========================================================= */
 .bg-white,
 .bg-light,
 .bg-mild-gray,
@@ -444,8 +466,8 @@ select,
 }
 
 /* =========================================================
-       Headers / Nav
-       ========================================================= */
+        Headers / Nav
+        ========================================================= */
 .card-header,
 .card-footer,
 .modal-header,
@@ -465,8 +487,8 @@ thead {
 }
 
 /* =========================================================
-       Sidebar
-       ========================================================= */
+        Sidebar
+        ========================================================= */
 .sidebar a,
 .main-sidebar a,
 aside a {
@@ -482,8 +504,8 @@ aside a {
 }
 
 /* =========================================================
-       Text
-       ========================================================= */
+        Text
+        ========================================================= */
 .text-dark-black,
 .text-dark-black-50,
 .text-gray-800,
@@ -495,8 +517,8 @@ textarea::placeholder {
 }
 
 /* =========================================================
-       Tables
-       ========================================================= */
+        Tables
+        ========================================================= */
 table,
 .table {
   background: var(--dr-bg) !important;
@@ -530,8 +552,8 @@ div > .bg-mild-blue-hover:hover,
 }
 
 /* =========================================================
-       Inputs
-       ========================================================= */
+        Inputs
+        ========================================================= */
 input,
 textarea,
 select,
@@ -557,8 +579,8 @@ select:focus,
 }
 
 /* =========================================================
-       Buttons
-       ========================================================= */
+        Buttons
+        ========================================================= */
 .btn-primary,
 .daterangepicker .ranges li.active {
   background: var(--dr-purple) !important;
@@ -591,8 +613,8 @@ select:focus,
 }
 
 /* =========================================================
-       Alerts & Badges
-       ========================================================= */
+        Alerts & Badges
+        ========================================================= */
 .alert-success,
 .bg-mild-green-10,
 .bg-mild-green\/10,
@@ -622,8 +644,8 @@ select:focus,
 }
 
 /* =========================================================
-       Links
-       ========================================================= */
+        Links
+        ========================================================= */
 a {
   color: var(--dr-cyan) !important;
 }
@@ -633,8 +655,8 @@ a:hover {
 }
 
 /* =========================================================
-       Date Range Picker
-       ========================================================= */
+        Date Range Picker
+        ========================================================= */
 .daterangepicker,
 .daterangepicker .calendar-table,
 .daterangepicker .drp-buttons,
@@ -667,27 +689,132 @@ a:hover {
 }
 
 /* =========================================================
-       SVG / Charts
-       ========================================================= */
-svg path,
-svg rect,
-#user path,
-#tracker-table svg path {
-  fill: var(--dr-fg) !important;
-  stroke: var(--dr-fg) !important;
-}
+        SVG / Charts
+        ========================================================= */
+.timesheet-header-shadow,
+.timesheet-filter-header {
+  svg path,
+  svg rect,
+  #user path,
+  #tracker-table svg path {
+    fill: var(--dr-fg) !important;
+  }
 
-div rect {
-  fill: var(--dr-bg) !important;
-}
+  div rect {
+    fill: var(--dr-bg-secondary) !important;
+    stroke: var(--dr-bg-secondary) !important;
+  }
 
-div g {
-  fill: var(--dr-fg) !important;
+  div g {
+    fill: var(--dr-fg) !important;
+    fill-opacity: 1;
+  }
 }
 
 /* =========================================================
-       DataTables Pagination
-       ========================================================= */
+        Google Timeline
+        ========================================================= */
+#my-checkin-detail,
+#checkin-detail,
+#all-checkin-detail,
+#all-check-in-detail {
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#my-checkin-detail svg,
+#checkin-detail svg,
+#all-checkin-detail svg,
+#all-check-in-detail svg {
+  background: transparent !important;
+}
+
+#my-checkin-detail svg text.htl-label,
+#checkin-detail svg text.htl-label,
+#all-checkin-detail svg text.htl-label,
+#all-check-in-detail svg text.htl-label,
+#my-checkin-detail svg text,
+#checkin-detail svg text,
+#all-checkin-detail svg text,
+#all-check-in-detail svg text {
+  fill: var(--dr-comment) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+#my-checkin-detail svg line.htl-grid,
+#checkin-detail svg line.htl-grid,
+#all-checkin-detail svg line.htl-grid,
+#all-check-in-detail svg line.htl-grid,
+#my-checkin-detail svg path.htl-grid,
+#checkin-detail svg path.htl-grid,
+#all-checkin-detail svg path.htl-grid,
+#all-check-in-detail svg path.htl-grid {
+  stroke: var(--dr-border) !important;
+}
+
+#my-checkin-detail svg rect.htl-row-bg,
+#checkin-detail svg rect.htl-row-bg,
+#all-checkin-detail svg rect.htl-row-bg,
+#all-check-in-detail svg rect.htl-row-bg {
+  fill: var(--dr-bg) !important;
+  stroke: var(--dr-bg) !important;
+}
+
+#my-checkin-detail svg rect.htl-wfo,
+#checkin-detail svg rect.htl-wfo,
+#all-checkin-detail svg rect.htl-wfo,
+#all-check-in-detail svg rect.htl-wfo {
+  fill: color-mix(in srgb, var(--dr-green) 82%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-green) 55%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-wfh,
+#checkin-detail svg rect.htl-wfh,
+#all-checkin-detail svg rect.htl-wfh,
+#all-check-in-detail svg rect.htl-wfh {
+  fill: color-mix(in srgb, var(--dr-cyan) 78%, var(--dr-purple)) !important;
+  stroke: color-mix(in srgb, var(--dr-cyan) 50%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-timeoff,
+#checkin-detail svg rect.htl-timeoff,
+#all-checkin-detail svg rect.htl-timeoff,
+#all-check-in-detail svg rect.htl-timeoff {
+  fill: color-mix(in srgb, var(--dr-yellow) 75%, var(--dr-pink)) !important;
+  stroke: color-mix(in srgb, var(--dr-yellow) 45%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-dayoff,
+#checkin-detail svg rect.htl-dayoff,
+#all-checkin-detail svg rect.htl-dayoff,
+#all-check-in-detail svg rect.htl-dayoff {
+  fill: color-mix(in srgb, var(--dr-red) 70%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-red) 45%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-other,
+#checkin-detail svg rect.htl-other,
+#all-checkin-detail svg rect.htl-other,
+#all-check-in-detail svg rect.htl-other {
+  fill: color-mix(in srgb, var(--dr-purple) 65%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-purple) 40%, transparent) !important;
+}
+
+/* =========================================================
+        Dropdown search icon alignment
+        ========================================================= */
+.filter_by_project .drop-container .drop-body .search-section::after,
+.filter_by_user .drop-container .drop-body .search-section::after,
+.group_by_filter .drop-container .drop-body .search-section::after,
+.hubble-dropdown .drop-container .drop-body .search-section::after {
+  top: 21px;
+}
+
+/* =========================================================
+        DataTables Pagination
+        ========================================================= */
 .page-link,
 .dataTables_wrapper .dataTables_paginate .paginate_button {
   background: var(--dr-bg-tertiary) !important;
@@ -702,8 +829,8 @@ div g {
 }
 
 /* =========================================================
-       Loader
-       ========================================================= */
+        Loader
+        ========================================================= */
 .page-loader {
   background: rgb(40 42 54 / 70%) !important;
 }
@@ -719,8 +846,8 @@ div g {
 }
 
 /* =========================================================
-       Misc Existing Fixes
-       ========================================================= */
+        Misc Existing Fixes
+        ========================================================= */
 .content-page .change_groupBy_view .bg-white > div:first-child {
   border-bottom: 1px solid var(--dr-border);
 }
@@ -743,8 +870,8 @@ div g {
 }
 
 /* =========================================================
-       White Background Catchers
-       ========================================================= */
+        White Background Catchers
+        ========================================================= */
 [style*="background:#fff"],
 [style*="background-color:#fff"],
 [style*="background:white"],
@@ -757,8 +884,8 @@ div g {
 }
 
 /* =========================================================
-       Utility Catchers
-       ========================================================= */
+        Utility Catchers
+        ========================================================= */
 [class*="bg-white"] {
   background: var(--dr-bg-secondary) !important;
 }
@@ -772,8 +899,8 @@ div g {
 }
 
 /* =========================================================
-       Scrollbars
-       ========================================================= */
+        Scrollbars
+        ========================================================= */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -790,5 +917,566 @@ div g {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--dr-purple);
+}
+
+/* ============================================
+    Green Cards -> Card View
+    ============================================ */
+#all-cards-table {
+  background: transparent !important;
+}
+
+#all-cards-table thead {
+  display: none;
+}
+
+#all-cards-table tbody {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 18px;
+  padding: 16px;
+}
+
+#all-cards-table tbody tr {
+  display: flex !important;
+  flex-direction: column;
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 18px;
+  padding: 18px;
+  min-height: 240px;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 15%),
+    0 12px 24px rgb(0 0 0 / 10%);
+}
+
+#all-cards-table tbody tr:hover {
+  transform: translateY(-3px);
+  border-color: var(--dr-purple) !important;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 20%);
+}
+
+#all-cards-table tbody td {
+  display: block;
+  width: 100%;
+  border: none !important;
+  padding: 4px 0 !important;
+  background: transparent !important;
+}
+
+#all-cards-table tbody td:nth-child(1),
+#all-cards-table tbody td:nth-child(7) {
+  display: none;
+}
+
+#all-cards-table tbody td:nth-child(4) {
+  order: 1;
+  margin-bottom: 12px;
+}
+
+#all-cards-table tbody td:nth-child(4) span {
+  background: rgba(106, 191, 149, 0.15) !important;
+  color: var(--dr-green) !important;
+  border: 1px solid rgba(106, 191, 149, 0.25);
+  border-radius: 999px;
+  padding: 6px 12px !important;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#all-cards-table tbody td:nth-child(3) {
+  order: 2;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--dr-fg) !important;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#all-cards-table tbody td:nth-child(2) {
+  order: 3;
+  color: var(--dr-comment) !important;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+#all-cards-table tbody td:nth-child(2)::before {
+  content: "📅 ";
+}
+
+#all-cards-table tbody td:nth-child(5) {
+  order: 4;
+  color: var(--dr-fg) !important;
+  font-size: 14px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#all-cards-table tbody td:nth-child(5)::before {
+  content: "👤 ";
+  color: var(--dr-comment);
+}
+
+#all-cards-table tbody td:nth-child(6) {
+  order: 5;
+  color: var(--dr-fg) !important;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+#all-cards-table tbody td:nth-child(6)::before {
+  content: "📁 ";
+  color: var(--dr-comment);
+}
+
+#all-cards-table tbody td:nth-child(8) {
+  order: 6;
+  color: var(--dr-fg) !important;
+  font-size: 14px;
+}
+
+#all-cards-table tbody td:nth-child(8)::before {
+  content: "👨‍💼 ";
+  color: var(--dr-comment);
+}
+
+#all-cards-table tbody td:nth-child(9) {
+  order: 7;
+  margin-top: auto;
+  text-align: right;
+  padding-top: 20px !important;
+}
+
+#all-cards-table tbody td:nth-child(9) a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: var(--dr-bg);
+  border: 1px solid var(--dr-border);
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+#all-cards-table tbody td:nth-child(9) a div {
+  margin-right: 0 !important;
+}
+
+#all-cards-table tbody td:nth-child(9) a:hover {
+  background: var(--dr-purple);
+  border-color: var(--dr-purple);
+}
+
+#all-cards-table tbody td:nth-child(9) a:hover span {
+  color: var(--dr-bg) !important;
+}
+
+@media (max-width: 768px) {
+  #all-cards-table tbody {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+}
+
+/* ============================================
+    Performance Appraisal Cards (#pa-table)
+    ============================================ */
+#pa-table thead {
+  display: none;
+}
+
+#pa-table tbody {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  padding: 16px;
+}
+
+#pa-table tbody tr {
+  display: flex !important;
+  flex-direction: column;
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 18px;
+  padding: 18px;
+  transition: all 0.2s ease;
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 15%),
+    0 12px 24px rgb(0 0 0 / 10%);
+}
+
+#pa-table tbody tr:hover {
+  transform: translateY(-3px);
+  border-color: var(--dr-purple) !important;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 20%);
+}
+
+#pa-table tbody td {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+#pa-table tbody td:first-child {
+  margin-bottom: 16px;
+}
+
+#pa-table .chip {
+  display: flex !important;
+  align-items: center;
+  gap: 14px !important;
+  width: 100% !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+#pa-table .chip img {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50%;
+  border: 2px solid var(--dr-border);
+  flex-shrink: 0;
+}
+
+#pa-table .chip span {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dr-fg) !important;
+  line-height: 1.3;
+}
+
+#pa-table tbody td:nth-child(2) {
+  margin-bottom: 18px;
+}
+
+#pa-table tbody td:nth-child(2) span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 7px 14px !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#pa-table .text-golden-yellow {
+  color: var(--dr-yellow) !important;
+}
+
+#pa-table .bg-golden-yellow-10 {
+  background: rgba(212, 180, 131, 0.15) !important;
+  border: 1px solid rgba(212, 180, 131, 0.25);
+}
+
+#pa-table tbody td:last-child {
+  margin-top: auto;
+}
+
+#pa-table tbody td:last-child > div {
+  justify-content: flex-start !important;
+  gap: 10px !important;
+}
+
+#pa-table tbody td:last-child a {
+  text-decoration: none;
+}
+
+#pa-table .bg-dark-blue {
+  background: var(--dr-purple) !important;
+  color: var(--dr-bg) !important;
+  border-radius: 10px;
+  padding: 8px 14px !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#pa-table .bg-gray-500 {
+  background: var(--dr-bg) !important;
+  color: var(--dr-comment) !important;
+  border: 1px solid var(--dr-border);
+  border-radius: 10px;
+  padding: 8px 14px !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#pa-table .bg-gray-500:hover {
+  border-color: var(--dr-red);
+  color: var(--dr-red) !important;
+}
+
+#pa-table .bg-dark-blue:hover {
+  background: var(--dr-pink) !important;
+}
+
+@media (max-width: 768px) {
+  #pa-table tbody {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+}
+
+/* ==========================================
+    Floating Assessment Panel
+    ========================================== */
+#front-assesment {
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    0 20px 60px rgb(0 0 0 / 45%),
+    0 0 0 1px rgb(255 255 255 / 3%);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+#front-assesment .px-5.py-7\.5 {
+  background: transparent !important;
+}
+
+#front-assesment button {
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 18px !important;
+  transition: all 0.25s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+#front-assesment button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgb(0 0 0 / 35%);
+}
+
+#front-assesment button p {
+  background: rgb(0 0 0 / 20%) !important;
+  color: var(--dr-fg) !important;
+  font-weight: 600;
+  border-top: 1px solid rgb(255 255 255 / 5%);
+}
+
+#front-assesment button .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#front-assesment svg {
+  transform: scale(0.85);
+}
+
+#front-assesment svg path {
+  fill: white !important;
+}
+
+#front-assesment i {
+  color: white !important;
+}
+
+#checkin-btn {
+  background: linear-gradient(135deg, #50fa7b, #3ccf64) !important;
+}
+
+#home_location {
+  background: linear-gradient(135deg, #6272a4, #4c5b8a) !important;
+}
+
+#office_location {
+  background: linear-gradient(135deg, #50fa7b, #3ccf64) !important;
+}
+
+#break-btn {
+  background: linear-gradient(135deg, #6272a4, #44475a) !important;
+}
+
+#lunch-btn {
+  background: linear-gradient(135deg, #ffb86c, #ff9f43) !important;
+}
+
+#attendance-time-off-btn {
+  background: linear-gradient(135deg, #f1fa8c, #d4c65f) !important;
+}
+
+#checkout-btn {
+  background: linear-gradient(135deg, #ff5555, #e63946) !important;
+}
+
+#front-assesment a.text-primary-red {
+  color: var(--dr-cyan) !important;
+  transition: 0.2s;
+}
+
+#front-assesment a.text-primary-red:hover {
+  color: var(--dr-purple) !important;
+}
+
+@media (max-width: 768px) {
+  #front-assesment {
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    bottom: 12px !important;
+  }
+}
+
+/* ==========================================================
+    Floating Assessment Button (FAB)
+    ========================================================== */
+.front-assesment-btn {
+  width: 64px !important;
+  height: 64px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-purple);
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 50% !important;
+  box-shadow:
+    0 8px 24px rgb(0 0 0 / 35%),
+    inset 0 1px 1px rgb(255 255 255 / 4%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  overflow: hidden;
+}
+
+.front-assesment-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 32px rgb(0 0 0 / 45%),
+    0 0 24px rgb(189 147 249 / 20%);
+}
+
+.front-assesment-btn:active {
+  transform: scale(0.96);
+}
+
+.front-assesment-btn::after {
+  display: none !important;
+}
+
+.front-assesment-btn span {
+  position: static !important;
+  inset: unset !important;
+  transform: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.front-assesment-btn .icon {
+  display: flex;
+}
+
+.front-assesment-btn .other-icon {
+  display: none;
+}
+
+.front-assesment-btn[data-bg] .icon {
+  display: none;
+}
+
+.front-assesment-btn[data-bg] .other-icon {
+  display: flex;
+}
+
+.front-assesment-btn svg {
+  width: 26px !important;
+  height: 26px !important;
+  overflow: visible;
+}
+
+.front-assesment-btn svg rect,
+.front-assesment-btn svg defs,
+.front-assesment-btn svg filter,
+.front-assesment-btn svg circle {
+  display: none;
+}
+
+.front-assesment-btn svg path {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+.front-assesment-btn[data-bg="checkin-btn"],
+.front-assesment-btn[data-bg="home_location"] {
+  background: var(--dr-green) !important;
+  color: white;
+}
+
+.front-assesment-btn[data-bg="office_location"] {
+  background: var(--dr-cyan) !important;
+  color: white;
+}
+
+.front-assesment-btn[data-bg="break-btn"] {
+  background: var(--dr-comment) !important;
+  color: white;
+}
+
+.front-assesment-btn[data-bg="lunch-btn"] {
+  background: var(--dr-orange) !important;
+  color: white;
+}
+
+.front-assesment-btn[data-bg="attendance-time-off-btn"],
+.front-assesment-btn[data-bg="checkout-btn"] {
+  background: var(--dr-red) !important;
+  color: white;
+}
+
+.front-assesment-btn.dotted-border {
+  animation: fab-glow 2s infinite;
+}
+
+@keyframes fab-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 35%),
+      0 0 0 0 rgb(80 250 123 / 0%);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 35%),
+      0 0 0 12px rgb(80 250 123 / 15%);
+  }
+}
+
+@media (max-width: 768px) {
+  .front-assesment-btn {
+    width: 58px !important;
+    height: 58px !important;
+    right: 18px !important;
+    bottom: 18px !important;
+  }
+
+  .front-assesment-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+/* ==========================================================
+      DataTables Sorting Layout Fix
+    ========================================================== */
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+  background-repeat: no-repeat !important;
+  background-position: center right !important;
 }
 }
