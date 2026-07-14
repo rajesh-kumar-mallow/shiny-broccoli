@@ -1,15 +1,75 @@
-import { initThemeSwitcher } from "./shared/theme-switcher.js";
+import { render } from "preact";
+import { initThemeSwitcher } from "./shared/theme-switcher";
+import { WORK_DAY_MINUTES } from "./shared/constants";
 
 initThemeSwitcher();
+
+type Mode = "my" | "all";
+
+type Point = { x: number; minutes: number };
+
+type RectInfo = {
+  el: SVGRectElement;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+};
+
+type RowInfo = {
+  text: SVGTextElement;
+  content: string;
+  label: string;
+  x: number;
+  y: number;
+  workedMinutes: number | null;
+};
+
+type WorkModeInfo = {
+  type: "hybrid" | "wfo" | "wfh" | "none";
+  label: string;
+  subtitle: string;
+  officeMinutes: number;
+  homeMinutes: number;
+};
+
+type RowTooltipData = {
+  title: string;
+  worked: string;
+  timeOff: string;
+  required: string;
+  remaining: string;
+  workMode: WorkModeInfo;
+  isDayOffRow: boolean;
+  dayOffSubtitle?: string;
+  dayOffMessage?: string;
+  subtitle?: string;
+  heroTitle?: string;
+  heroValue?: string;
+  badgeText?: string;
+  status?: string;
+  primaryChipLabel?: string;
+};
+
+type HelperState = {
+  applyTimer: ReturnType<typeof setTimeout> | null;
+  observer: MutationObserver | null;
+  isApplying: boolean;
+  applyTimestamps: number[];
+  circuitOpenUntil: number;
+  originalPushState: History["pushState"];
+  originalReplaceState: History["replaceState"];
+  destroy?: () => void;
+};
 
 (() => {
   window.__checkoutHoverHelper?.destroy?.();
 
-  const REQUIRED_WORK_MINUTES = 8 * 60;
+  const REQUIRED_WORK_MINUTES = WORK_DAY_MINUTES;
   const TOOLTIP_ID = "checkout-hover-tooltip";
-  const HIGHLIGHT_NAME = "Dheeraj Prakash";
 
-  const MONTHS = {
+  const MONTHS: Record<string, number> = {
     jan: 0,
     feb: 1,
     mar: 2,
@@ -24,34 +84,33 @@ initThemeSwitcher();
     dec: 11,
   };
 
-  const helperState = {
+  const MAX_APPLIES_PER_WINDOW = 6;
+  const RATE_WINDOW_MS = 4000;
+  const COOLDOWN_MS = 8000;
+
+  const helperState: HelperState = {
     applyTimer: null,
     observer: null,
     isApplying: false,
+    applyTimestamps: [],
+    circuitOpenUntil: 0,
     originalPushState: history.pushState,
     originalReplaceState: history.replaceState,
   };
 
   window.__checkoutHoverHelper = helperState;
 
-  const round = (value, precision = 3) => Math.round(value * 10 ** precision) / 10 ** precision;
+  const round = (value: number, precision = 3) =>
+    Math.round(value * 10 ** precision) / 10 ** precision;
 
-  const toNumber = (value) => Number(value || 0);
+  const toNumber = (value: unknown) => Number(value || 0);
 
-  const median = (values) => {
+  const median = (values: number[]) => {
     const sorted = values.slice().sort((a, b) => a - b);
     return sorted[Math.floor(sorted.length / 2)];
   };
 
-  const escapeHtml = (value) =>
-    String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-
-  const getMode = () => {
+  const getMode = (): Mode => {
     const path = window.location.pathname;
 
     if (
@@ -64,7 +123,7 @@ initThemeSwitcher();
     return "all";
   };
 
-  const getRoot = (mode) => {
+  const getRoot = (mode: Mode): Element => {
     if (mode === "my") {
       return document.querySelector("#my-checkin-detail") || document.body;
     }
@@ -76,16 +135,16 @@ initThemeSwitcher();
     );
   };
 
-  const parseWorkedMinutes = (text) => {
+  const parseWorkedMinutes = (text: string): number | null => {
     const match = text.match(/\(\s*(\d+)\s*hrs?\s+(\d+)\s*mins?\s*\)/i);
     if (!match) return null;
 
     return Number(match[1]) * 60 + Number(match[2]);
   };
 
-  const getCleanLabel = (text) => text.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  const getCleanLabel = (text: string) => text.replace(/\s*\([^)]*\)\s*$/, "").trim();
 
-  const parseTimeLabelMinutes = (text) => {
+  const parseTimeLabelMinutes = (text: string): number | null => {
     const match = text.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
     if (!match) return null;
 
@@ -99,7 +158,7 @@ initThemeSwitcher();
     return hours * 60 + minutes;
   };
 
-  const parseDateLabel = (label) => {
+  const parseDateLabel = (label: string): Date | null => {
     const match = label.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
     if (!match) return null;
 
@@ -112,14 +171,14 @@ initThemeSwitcher();
     return new Date(year, month, day);
   };
 
-  const isSameDate = (a, b) =>
-    a &&
-    b &&
+  const isSameDate = (a: Date | null, b: Date | null) =>
+    !!a &&
+    !!b &&
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
-  const formatDuration = (minutes) => {
+  const formatDuration = (minutes: number) => {
     const total = Math.max(0, Math.round(minutes));
     const hrs = Math.floor(total / 60);
     const mins = total % 60;
@@ -130,14 +189,14 @@ initThemeSwitcher();
     return `${hrs}h ${mins}m`;
   };
 
-  const formatTime = (date) =>
+  const formatTime = (date: Date) =>
     date.toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
 
-  const getBBoxSafe = (el) => {
+  const getBBoxSafe = (el: SVGGraphicsElement): DOMRect | null => {
     try {
       return el.getBBox();
     } catch {
@@ -145,14 +204,14 @@ initThemeSwitcher();
     }
   };
 
-  const getFill = (el) => {
+  const getFill = (el: Element) => {
     const fill = (el.getAttribute("fill") || "").trim().toLowerCase();
     if (fill) return fill;
 
     return (window.getComputedStyle(el).fill || "").trim().toLowerCase();
   };
 
-  const getRgb = (color) => {
+  const getRgb = (color: string) => {
     const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
     if (!rgbMatch) return null;
 
@@ -163,7 +222,7 @@ initThemeSwitcher();
     };
   };
 
-  const isTimeOffColor = (color) => {
+  const isTimeOffColor = (color: string) => {
     if (!color) return false;
 
     const normalizedColor = color.toLowerCase();
@@ -178,7 +237,7 @@ initThemeSwitcher();
     return rgb.r >= 180 && rgb.g <= 120 && rgb.b <= 90;
   };
 
-  const isDayOffColor = (color) => {
+  const isDayOffColor = (color: string) => {
     if (!color) return false;
 
     const normalizedColor = color.toLowerCase();
@@ -193,7 +252,7 @@ initThemeSwitcher();
     return rgb.r >= 150 && rgb.g <= 60 && rgb.b <= 60;
   };
 
-  const isWfoColor = (color) => {
+  const isWfoColor = (color: string) => {
     if (!color) return false;
 
     const normalizedColor = color.toLowerCase();
@@ -210,7 +269,7 @@ initThemeSwitcher();
     return rgb.g >= 110 && rgb.r <= 90 && rgb.b <= 120;
   };
 
-  const isWfhColor = (color) => {
+  const isWfhColor = (color: string) => {
     if (!color) return false;
 
     const normalizedColor = color.toLowerCase();
@@ -225,7 +284,7 @@ initThemeSwitcher();
     return rgb.b >= 140 && rgb.r <= 100 && rgb.g <= 170;
   };
 
-  const isDayOffText = (text) => {
+  const isDayOffText = (text: string) => {
     const value = text.trim().toLowerCase();
 
     if (value.includes("time off")) return false;
@@ -233,13 +292,13 @@ initThemeSwitcher();
     return /day\s*off|week\s*off|weekly\s*off|holiday|off\s*day/i.test(value);
   };
 
-  const pickAttendanceSvg = (root) => {
+  const pickAttendanceSvg = (root: Element): SVGSVGElement | undefined => {
     const svgs = [...root.querySelectorAll("svg")];
 
     return svgs
       .map((svg) => {
         const workedTextCount = [...svg.querySelectorAll("text")].filter(
-          (text) => parseWorkedMinutes(text.textContent.trim()) !== null,
+          (text) => parseWorkedMinutes((text.textContent || "").trim()) !== null,
         ).length;
 
         const barCount = [...svg.querySelectorAll("rect")].filter((rect) => {
@@ -263,8 +322,8 @@ initThemeSwitcher();
       .sort((a, b) => b.score - a.score)[0]?.svg;
   };
 
-  const getVerticalGridXs = (svg) => {
-    const xs = [];
+  const getVerticalGridXs = (svg: SVGSVGElement) => {
+    const xs: number[] = [];
 
     [...svg.querySelectorAll("path")].forEach((path) => {
       const box = getBBoxSafe(path);
@@ -278,7 +337,7 @@ initThemeSwitcher();
     });
 
     const sortedXs = xs.sort((a, b) => a - b);
-    const uniqueXs = [];
+    const uniqueXs: number[] = [];
 
     sortedXs.forEach((x) => {
       const lastX = uniqueXs[uniqueXs.length - 1];
@@ -291,7 +350,7 @@ initThemeSwitcher();
     return uniqueXs;
   };
 
-  const getDominantGridGap = (xs) => {
+  const getDominantGridGap = (xs: number[]): number | null => {
     const diffs = xs
       .slice(1)
       .map((x, index) => x - xs[index])
@@ -299,7 +358,7 @@ initThemeSwitcher();
 
     if (!diffs.length) return null;
 
-    const buckets = new Map();
+    const buckets = new Map<number, { count: number; total: number }>();
 
     diffs.forEach((diff) => {
       const key = Math.round(diff);
@@ -318,8 +377,8 @@ initThemeSwitcher();
     return dominantBucket.total / dominantBucket.count;
   };
 
-  const inferPxPerMinuteFromTimeLabels = (root) => {
-    const points = [...root.querySelectorAll("svg text")]
+  const inferPxPerMinuteFromTimeLabels = (root: Element): number | null => {
+    const points: Point[] = [...root.querySelectorAll("svg text")]
       .map((text) => {
         const minutes = parseTimeLabelMinutes(text.textContent || "");
         if (minutes === null) return null;
@@ -329,10 +388,10 @@ initThemeSwitcher();
           minutes,
         };
       })
-      .filter(Boolean)
+      .filter((p): p is Point => p !== null)
       .sort((a, b) => a.x - b.x);
 
-    const candidates = [];
+    const candidates: number[] = [];
 
     for (let index = 0; index < points.length - 1; index += 1) {
       const current = points[index];
@@ -351,7 +410,15 @@ initThemeSwitcher();
     return median(candidates);
   };
 
-  const inferPxPerMinute = ({ root, gridXs, mode }) => {
+  const inferPxPerMinute = ({
+    root,
+    gridXs,
+    mode,
+  }: {
+    root: Element;
+    gridXs: number[];
+    mode: Mode;
+  }): number | null => {
     const fromTimeLabels = inferPxPerMinuteFromTimeLabels(root);
     if (fromTimeLabels) return fromTimeLabels;
 
@@ -361,8 +428,8 @@ initThemeSwitcher();
     return gridGapPx / (mode === "my" ? 30 : 60);
   };
 
-  const getAxisTicks = (root) => {
-    const ticks = [...root.querySelectorAll("svg text")]
+  const getAxisTicks = (root: Element): Point[] => {
+    const ticks: Point[] = [...root.querySelectorAll("svg text")]
       .map((text) => {
         const minutes = parseTimeLabelMinutes(text.textContent || "");
 
@@ -373,10 +440,10 @@ initThemeSwitcher();
           minutes,
         };
       })
-      .filter(Boolean)
+      .filter((p): p is Point => p !== null)
       .sort((a, b) => a.x - b.x);
 
-    const uniqueTicks = [];
+    const uniqueTicks: Point[] = [];
 
     ticks.forEach((tick) => {
       const lastTick = uniqueTicks[uniqueTicks.length - 1];
@@ -389,10 +456,18 @@ initThemeSwitcher();
     return uniqueTicks;
   };
 
-  const getNearestAxisTick = ({ x, axisTicks, pxPerMinute }) => {
+  const getNearestAxisTick = ({
+    x,
+    axisTicks,
+    pxPerMinute,
+  }: {
+    x: number;
+    axisTicks: Point[];
+    pxPerMinute: number;
+  }): Point | null => {
     const tolerancePx = Math.max(4, pxPerMinute * 4);
 
-    let nearestTick = null;
+    let nearestTick: Point | null = null;
     let nearestDiff = Infinity;
 
     axisTicks.forEach((tick) => {
@@ -407,7 +482,15 @@ initThemeSwitcher();
     return nearestDiff <= tolerancePx ? nearestTick : null;
   };
 
-  const getMinutesFromX = ({ x, axisTicks, pxPerMinute }) => {
+  const getMinutesFromX = ({
+    x,
+    axisTicks,
+    pxPerMinute,
+  }: {
+    x: number;
+    axisTicks: Point[];
+    pxPerMinute: number;
+  }): number | null => {
     const nearestTick = getNearestAxisTick({
       x,
       axisTicks,
@@ -430,7 +513,15 @@ initThemeSwitcher();
     return previousTick.minutes + progress * (nextTick.minutes - previousTick.minutes);
   };
 
-  const getRectDurationMinutes = ({ rect, axisTicks, pxPerMinute }) => {
+  const getRectDurationMinutes = ({
+    rect,
+    axisTicks,
+    pxPerMinute,
+  }: {
+    rect: RectInfo;
+    axisTicks: Point[];
+    pxPerMinute: number;
+  }) => {
     const startMinutes = getMinutesFromX({
       x: rect.x,
       axisTicks,
@@ -446,15 +537,25 @@ initThemeSwitcher();
     if (
       Number.isFinite(startMinutes) &&
       Number.isFinite(endMinutes) &&
-      endMinutes >= startMinutes
+      (endMinutes as number) >= (startMinutes as number)
     ) {
-      return endMinutes - startMinutes;
+      return (endMinutes as number) - (startMinutes as number);
     }
 
     return rect.width / pxPerMinute;
   };
 
-  const getTotalRectDurationMinutes = ({ rowRects, predicate, axisTicks, pxPerMinute }) => {
+  const getTotalRectDurationMinutes = ({
+    rowRects,
+    predicate,
+    axisTicks,
+    pxPerMinute,
+  }: {
+    rowRects: RectInfo[];
+    predicate: (fill: string) => boolean;
+    axisTicks: Point[];
+    pxPerMinute: number;
+  }) => {
     return rowRects
       .filter((rect) => predicate(rect.fill))
       .reduce(
@@ -469,8 +570,8 @@ initThemeSwitcher();
       );
   };
 
-  const ensureTooltip = () => {
-    let tooltip = document.getElementById(TOOLTIP_ID);
+  const ensureTooltip = (): HTMLDivElement => {
+    let tooltip = document.getElementById(TOOLTIP_ID) as HTMLDivElement | null;
 
     if (tooltip) return tooltip;
 
@@ -490,14 +591,30 @@ initThemeSwitcher();
     return tooltip;
   };
 
-  const getChipHtml = ({ label, value, variant = "default" }) => `
-    <div class="cht-chip cht-chip--${variant}">
-      <div class="cht-chip-label">${label}</div>
-      <div class="cht-chip-value">${value}</div>
-    </div>
-  `;
+  function Chip({
+    label,
+    value,
+    variant = "default",
+  }: {
+    label: string;
+    value: string;
+    variant?: string;
+  }) {
+    return (
+      <div class={`cht-chip cht-chip--${variant}`}>
+        <div class="cht-chip-label">{label}</div>
+        <div class="cht-chip-value">{value}</div>
+      </div>
+    );
+  }
 
-  const getWorkModeInfo = ({ officeMinutes, homeMinutes }) => {
+  const getWorkModeInfo = ({
+    officeMinutes,
+    homeMinutes,
+  }: {
+    officeMinutes: number;
+    homeMinutes: number;
+  }): WorkModeInfo => {
     const office = Math.max(0, Math.round(officeMinutes));
     const home = Math.max(0, Math.round(homeMinutes));
 
@@ -543,9 +660,9 @@ initThemeSwitcher();
     };
   };
 
-  const getWorkModeHtml = (workMode) => {
+  function WorkModeBadge({ workMode }: { workMode: WorkModeInfo }) {
     if (!workMode || workMode.type === "none") {
-      return "";
+      return null;
     }
 
     const modeText =
@@ -557,22 +674,22 @@ initThemeSwitcher();
               workMode.officeMinutes,
             )} · WFH ${formatDuration(workMode.homeMinutes)}`;
 
-    return `
+    return (
       <div class="cht-work-mode-wrap">
-        <div class="cht-work-mode cht-work-mode--${workMode.type}">
+        <div class={`cht-work-mode cht-work-mode--${workMode.type}`}>
           <span class="cht-work-mode-dot"></span>
-          <span>${escapeHtml(modeText)}</span>
+          <span>{modeText}</span>
         </div>
       </div>
-    `;
-  };
+    );
+  }
 
-  const getStatusClass = (status) => {
+  const getStatusClass = (status?: string) => {
     const valid = ["pending", "short", "ready", "completed", "full-time-off"];
-    return valid.includes(status) ? status : "pending";
+    return status && valid.includes(status) ? status : "pending";
   };
 
-  const getWorkTooltipHtml = ({
+  function WorkTooltip({
     title,
     subtitle,
     worked,
@@ -585,78 +702,76 @@ initThemeSwitcher();
     status,
     primaryChipLabel,
     workMode,
-  }) => {
-    const safeTitle = escapeHtml(title);
-    const safeSubtitle = escapeHtml(subtitle);
-    const safeHeroTitle = escapeHtml(heroTitle);
-    const safeHeroValue = escapeHtml(heroValue);
-    const safeBadgeText = escapeHtml(badgeText);
-
+  }: {
+    title: string;
+    subtitle?: string;
+    worked: string;
+    timeOff: string;
+    required: string;
+    remaining: string;
+    heroTitle?: string;
+    heroValue?: string;
+    badgeText?: string;
+    status?: string;
+    primaryChipLabel?: string;
+    workMode: WorkModeInfo;
+  }) {
     const statusClass = getStatusClass(status);
 
-    return `
-      <div class="cht-tooltip-body cht-status--${statusClass}">
+    return (
+      <div class={`cht-tooltip-body cht-status--${statusClass}`}>
         <div class="cht-tooltip-header">
           <div class="cht-tooltip-header-text">
-            <div class="cht-tooltip-title">${safeTitle}</div>
-            <div class="cht-tooltip-subtitle">${safeSubtitle}</div>
+            <div class="cht-tooltip-title">{title}</div>
+            <div class="cht-tooltip-subtitle">{subtitle}</div>
           </div>
-          <div class="cht-tooltip-badge">${safeBadgeText}</div>
+          <div class="cht-tooltip-badge">{badgeText}</div>
         </div>
 
         <div class="cht-tooltip-hero">
-          <div class="cht-tooltip-hero-label">${safeHeroTitle}</div>
-          <div class="cht-tooltip-hero-value">${safeHeroValue}</div>
+          <div class="cht-tooltip-hero-label">{heroTitle}</div>
+          <div class="cht-tooltip-hero-value">{heroValue}</div>
         </div>
 
         <div class="cht-tooltip-chips">
-          ${getChipHtml({
-            label: primaryChipLabel,
-            value: remaining,
-            variant: "accent",
-          })}
-          ${getChipHtml({
-            label: "Worked",
-            value: worked,
-          })}
-          ${getChipHtml({
-            label: "Time off",
-            value: timeOff,
-          })}
-          ${getChipHtml({
-            label: "Required",
-            value: required,
-          })}
+          <Chip label={primaryChipLabel || ""} value={remaining} variant="accent" />
+          <Chip label="Worked" value={worked} />
+          <Chip label="Time off" value={timeOff} />
+          <Chip label="Required" value={required} />
         </div>
 
-        ${getWorkModeHtml(workMode)}
+        <WorkModeBadge workMode={workMode} />
       </div>
-    `;
-  };
+    );
+  }
 
-  const getDayOffTooltipHtml = ({ title, subtitle, message }) => {
-    const safeTitle = escapeHtml(title);
-    const safeSubtitle = escapeHtml(subtitle);
-    const safeMessage = escapeHtml(message);
-
-    return `
+  function DayOffTooltip({
+    title,
+    subtitle,
+    message,
+  }: {
+    title: string;
+    subtitle?: string;
+    message?: string;
+  }) {
+    return (
       <div class="cht-tooltip-body cht-dayoff">
         <div class="cht-dayoff-header">
           <div class="cht-dayoff-icon">🎉</div>
           <div class="cht-tooltip-header-text">
-            <div class="cht-tooltip-title">${safeTitle}</div>
-            <div class="cht-dayoff-subtitle">${safeSubtitle}</div>
+            <div class="cht-tooltip-title">{title}</div>
+            <div class="cht-dayoff-subtitle">{subtitle}</div>
           </div>
         </div>
         <div class="cht-dayoff-card">
           <div class="cht-dayoff-title">Day Off</div>
-          <div class="cht-dayoff-message">${safeMessage}</div>
+          <div class="cht-dayoff-message">{message}</div>
         </div>
       </div>
-    `;
-  };
+    );
+  }
 
-  const moveTooltip = (tooltip, event) => {
+  const moveTooltip = (tooltip: HTMLElement, event: MouseEvent) => {
     const offset = 16;
     const tooltipRect = tooltip.getBoundingClientRect();
 
@@ -675,7 +790,7 @@ initThemeSwitcher();
     tooltip.style.top = `${Math.max(12, top)}px`;
   };
 
-  const getRowTexts = ({ allTexts, row }) => {
+  const getRowTexts = ({ allTexts, row }: { allTexts: SVGTextElement[]; row: RowInfo }) => {
     return allTexts.filter((text) => {
       if (text === row.text) return false;
 
@@ -684,16 +799,16 @@ initThemeSwitcher();
     });
   };
 
-  const shouldHighlightRow = ({ mode, row }) => {
+  const shouldHighlightRow = ({ mode, row }: { mode: Mode; row: RowInfo }) => {
     if (mode === "all") {
-      return row.label.trim().toLowerCase() === HIGHLIGHT_NAME.toLowerCase();
+      return false;
     }
 
     const rowDate = parseDateLabel(row.label);
     return isSameDate(rowDate, new Date());
   };
 
-  const storeOriginalTextAttrs = (text) => {
+  const storeOriginalTextAttrs = (text: SVGTextElement) => {
     if (!text.hasAttribute("data-checkout-original-fill")) {
       text.setAttribute("data-checkout-original-fill", text.getAttribute("fill") || "");
     }
@@ -706,7 +821,7 @@ initThemeSwitcher();
     }
   };
 
-  const resetTextAttrs = (text) => {
+  const resetTextAttrs = (text: Element) => {
     if (text.hasAttribute("data-checkout-original-fill")) {
       const originalFill = text.getAttribute("data-checkout-original-fill");
 
@@ -732,7 +847,15 @@ initThemeSwitcher();
     }
   };
 
-  const applyRowHighlight = ({ row, mode, svg }) => {
+  const applyRowHighlight = ({
+    row,
+    mode,
+    svg,
+  }: {
+    row: RowInfo;
+    mode: Mode;
+    svg: SVGSVGElement;
+  }) => {
     const SVG_NS = "http://www.w3.org/2000/svg";
 
     const textBox = getBBoxSafe(row.text);
@@ -774,14 +897,28 @@ initThemeSwitcher();
     highlightGroup.appendChild(rowBand);
     highlightGroup.appendChild(leftRail);
 
-    row.text.parentNode.insertBefore(highlightGroup, row.text);
+    row.text.parentNode?.insertBefore(highlightGroup, row.text);
 
     storeOriginalTextAttrs(row.text);
     row.text.setAttribute("font-weight", "900");
     row.text.setAttribute("fill", isAllCheckIn ? "#0d0c1d" : "#1e3a8a");
   };
 
-  const buildRowTooltipData = ({ mode, row, rowRects, rowTexts, pxPerMinute, axisTicks }) => {
+  const buildRowTooltipData = ({
+    mode,
+    row,
+    rowRects,
+    rowTexts,
+    pxPerMinute,
+    axisTicks,
+  }: {
+    mode: Mode;
+    row: RowInfo;
+    rowRects: RectInfo[];
+    rowTexts: SVGTextElement[];
+    pxPerMinute: number;
+    axisTicks: Point[];
+  }): RowTooltipData => {
     const timeOffMinutes = getTotalRectDurationMinutes({
       rowRects,
       predicate: isTimeOffColor,
@@ -810,7 +947,7 @@ initThemeSwitcher();
 
     const requiredMinutes = Math.max(0, Math.round(REQUIRED_WORK_MINUTES - timeOffMinutes));
 
-    const remainingMinutes = Math.max(0, requiredMinutes - row.workedMinutes);
+    const remainingMinutes = Math.max(0, requiredMinutes - (row.workedMinutes || 0));
 
     const isDayOffRow =
       rowTexts.some((text) => isDayOffText(text.textContent || "")) ||
@@ -822,7 +959,7 @@ initThemeSwitcher();
 
     const base = {
       title: row.label,
-      worked: formatDuration(row.workedMinutes),
+      worked: formatDuration(row.workedMinutes || 0),
       timeOff: formatDuration(timeOffMinutes),
       required: formatDuration(requiredMinutes),
       remaining: formatDuration(remainingMinutes),
@@ -946,22 +1083,22 @@ initThemeSwitcher();
       const allTexts = [...svg.querySelectorAll("text")];
 
       const rowTexts = allTexts.filter((text) => {
-        const content = text.textContent.trim();
+        const content = (text.textContent || "").trim();
         const x = toNumber(text.getAttribute("x"));
 
         return parseWorkedMinutes(content) !== null && x < leftBoundary + 20;
       });
 
-      const rows = rowTexts.map((text) => ({
+      const rows: RowInfo[] = rowTexts.map((text) => ({
         text,
-        content: text.textContent.trim(),
-        label: getCleanLabel(text.textContent.trim()),
+        content: (text.textContent || "").trim(),
+        label: getCleanLabel((text.textContent || "").trim()),
         x: toNumber(text.getAttribute("x")),
         y: toNumber(text.getAttribute("y")),
-        workedMinutes: parseWorkedMinutes(text.textContent.trim()),
+        workedMinutes: parseWorkedMinutes((text.textContent || "").trim()),
       }));
 
-      const rects = [...svg.querySelectorAll("rect")]
+      const rects: RectInfo[] = [...svg.querySelectorAll("rect")]
         .map((rect) => ({
           el: rect,
           x: toNumber(rect.getAttribute("x")),
@@ -972,10 +1109,10 @@ initThemeSwitcher();
         }))
         .filter((rect) => rect.x > leftBoundary - 5 && rect.width > 2 && rect.height > 5);
 
-      const findNearestRow = (rect) => {
+      const findNearestRow = (rect: RectInfo): RowInfo | null => {
         const rectCenterY = rect.y + rect.height / 2;
 
-        let nearestRow = null;
+        let nearestRow: RowInfo | null = null;
         let nearestDiff = Infinity;
 
         rows.forEach((row) => {
@@ -990,7 +1127,7 @@ initThemeSwitcher();
         return nearestDiff <= 45 ? nearestRow : null;
       };
 
-      const rectsByRow = new Map();
+      const rectsByRow = new Map<RowInfo, RectInfo[]>();
 
       rects.forEach((rect) => {
         const row = findNearestRow(rect);
@@ -1001,10 +1138,10 @@ initThemeSwitcher();
           rectsByRow.set(row, []);
         }
 
-        rectsByRow.get(row).push(rect);
+        rectsByRow.get(row)?.push(rect);
       });
 
-      const results = [];
+      const results: Record<string, unknown>[] = [];
 
       rows.forEach((row) => {
         const rowRects = rectsByRow.get(row) || [];
@@ -1042,33 +1179,31 @@ initThemeSwitcher();
           axisTicks,
         });
 
-        let tooltipHtml = "";
-
-        if (data.isDayOffRow) {
-          tooltipHtml = getDayOffTooltipHtml({
-            title: data.title,
-            subtitle: data.dayOffSubtitle,
-            message: data.dayOffMessage,
-          });
-        } else {
-          tooltipHtml = getWorkTooltipHtml({
-            title: data.title,
-            subtitle: data.subtitle,
-            worked: data.worked,
-            timeOff: data.timeOff,
-            required: data.required,
-            remaining: data.remaining,
-            heroTitle: data.heroTitle,
-            heroValue: data.heroValue,
-            badgeText: data.badgeText,
-            status: data.status,
-            primaryChipLabel: data.primaryChipLabel,
-            workMode: data.workMode,
-          });
-        }
+        const tooltipVNode = data.isDayOffRow ? (
+          <DayOffTooltip
+            title={data.title}
+            subtitle={data.dayOffSubtitle}
+            message={data.dayOffMessage}
+          />
+        ) : (
+          <WorkTooltip
+            title={data.title}
+            subtitle={data.subtitle}
+            worked={data.worked}
+            timeOff={data.timeOff}
+            required={data.required}
+            remaining={data.remaining}
+            heroTitle={data.heroTitle}
+            heroValue={data.heroValue}
+            badgeText={data.badgeText}
+            status={data.status}
+            primaryChipLabel={data.primaryChipLabel}
+            workMode={data.workMode}
+          />
+        );
 
         row.text.onmouseenter = (event) => {
-          tooltip.innerHTML = tooltipHtml;
+          render(tooltipVNode, tooltip);
           tooltip.style.display = "block";
           moveTooltip(tooltip, event);
         };
@@ -1109,20 +1244,44 @@ initThemeSwitcher();
   };
 
   const scheduleApply = () => {
-    window.clearTimeout(helperState.applyTimer);
+    window.clearTimeout(helperState.applyTimer ?? undefined);
 
     helperState.applyTimer = window.setTimeout(() => {
+      const now = Date.now();
+
+      if (now < helperState.circuitOpenUntil) return;
+
+      helperState.applyTimestamps = helperState.applyTimestamps.filter(
+        (timestamp) => now - timestamp < RATE_WINDOW_MS,
+      );
+      helperState.applyTimestamps.push(now);
+
+      if (helperState.applyTimestamps.length > MAX_APPLIES_PER_WINDOW) {
+        helperState.circuitOpenUntil = now + COOLDOWN_MS;
+        helperState.applyTimestamps = [];
+        console.warn(
+          `[checkout-hover-helper] Re-apply loop detected. Pausing auto re-sync for ${COOLDOWN_MS}ms.`,
+        );
+        return;
+      }
+
       applyCheckoutHover();
     }, 250);
   };
 
-  history.pushState = function patchedPushState(...args) {
+  history.pushState = function patchedPushState(
+    this: History,
+    ...args: Parameters<History["pushState"]>
+  ) {
     const result = helperState.originalPushState.apply(this, args);
     scheduleApply();
     return result;
   };
 
-  history.replaceState = function patchedReplaceState(...args) {
+  history.replaceState = function patchedReplaceState(
+    this: History,
+    ...args: Parameters<History["replaceState"]>
+  ) {
     const result = helperState.originalReplaceState.apply(this, args);
     scheduleApply();
     return result;
@@ -1131,18 +1290,24 @@ initThemeSwitcher();
   window.addEventListener("popstate", scheduleApply);
   window.addEventListener("resize", scheduleApply);
 
+  const OWN_NODE_SELECTOR = `#${TOOLTIP_ID}, [data-checkout-helper='true']`;
+
+  const isOwnNode = (node: Node): boolean =>
+    node instanceof Element &&
+    (node.id === TOOLTIP_ID ||
+      node.matches(OWN_NODE_SELECTOR) ||
+      Boolean(node.closest(OWN_NODE_SELECTOR)));
+
+  const isOwnMutation = (record: MutationRecord) => {
+    if (isOwnNode(record.target)) return true;
+
+    const changedNodes = [...record.addedNodes, ...record.removedNodes];
+    return changedNodes.length > 0 && changedNodes.every(isOwnNode);
+  };
+
   helperState.observer = new MutationObserver((records) => {
     if (helperState.isApplying) return;
-
-    const onlyTooltipChanged = records.every((record) => {
-      const target = record.target;
-
-      return (
-        target instanceof Element && (target.id === TOOLTIP_ID || target.closest(`#${TOOLTIP_ID}`))
-      );
-    });
-
-    if (onlyTooltipChanged) return;
+    if (records.every(isOwnMutation)) return;
 
     scheduleApply();
   });
@@ -1153,7 +1318,7 @@ initThemeSwitcher();
   });
 
   helperState.destroy = () => {
-    window.clearTimeout(helperState.applyTimer);
+    window.clearTimeout(helperState.applyTimer ?? undefined);
     helperState.observer?.disconnect?.();
 
     history.pushState = helperState.originalPushState;

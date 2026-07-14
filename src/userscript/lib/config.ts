@@ -1,9 +1,11 @@
+import { WORK_DAY_MINUTES } from "../../userscripts/shared/constants.js";
+
 export const CONFIG = {
   checkInApiUrl: "https://hubble.mallow-tech.com/attendance/get-my-check-in-data",
   timesheetApiUrl: "https://hubble.mallow-tech.com/v2/timesheet-entries",
   cardId: "custom-work-log-summary-card",
   oldIds: ["custom-timeoff-compensation-card", "custom-work-log-summary-card"],
-  workDayMinutes: 8 * 60,
+  workDayMinutes: WORK_DAY_MINUTES,
   weekendDays: [0, 6] as number[],
   maxTimesheetPages: 50,
   compareByRoundedHours: true,
@@ -18,6 +20,3 @@ export const CONFIG = {
   workTypes: new Set(["login", "Check In", "Check In Office", "Check In Home"]),
   dayOffLabels: new Set(["Day Off", "Comp Off", "On Duty"]),
 } as const;
-
-export const ARTIFACT_BASE =
-  "https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages";

@@ -1,21 +1,17 @@
 import { defineConfig } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import preact from "@preact/preset-vite";
 import monkey from "vite-plugin-monkey";
 import pkg from "./package.json" with { type: "json" };
+import { getArtifactBase } from "./scripts/shared/manifest.mjs";
 
 const SCRIPT_FILE = "check-in-summary-with-compensation-v2.user.js";
-const env =
-  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {};
-const ARTIFACT_BASE =
-  env.HUBBLE_LOCAL_DEV === "1"
-    ? `http://${env.HUBBLE_DEV_HOST ?? "localhost"}:${env.HUBBLE_DEV_PORT ?? "5174"}`
-    : "https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages";
+const ARTIFACT_BASE = getArtifactBase();
 
 export default defineConfig({
   plugins: [
-    svelte(),
+    preact(),
     monkey({
-      entry: "src/userscript/main.ts",
+      entry: "src/userscript/main.tsx",
       userscript: {
         name: "Check-in summary with compensation V2",
         namespace: "https://hubble.mallow-tech.com",

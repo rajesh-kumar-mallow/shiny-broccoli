@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { build } from "vite";
+import preact from "@preact/preset-vite";
 import monkey from "vite-plugin-monkey";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -24,6 +25,7 @@ for (const script of PLAIN_SCRIPTS) {
   await build({
     root,
     plugins: [
+      preact(),
       monkey({
         entry: script.entry,
         userscript: {

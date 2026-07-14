@@ -17,9 +17,9 @@ import {
   getArtifactBase,
   getDevHost,
   getDevPort,
+  MAIN_SCRIPT,
   PLAIN_SCRIPTS,
   STYLES,
-  SVELTE_SCRIPT,
 } from "./shared/manifest.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -118,7 +118,7 @@ function writeInstallPage() {
   const lanIp = getLanIp();
   const lanBase = lanIp ? `http://${lanIp}:${getDevPort()}` : null;
 
-  const userscripts = [SVELTE_SCRIPT, ...PLAIN_SCRIPTS].map((script) => ({
+  const userscripts = [MAIN_SCRIPT, ...PLAIN_SCRIPTS].map((script) => ({
     name: script.userscript.name,
     file: script.fileName,
     install: tampermonkeyInstallUrl(base, script.fileName),
@@ -255,7 +255,7 @@ function listSourceFiles(dir, acc = []) {
       listSourceFiles(fullPath, acc);
       continue;
     }
-    if (/\.(svelte|ts|js|css)$/.test(entry.name)) acc.push(fullPath);
+    if (/\.(tsx|ts|js|css)$/.test(entry.name)) acc.push(fullPath);
   }
   return acc;
 }

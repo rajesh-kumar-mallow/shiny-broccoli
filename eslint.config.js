@@ -1,14 +1,11 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
-import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import ts from "typescript-eslint";
-import svelteConfig from "./svelte.config.js";
 
 export default ts.config(
   js.configs.recommended,
   ...ts.configs.recommended,
-  ...svelte.configs["flat/recommended"],
   eslintConfigPrettier,
   {
     ignores: ["dist/**", "node_modules/**"],
@@ -21,20 +18,6 @@ export default ts.config(
     },
   },
   {
-    files: ["**/*.svelte"],
-    languageOptions: {
-      parserOptions: {
-        parser: ts.parser,
-        extraFileExtensions: [".svelte"],
-        svelteConfig,
-      },
-    },
-    rules: {
-      // Status copy and table HTML are built from escaped/trusted app data.
-      "svelte/no-at-html-tags": "off",
-    },
-  },
-  {
     files: ["scripts/**/*.mjs"],
     languageOptions: {
       globals: {
@@ -43,7 +26,14 @@ export default ts.config(
     },
   },
   {
-    files: ["src/userscripts/**/*.js"],
+    files: ["src/vite-env.d.ts"],
+    rules: {
+      // moment/$/jQuery are host-page globals with no real type surface to declare.
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  {
+    files: ["src/userscripts/**/*.{js,ts,tsx}"],
     languageOptions: {
       globals: {
         ...globals.browser,

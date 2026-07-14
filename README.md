@@ -4,35 +4,27 @@ Tampermonkey + Stylus extensions for [Hubble](https://hubble.mallow-tech.com): w
 
 ## Install
 
-Install **Tampermonkey** scripts you need, plus **Stylus** userstyles. Always install `hubble-theme.user.css` for the Dracula theme and `hubble-theme-host.user.js` so theme tokens apply on every Hubble page (including Projects).
+### 0. Get the two browser extensions first
 
-### Tampermonkey (userscripts)
+These `.user.js` / `.user.css` files don't do anything by themselves — you need a manager extension installed for each:
 
-| Script                                | Install                                                                                                                                                                                         |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hubble Dracula Theme Host (required)  | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme-host.user.js)                     |
-| Check-in summary with compensation V2 | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js) |
-| Hubble Checkout Hover Helper          | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js)          |
-| Hubble Smart Attendance Assistant     | [Install](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js)     |
+| Extension                                      | Runs                      |
+| ---------------------------------------------- | ------------------------- |
+| [Tampermonkey](https://www.tampermonkey.net/)  | `*.user.js` (userscripts) |
+| [Stylus](https://github.com/openstyles/stylus) | `*.user.css` (userstyles) |
 
-### Stylus (userstyles)
+### 1. Pick the features you want
 
-| Style                             | Install                                                                                                                                 |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Hubble Dracula Theme (required)   | [Install](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme.user.css)                          |
-| Work log summary styles           | [Install](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css) |
-| Smart Attendance Assistant styles | [Install](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.css)     |
+Each row is a bundle — install **everything in that row together**. A userscript installed without its matching userstyle (or vice versa) will look broken or do nothing, since the script renders the markup and the style makes it match the Dracula theme. The theme row is the shared base every other feature builds on, so install it no matter which features you pick below.
 
-### What to install together
+| Feature                                         | Tampermonkey (userscript)                                                                                                                                                                                                     | Stylus (userstyle)                                                                                                                                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dracula theme** — always install this         | [Hubble Dracula Theme Host](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme-host.user.js)                                 | [Hubble Dracula Theme](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-theme.user.css)                                                       |
+| Work log summary (check-in card + compensation) | [Check-in summary with compensation V2](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js) | Theme (above) **+** [Work log summary styles](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css)       |
+| Checkout hover tooltips                         | [Hubble Checkout Hover Helper](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js)                   | Theme (above) only — no extra userstyle needed                                                                                                                                    |
+| Smart attendance widget                         | [Hubble Smart Attendance Assistant](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js)         | Theme (above) **+** [Smart Attendance Assistant styles](https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.css) |
 
-| Feature           | Tampermonkey                                    | Stylus                                                                     |
-| ----------------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| Dracula theme     | `hubble-theme-host.user.js`                     | `hubble-theme.user.css`                                                    |
-| Work log summary  | `check-in-summary-with-compensation-v2.user.js` | `hubble-theme.user.css` + `check-in-summary-with-compensation-v2.user.css` |
-| Checkout hover    | `hubble-checkout-hover-helper.user.js`          | `hubble-theme.user.css`                                                    |
-| Attendance widget | `hubble-smart-attendance-assistant.user.js`     | `hubble-theme.user.css` + `hubble-smart-attendance-assistant.user.css`     |
-
-A floating **Auto / Dark / Light** theme switcher appears when `hubble-theme-host.user.js` (or another userscript that bundles the switcher) is active. Choice is saved in `localStorage` (`hubble-theme`).
+A floating **Auto / Dark / Light** theme switcher appears once `hubble-theme-host.user.js` (or any other userscript here, since they all bundle the switcher) is active. Choice is saved in `localStorage` (`hubble-theme`).
 
 ## Raw URLs (auto-update)
 
@@ -81,8 +73,8 @@ npm run build:local  # One-shot local build (localhost update URLs)
 ## Project layout
 
 ```
-src/userscript/     Svelte + TypeScript (check-in summary)
-src/userscripts/    Plain JS userscripts + shared theme switcher
+src/userscript/     Preact + TypeScript (check-in summary)
+src/userscripts/    Preact + TypeScript userscripts + shared theme switcher
 src/styles/         CSS sources (Stylus userstyles)
 dist/               Built artifacts (deployed to gh-pages branch)
 ```

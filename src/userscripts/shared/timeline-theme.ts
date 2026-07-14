@@ -7,7 +7,7 @@ const TIMELINE_CONTAINER_IDS = [
 
 const BAR_CLASSES = ["htl-row-bg", "htl-wfo", "htl-wfh", "htl-timeoff", "htl-dayoff", "htl-other"];
 
-function getRgb(color) {
+function getRgb(color: string) {
   const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
   if (!rgbMatch) return null;
   return {
@@ -17,13 +17,13 @@ function getRgb(color) {
   };
 }
 
-function getFill(rect) {
+function getFill(rect: Element) {
   const fill = (rect.getAttribute("fill") || "").trim().toLowerCase();
   if (fill && fill !== "none") return fill;
   return (getComputedStyle(rect).fill || "").trim().toLowerCase();
 }
 
-function isRowBackground(color) {
+function isRowBackground(color: string) {
   if (!color || color === "none") return false;
   if (["#fff", "#ffffff", "white", "#f5f5f5", "#fafafa", "#f8f9fa", "#f1f5f9"].includes(color)) {
     return true;
@@ -33,7 +33,7 @@ function isRowBackground(color) {
   return rgb.r >= 235 && rgb.g >= 235 && rgb.b >= 235;
 }
 
-function isTimeOffColor(color) {
+function isTimeOffColor(color: string) {
   if (!color) return false;
   if (["#ff4f00", "#ff5000", "#f4511e", "#e24301", "#ff5722"].includes(color)) return true;
   const rgb = getRgb(color);
@@ -41,7 +41,7 @@ function isTimeOffColor(color) {
   return rgb.r >= 180 && rgb.g <= 120 && rgb.b <= 90;
 }
 
-function isDayOffColor(color) {
+function isDayOffColor(color: string) {
   if (!color) return false;
   if (["#cd0404", "#b91c1c", "#dc2626"].includes(color)) return true;
   const rgb = getRgb(color);
@@ -49,7 +49,7 @@ function isDayOffColor(color) {
   return rgb.r >= 150 && rgb.g <= 60 && rgb.b <= 60;
 }
 
-function isWfoColor(color) {
+function isWfoColor(color: string) {
   if (!color) return false;
   if (["#22914b", "#22c55e", "#16a34a", "#15803d", "#008000", "green"].includes(color)) {
     return true;
@@ -59,7 +59,7 @@ function isWfoColor(color) {
   return rgb.g >= 110 && rgb.r <= 90 && rgb.b <= 120;
 }
 
-function isWfhColor(color) {
+function isWfhColor(color: string) {
   if (!color) return false;
   if (["#0066cc", "#1976d2", "#2563eb", "#1d4ed8", "#0ea5e9", "blue"].includes(color)) {
     return true;
@@ -69,7 +69,7 @@ function isWfhColor(color) {
   return rgb.b >= 140 && rgb.r <= 100 && rgb.g <= 170;
 }
 
-function classifyRect(rect) {
+function classifyRect(rect: Element) {
   const fill = getFill(rect);
   const width = Number(rect.getAttribute("width") || 0);
   const height = Number(rect.getAttribute("height") || 0);
@@ -91,7 +91,7 @@ function classifyRect(rect) {
   return null;
 }
 
-function themeTimelineContainer(container) {
+function themeTimelineContainer(container: HTMLElement | null) {
   if (!container) return;
 
   container.querySelectorAll("svg rect").forEach((rect) => {
@@ -118,9 +118,9 @@ function themeAllTimelines() {
   }
 }
 
-function debounce(fn, ms = 120) {
-  let timer;
-  return (...args) => {
+function debounce<T extends (...args: never[]) => void>(fn: T, ms = 120) {
+  let timer: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), ms);
   };

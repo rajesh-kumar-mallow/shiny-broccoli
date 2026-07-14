@@ -4,8 +4,8 @@ export const PROD_ARTIFACT_BASE =
 export const DEFAULT_DEV_PORT = 5174;
 export const VITE_DEV_PORT = 5173;
 
-export const SVELTE_SCRIPT = {
-  entry: "src/userscript/main.ts",
+export const MAIN_SCRIPT = {
+  entry: "src/userscript/main.tsx",
   fileName: "check-in-summary-with-compensation-v2.user.js",
   userscript: {
     name: "Check-in summary with compensation V2",
@@ -35,7 +35,7 @@ export const PLAIN_SCRIPTS = [
     },
   },
   {
-    entry: "src/userscripts/checkout-hover-helper.js",
+    entry: "src/userscripts/checkout-hover-helper.tsx",
     fileName: "hubble-checkout-hover-helper.user.js",
     userscript: {
       name: "Hubble Checkout Hover Helper",
@@ -53,7 +53,7 @@ export const PLAIN_SCRIPTS = [
     },
   },
   {
-    entry: "src/userscripts/smart-attendance-assistant.js",
+    entry: "src/userscripts/smart-attendance-assistant.tsx",
     fileName: "hubble-smart-attendance-assistant.user.js",
     userscript: {
       name: "Hubble Smart Attendance Assistant",
@@ -97,7 +97,7 @@ export const STYLES = [
 ];
 
 export const ALL_ARTIFACTS = [
-  SVELTE_SCRIPT.fileName,
+  MAIN_SCRIPT.fileName,
   ...PLAIN_SCRIPTS.map((s) => s.fileName),
   ...STYLES.map((s) => s.file),
 ];

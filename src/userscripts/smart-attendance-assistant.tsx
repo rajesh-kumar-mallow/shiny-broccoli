@@ -1,6 +1,162 @@
-import { initThemeSwitcher } from "./shared/theme-switcher.js";
+import { render } from "preact";
+import { initThemeSwitcher } from "./shared/theme-switcher";
+import { WORK_DAY_MINUTES } from "./shared/constants";
 
 initThemeSwitcher();
+
+type AttendanceRow = {
+  type: string;
+  start_time?: string;
+  end_time?: string;
+};
+
+type AttendanceData = Record<string, AttendanceRow[]>;
+
+type PanelProps = {
+  checkoutFormatted: string;
+  checkoutAmPm: string;
+  remLabel: string;
+  checkInFormatted: string;
+  progress: number;
+  workedH: number;
+  workedM: number;
+  remH: number;
+  remM: number;
+  remainingMinutes: number;
+  breakMinutes: number;
+  workedPct: string;
+  breakPct: string;
+  remPct: string;
+  requiredWorkHours: number;
+};
+
+function RemainingStat({
+  remainingMinutes,
+  remH,
+  remM,
+}: {
+  remainingMinutes: number;
+  remH: number;
+  remM: number;
+}) {
+  if (remainingMinutes > 0) {
+    return (
+      <>
+        <div class="aw-stat-value">
+          {remH > 0 ? `${remH}h` : ""}
+          {remM}m
+        </div>
+        <div class="aw-stat-sub">remaining</div>
+      </>
+    );
+  }
+  return (
+    <div class="aw-done-state">
+      <div class="aw-done-icon">✓</div>
+      <div class="aw-done-text">Done!</div>
+    </div>
+  );
+}
+
+function Panel({
+  checkoutFormatted,
+  checkoutAmPm,
+  remLabel,
+  checkInFormatted,
+  progress,
+  workedH,
+  workedM,
+  remH,
+  remM,
+  remainingMinutes,
+  breakMinutes,
+  workedPct,
+  breakPct,
+  remPct,
+  requiredWorkHours,
+}: PanelProps) {
+  return (
+    <>
+      <div class="aw-header">
+        <div class="aw-header-aurora"></div>
+        <div class="aw-header-grid"></div>
+        <div class="aw-label">Recommended Checkout</div>
+        <div class="aw-checkout-row">
+          <div class="aw-checkout-time">{checkoutFormatted}</div>
+          <div class="aw-checkout-ampm">{checkoutAmPm}</div>
+          <div class="aw-checkin-badge">{remLabel}</div>
+        </div>
+        <div class="aw-progress-wrap">
+          <div class="aw-progress-labels">
+            <span>{checkInFormatted}</span>
+            <span>{Math.round(progress)}%</span>
+          </div>
+          <div class="aw-progress-track">
+            <div class="aw-progress-fill" style={`width:${progress}%`}>
+              <div class="aw-progress-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aw-body">
+        <div class="aw-stats-row">
+          <div class="aw-stat">
+            <div class="aw-stat-glow"></div>
+            <div class="aw-stat-label">Worked</div>
+            <div class="aw-stat-value">
+              {workedH}h {workedM}m
+            </div>
+            <div class="aw-stat-sub">elapsed</div>
+          </div>
+          <div class="aw-stat">
+            <div class="aw-stat-glow"></div>
+            <div class="aw-stat-label">Left</div>
+            <RemainingStat remainingMinutes={remainingMinutes} remH={remH} remM={remM} />
+          </div>
+          <div class="aw-stat">
+            <div class="aw-stat-glow"></div>
+            <div class="aw-stat-label">Break</div>
+            <div class="aw-stat-value">{breakMinutes}m</div>
+            <div class="aw-stat-sub">deducted</div>
+          </div>
+        </div>
+
+        <div class="aw-timeline">
+          <div class="aw-tl-axis">DAY</div>
+          <div class="aw-tl-inner">
+            <div class="aw-tl-segs">
+              <div class="aw-tl-seg aw-tl-work" style={`flex:${workedPct}`}></div>
+              {parseFloat(breakPct) > 0 && (
+                <div class="aw-tl-seg aw-tl-break" style={`flex:${breakPct}`}></div>
+              )}
+              {parseFloat(remPct) > 0 && (
+                <div class="aw-tl-seg aw-tl-rem" style={`flex:${remPct}`}></div>
+              )}
+            </div>
+            <div class="aw-tl-labels">
+              <span>{checkInFormatted}</span>
+              {breakMinutes > 0 ? <span>{breakMinutes}m break</span> : <span></span>}
+              <span>
+                {checkoutFormatted} {checkoutAmPm}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aw-footer">
+        <div class="aw-live">
+          <div class="aw-live-dot"></div>
+          <span id="aw-live-clock">--:--:--</span>
+        </div>
+        <div class="aw-footer-right">
+          <div class="aw-req-chip">{requiredWorkHours} hrs / day</div>
+        </div>
+      </div>
+    </>
+  );
+}
 
 (function () {
   "use strict";
@@ -12,7 +168,7 @@ initThemeSwitcher();
   function initWidget() {
     if (document.getElementById("attendance-toggle-btn")) return;
 
-    const REQUIRED_WORK_HOURS = 8;
+    const REQUIRED_WORK_HOURS = WORK_DAY_MINUTES / 60;
 
     const root = document.createElement("div");
     root.id = "advanced-attendance-widget";
@@ -74,7 +230,9 @@ initThemeSwitcher();
           btn.style.left = pos.left;
           btn.style.top = pos.top;
           btn.style.right = "unset";
-        } catch (e) {}
+        } catch {
+          /* ignore */
+        }
       }
 
       btn.addEventListener("mousedown", (e) => {
@@ -85,7 +243,7 @@ initThemeSwitcher();
         const startX = e.clientX,
           startY = e.clientY;
 
-        const onMouseMove = (mv) => {
+        const onMouseMove = (mv: MouseEvent) => {
           if (Math.abs(mv.clientX - startX) > 3 || Math.abs(mv.clientY - startY) > 3) {
             isDragging = true;
             wasDragging = true;
@@ -123,7 +281,7 @@ initThemeSwitcher();
 
     /* ─────────────────────────────────────────── CLOCK */
 
-    let clockInterval = null;
+    let clockInterval: ReturnType<typeof setInterval> | null = null;
 
     function startClock() {
       updateClock();
@@ -131,7 +289,7 @@ initThemeSwitcher();
     }
 
     function stopClock() {
-      clearInterval(clockInterval);
+      if (clockInterval) clearInterval(clockInterval);
       clockInterval = null;
     }
 
@@ -148,7 +306,7 @@ initThemeSwitcher();
 
     /* ─────────────────────────────────────────── DATA */
 
-    async function getTodayAttendanceData() {
+    async function getTodayAttendanceData(): Promise<AttendanceData | null> {
       try {
         const today = moment().format("YYYY-MM-DD");
         const response = await $.ajax({
@@ -235,96 +393,27 @@ initThemeSwitcher();
       const breakPct = Math.min((breakMinutes / totalMinutes) * 100, 100).toFixed(1);
       const remPct = Math.max(100 - parseFloat(workedPct) - parseFloat(breakPct), 0).toFixed(1);
 
-      /* Remaining stat */
-      const remStatHtml =
-        remainingMinutes > 0
-          ? `<div class="aw-stat-value">${remH > 0 ? remH + "h" : ""}${remM}m</div>
-                   <div class="aw-stat-sub">remaining</div>`
-          : `<div class="aw-done-state">
-                       <div class="aw-done-icon">✓</div>
-                       <div class="aw-done-text">Done!</div>
-                   </div>`;
-
       /* Render */
-      panel.innerHTML = `
-                <div class="aw-header">
-                    <div class="aw-header-aurora"></div>
-                    <div class="aw-header-grid"></div>
-                    <div class="aw-label">Recommended Checkout</div>
-                    <div class="aw-checkout-row">
-                        <div class="aw-checkout-time">${checkoutFormatted}</div>
-                        <div class="aw-checkout-ampm">${checkoutAmPm}</div>
-                        <div class="aw-checkin-badge">${remLabel}</div>
-                    </div>
-                    <div class="aw-progress-wrap">
-                        <div class="aw-progress-labels">
-                            <span>${checkInFormatted}</span>
-                            <span>${Math.round(progress)}%</span>
-                        </div>
-                        <div class="aw-progress-track">
-                            <div class="aw-progress-fill" style="width:${progress}%">
-                                <div class="aw-progress-dot"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="aw-body">
-                    <div class="aw-stats-row">
-                        <div class="aw-stat">
-                            <div class="aw-stat-glow"></div>
-                            <div class="aw-stat-label">Worked</div>
-                            <div class="aw-stat-value">${workedH}h ${workedM}m</div>
-                            <div class="aw-stat-sub">elapsed</div>
-                        </div>
-                        <div class="aw-stat">
-                            <div class="aw-stat-glow"></div>
-                            <div class="aw-stat-label">Left</div>
-                            ${remStatHtml}
-                        </div>
-                        <div class="aw-stat">
-                            <div class="aw-stat-glow"></div>
-                            <div class="aw-stat-label">Break</div>
-                            <div class="aw-stat-value">${breakMinutes}m</div>
-                            <div class="aw-stat-sub">deducted</div>
-                        </div>
-                    </div>
-
-                    <div class="aw-timeline">
-                        <div class="aw-tl-axis">DAY</div>
-                        <div class="aw-tl-inner">
-                            <div class="aw-tl-segs">
-                                <div class="aw-tl-seg aw-tl-work"  style="flex:${workedPct}"></div>
-                                ${
-                                  parseFloat(breakPct) > 0
-                                    ? `<div class="aw-tl-seg aw-tl-break" style="flex:${breakPct}"></div>`
-                                    : ""
-                                }
-                                ${
-                                  parseFloat(remPct) > 0
-                                    ? `<div class="aw-tl-seg aw-tl-rem"  style="flex:${remPct}"></div>`
-                                    : ""
-                                }
-                            </div>
-                            <div class="aw-tl-labels">
-                                <span>${checkInFormatted}</span>
-                                ${breakMinutes > 0 ? `<span>${breakMinutes}m break</span>` : "<span></span>"}
-                                <span>${checkoutFormatted} ${checkoutAmPm}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="aw-footer">
-                    <div class="aw-live">
-                        <div class="aw-live-dot"></div>
-                        <span id="aw-live-clock">--:--:--</span>
-                    </div>
-                    <div class="aw-footer-right">
-                        <div class="aw-req-chip">${REQUIRED_WORK_HOURS} hrs / day</div>
-                    </div>
-                </div>
-            `;
+      render(
+        <Panel
+          checkoutFormatted={checkoutFormatted}
+          checkoutAmPm={checkoutAmPm}
+          remLabel={remLabel}
+          checkInFormatted={checkInFormatted}
+          progress={progress}
+          workedH={workedH}
+          workedM={workedM}
+          remH={remH}
+          remM={remM}
+          remainingMinutes={remainingMinutes}
+          breakMinutes={breakMinutes}
+          workedPct={workedPct}
+          breakPct={breakPct}
+          remPct={remPct}
+          requiredWorkHours={REQUIRED_WORK_HOURS}
+        />,
+        panel,
+      );
       startClock();
     }
 
@@ -354,7 +443,7 @@ initThemeSwitcher();
     /* ─────────────────────────────────────────── CLOSE OUTSIDE */
 
     document.addEventListener("click", (e) => {
-      if (!btn.contains(e.target) && !panel.contains(e.target)) {
+      if (!btn.contains(e.target as Node) && !panel.contains(e.target as Node)) {
         panel.style.display = "none";
         stopClock();
       }
