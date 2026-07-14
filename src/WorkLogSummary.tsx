@@ -1,7 +1,10 @@
+import { render } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import Icon from "./components/Icon";
 import MonthPicker from "./components/MonthPicker";
+import { initThemeSwitcher } from "./shared/theme-switcher";
 import { CONFIG } from "./lib/config";
+import { initDom } from "./lib/dom";
 import { loadViewState } from "./lib/data-loader";
 import { buildDetailsHtml } from "./lib/details";
 import { hideMiniModal, setMiniModalState, attachModalClicks } from "./lib/mini-modal";
@@ -12,7 +15,7 @@ import { formatDisplayDate, formatMinutes, getMonthRange } from "./lib/utils";
 
 const pop = serializePop;
 
-export default function App() {
+function WorkLogSummary() {
   const [monthOffset, setMonthOffset] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [view, setView] = useState<ViewState>({ kind: "loading", monthOffset: 0 });
@@ -487,4 +490,11 @@ export default function App() {
   }
 
   return <div ref={cardRef}>{content}</div>;
+}
+
+initThemeSwitcher();
+initDom();
+const card = document.getElementById(CONFIG.cardId);
+if (card) {
+  render(<WorkLogSummary />, card);
 }

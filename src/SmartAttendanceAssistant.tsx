@@ -30,6 +30,27 @@ type PanelProps = {
   requiredWorkHours: number;
 };
 
+function ButtonContent() {
+  return (
+    <>
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      <span id="attendance-btn-time">--:-- --</span>
+    </>
+  );
+}
+
 function RemainingStat({
   remainingMinutes,
   remH,
@@ -178,14 +199,7 @@ function Panel({
 
     const btn = document.createElement("button");
     btn.id = "attendance-toggle-btn";
-    btn.innerHTML = `
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span id="attendance-btn-time">--:-- --</span>
-        `;
+    render(<ButtonContent />, btn);
     root.appendChild(btn);
 
     /* ─────────────────────────────────────────── PANEL */

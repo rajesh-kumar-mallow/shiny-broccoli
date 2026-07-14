@@ -5,7 +5,7 @@ export const DEFAULT_DEV_PORT = 5174;
 export const VITE_DEV_PORT = 5173;
 
 export const MAIN_SCRIPT = {
-  entry: "src/userscript/main.tsx",
+  entry: "src/WorkLogSummary.tsx",
   fileName: "check-in-summary-with-compensation-v2.user.js",
   userscript: {
     name: "Check-in summary with compensation V2",
@@ -20,7 +20,7 @@ export const MAIN_SCRIPT = {
 
 export const PLAIN_SCRIPTS = [
   {
-    entry: "src/userscripts/theme-host.js",
+    entry: "src/theme-host.js",
     fileName: "hubble-theme-host.user.js",
     userscript: {
       name: "Hubble Dracula Theme Host",
@@ -35,7 +35,7 @@ export const PLAIN_SCRIPTS = [
     },
   },
   {
-    entry: "src/userscripts/checkout-hover-helper.tsx",
+    entry: "src/CheckoutHoverHelper.tsx",
     fileName: "hubble-checkout-hover-helper.user.js",
     userscript: {
       name: "Hubble Checkout Hover Helper",
@@ -53,7 +53,7 @@ export const PLAIN_SCRIPTS = [
     },
   },
   {
-    entry: "src/userscripts/smart-attendance-assistant.tsx",
+    entry: "src/SmartAttendanceAssistant.tsx",
     fileName: "hubble-smart-attendance-assistant.user.js",
     userscript: {
       name: "Hubble Smart Attendance Assistant",

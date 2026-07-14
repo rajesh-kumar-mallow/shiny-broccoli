@@ -33,18 +33,19 @@ export default ts.config(
     },
   },
   {
-    files: ["src/userscripts/**/*.{js,ts,tsx}"],
+    files: ["src/*.{js,tsx}"],
+    rules: {
+      "no-empty": ["error", { allowEmptyCatch: true }],
+    },
+  },
+  {
+    files: ["src/SmartAttendanceAssistant.tsx"],
     languageOptions: {
       globals: {
-        ...globals.browser,
         moment: "readonly",
         $: "readonly",
         jQuery: "readonly",
       },
-    },
-    rules: {
-      "@typescript-eslint/no-unused-vars": "off",
-      "no-empty": ["error", { allowEmptyCatch: true }],
     },
   },
 );

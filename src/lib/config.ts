@@ -1,4 +1,4 @@
-import { WORK_DAY_MINUTES } from "../../userscripts/shared/constants.js";
+import { WORK_DAY_MINUTES } from "../shared/constants.js";
 
 export const CONFIG = {
   checkInApiUrl: "https://hubble.mallow-tech.com/attendance/get-my-check-in-data",

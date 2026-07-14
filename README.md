@@ -62,19 +62,21 @@ npm run build:local  # One-shot local build (localhost update URLs)
 
 **Share with teammates on same Wi‑Fi:** the install page also prints a LAN URL like `http://192.168.x.x:5174/`.
 
-**Script 1 fast iteration:** use `npm run dev` for Vite HMR on the Svelte userscript while Hubble is open.
+**Script 1 fast iteration:** use `npm run dev` for Vite HMR on the `WorkLogSummary.tsx` userscript while Hubble is open.
 
 ### Publish
 
-1. Edit `src/userscript/`, `src/userscripts/`, or `src/styles/`
+1. Edit `src/` or `src/styles/`
 2. Bump `version` in `package.json`
 3. Push to `main`
 
 ## Project layout
 
 ```
-src/userscript/     Preact + TypeScript (check-in summary)
-src/userscripts/    Preact + TypeScript userscripts + shared theme switcher
+src/                Preact + TypeScript userscripts (WorkLogSummary, CheckoutHoverHelper, SmartAttendanceAssistant, theme-host)
+src/lib/            Work-log-summary business logic
+src/components/     Shared Preact components (Icon, MonthPicker)
+src/shared/         Shared across all userscripts (theme switcher, timeline theme, constants)
 src/styles/         CSS sources (Stylus userstyles)
 dist/               Built artifacts (deployed to gh-pages branch)
 ```

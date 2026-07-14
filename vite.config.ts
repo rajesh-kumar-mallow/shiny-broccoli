@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     preact(),
     monkey({
-      entry: "src/userscript/main.tsx",
+      entry: "src/WorkLogSummary.tsx",
       userscript: {
         name: "Check-in summary with compensation V2",
         namespace: "https://hubble.mallow-tech.com",
