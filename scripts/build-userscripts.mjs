@@ -30,6 +30,7 @@ for (const script of PLAIN_SCRIPTS) {
         entry: script.entry,
         userscript: {
           ...script.userscript,
+          version: pkg.version,
           updateURL: `${artifactBase}/${script.fileName}`,
           downloadURL: `${artifactBase}/${script.fileName}`,
         },

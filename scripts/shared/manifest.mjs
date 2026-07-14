@@ -25,7 +25,6 @@ export const PLAIN_SCRIPTS = [
     userscript: {
       name: "Hubble Dracula Theme Host",
       namespace: "https://hubble.mallow-tech.com",
-      version: "1.0.0",
       description: "Applies saved Dracula theme (Auto/Dark/Light) on all Hubble pages",
       author: "Neon Raven",
       match: ["*://hubble.mallow-tech.com/*"],
@@ -40,7 +39,6 @@ export const PLAIN_SCRIPTS = [
     userscript: {
       name: "Hubble Checkout Hover Helper",
       namespace: "https://hubble.mallow-tech.com",
-      version: "1.0.0",
       description: "Auto checkout helper for Hubble attendance pages",
       author: "Neon Raven",
       match: [
@@ -58,7 +56,6 @@ export const PLAIN_SCRIPTS = [
     userscript: {
       name: "Hubble Smart Attendance Assistant",
       namespace: "https://hubble.mallow-tech.com",
-      version: "9.2",
       description: "Smart draggable checkout assistant with Dracula-themed UI",
       author: "Neon Raven",
       match: [

@@ -38,9 +38,12 @@ A floating **Auto / Dark / Light** theme switcher appears once `hubble-theme-hos
 
 ## Updates
 
-Tampermonkey and Stylus auto-update from the `gh-pages` branch when they check for updates (enabled by default).
+Tampermonkey and Stylus auto-update from the `gh-pages` branch when they check for updates (enabled by default). Update detection is driven entirely by the `@version` header — all 4 userscripts share the single `version` in `package.json`, so **bumping `package.json`'s version is what makes existing installs notice an update.** Pushing to `main` without a version bump still redeploys `gh-pages`, but installed users won't be prompted to refresh.
 
-After merging to `main`, GitHub Actions builds and deploys to the `gh-pages` branch automatically.
+After merging to `main`, GitHub Actions:
+
+1. Builds and deploys `dist/` to the `gh-pages` branch (this is what Tampermonkey/Stylus actually poll).
+2. Publishes a [GitHub Release](releases) tagged `v<version>` with the built `.user.js`/`.user.css` files attached and auto-generated release notes — skipped if a release for the current version already exists, so pushes without a version bump don't create duplicates.
 
 ## Development
 
