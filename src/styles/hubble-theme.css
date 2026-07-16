@@ -392,6 +392,115 @@ html[data-hubble-theme="light"] {
 }
 
 /* =========================================================
+    Checkout Hover Helper — custom "my check-in" timeline
+    ========================================================= */
+#checkout-hover-custom-chart.cht-chart {
+  padding: 16px 18px 20px;
+  background: var(--dr-bg-secondary);
+  border: 1px solid var(--dr-border);
+  border-radius: 18px;
+}
+
+.cht-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 10px 132px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dr-comment);
+}
+
+.cht-chart-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cht-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 4px;
+  border-radius: 10px;
+  cursor: default;
+}
+
+.cht-chart-row:hover {
+  background: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+}
+
+.cht-chart-row--today {
+  background: color-mix(in srgb, var(--dr-purple) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-purple) 25%, transparent);
+}
+
+.cht-chart-row-label {
+  flex: 0 0 118px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cht-chart-row-date {
+  font-size: 12px;
+  font-weight: 750;
+  color: var(--dr-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cht-chart-row-worked {
+  font-size: 11px;
+  color: var(--dr-comment);
+  font-weight: 600;
+}
+
+.cht-chart-row-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 22px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+}
+
+.cht-chart-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 3px;
+  border-radius: 5px;
+}
+
+.cht-chart-seg--wfo {
+  background: var(--dr-green);
+}
+
+.cht-chart-seg--wfh {
+  background: var(--dr-cyan);
+}
+
+.cht-chart-seg--break {
+  background: var(--dr-yellow);
+}
+
+.cht-chart-seg--timeoff {
+  background: var(--dr-orange);
+}
+
+.cht-chart-seg--dayoff {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: color-mix(in srgb, var(--dr-red) 18%, transparent);
+  color: var(--dr-red);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+/* =========================================================
         Hubble Dracula Theme - Global
         ========================================================= */
 html,
