@@ -1,0 +1,63 @@
+// ── Month picker ──
+#custom-work-log-summary-card {
+  .wls-month-picker {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    background: var(--dr-bg-tertiary);
+    border: 1px solid var(--dr-border);
+    border-radius: 10px;
+    padding: 3px 5px;
+  }
+
+  .wls-month-btn {
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--dr-comment);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 9px;
+    font-family: inherit;
+    transition: all 0.14s;
+    white-space: nowrap;
+    position: relative;
+
+    &:hover {
+      background: var(--dr-bg-secondary);
+      color: var(--dr-fg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    &.active {
+      background: var(--dr-bg-secondary);
+      color: var(--dr-purple);
+      font-weight: 800;
+      box-shadow: 0 1px 4px color-mix(in srgb, var(--dr-purple) 25%, transparent);
+
+      // dot indicator on active month
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--dr-purple);
+      }
+    }
+
+    // Past-month badge styling — slightly faded
+    &.past,
+    &.past:hover {
+      color: var(--dr-comment);
+    }
+  }
+}

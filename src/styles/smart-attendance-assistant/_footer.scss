@@ -1,0 +1,100 @@
+// ── FOOTER ─────────────────────────────────────
+
+.aw-footer {
+  padding: 13px 18px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--aw-footer-bg);
+  border-top: 1px solid var(--aw-footer-border);
+}
+
+.aw-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aw-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--aw-live-dot);
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--aw-live-ring);
+    animation: aw-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes aw-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+#aw-live-clock {
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--aw-clock-color);
+  letter-spacing: 1px;
+}
+
+.aw-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aw-req-chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--aw-req-color);
+  background: var(--aw-req-bg);
+  border: 1px solid var(--aw-req-border);
+  border-radius: 8px;
+  padding: 5px 11px;
+}
+
+// ── DONE STATE ─────────────────────────────────
+
+.aw-done-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 0 6px;
+}
+
+.aw-done-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--aw-done-icon-bg);
+  border: 1px solid var(--aw-done-icon-bdr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--aw-done-text);
+}
+
+.aw-done-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--aw-done-text);
+  letter-spacing: 0.5px;
+}

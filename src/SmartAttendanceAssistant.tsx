@@ -1,8 +1,8 @@
 import { render } from "preact";
-import { initThemeSwitcher } from "./shared/theme-switcher";
+import { initTheme } from "./shared/theme-switcher";
 import { WORK_DAY_MINUTES } from "./shared/constants";
 
-initThemeSwitcher();
+initTheme();
 
 type AttendanceRow = {
   type: string;

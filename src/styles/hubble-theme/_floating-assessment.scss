@@ -1,0 +1,276 @@
+// ==========================================
+//  Floating Assessment Panel
+// ==========================================
+#front-assesment {
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    0 20px 60px rgb(0 0 0 / 45%),
+    0 0 0 1px rgb(255 255 255 / 3%);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+
+  .px-5.py-7\.5 {
+    background: transparent !important;
+  }
+
+  button {
+    border: 1px solid var(--dr-border) !important;
+    border-radius: 18px !important;
+    transition: all 0.25s ease;
+    overflow: hidden;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgb(0 0 0 / 35%);
+    }
+
+    p {
+      background: rgb(0 0 0 / 20%) !important;
+      color: var(--dr-fg) !important;
+      font-weight: 600;
+      border-top: 1px solid rgb(255 255 255 / 5%);
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  svg {
+    transform: scale(0.85);
+
+    // These are Sketch-exported icons — each ships its own background rect
+    // (a flat, non-gradient color) plus a drop-shadow "preview card" (a
+    // `<use>` pair referencing a `defs`/`filter` rect) that were meant for a
+    // design-tool artboard, not an in-app button. Left alone they paint a
+    // mismatched flat-colored box (and a stray white shadow card) on top of
+    // the real button background set below via CSS. Hiding everything but
+    // the glyph `path` lets that real background show through instead.
+    rect,
+    use,
+    defs,
+    filter,
+    circle {
+      display: none;
+    }
+
+    path {
+      fill: white !important;
+    }
+  }
+
+  i {
+    color: white !important;
+  }
+
+  a.text-primary-red {
+    color: var(--dr-cyan) !important;
+    transition: 0.2s;
+
+    &:hover {
+      color: var(--dr-purple) !important;
+    }
+  }
+}
+
+// Hubble injects an external-link marker via `a[target="_blank"]::after` on
+// these (they're anchors that open a new tab) — left alone it renders inside
+// the button in the native page's own color, clashing with our gradient.
+#checkin-btn,
+#home_location,
+#office_location,
+#break-btn,
+#lunch-btn,
+#attendance-time-off-btn,
+#checkout-btn {
+  &::after {
+    content: "" !important;
+    color: inherit !important;
+  }
+}
+
+#checkin-btn {
+  background: linear-gradient(135deg, #50fa7b, #3ccf64) !important;
+}
+
+#home_location {
+  background: linear-gradient(135deg, #6272a4, #4c5b8a) !important;
+}
+
+#office_location {
+  background: linear-gradient(135deg, #50fa7b, #3ccf64) !important;
+}
+
+#break-btn {
+  background: linear-gradient(135deg, #6272a4, #44475a) !important;
+}
+
+#lunch-btn {
+  background: linear-gradient(135deg, #ffb86c, #ff9f43) !important;
+}
+
+#attendance-time-off-btn {
+  background: linear-gradient(135deg, #f1fa8c, #d4c65f) !important;
+}
+
+#checkout-btn {
+  background: linear-gradient(135deg, #ff5555, #e63946) !important;
+}
+
+@media (max-width: 768px) {
+  #front-assesment {
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    bottom: 12px !important;
+  }
+}
+
+// ==========================================================
+//  Floating Assessment Button (FAB)
+// ==========================================================
+.front-assesment-btn {
+  width: 64px !important;
+  height: 64px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-purple);
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 50% !important;
+  box-shadow:
+    0 8px 24px rgb(0 0 0 / 35%),
+    inset 0 1px 1px rgb(255 255 255 / 4%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 32px rgb(0 0 0 / 45%),
+      0 0 24px rgb(189 147 249 / 20%);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &::after {
+    display: none !important;
+  }
+
+  span {
+    position: static !important;
+    inset: unset !important;
+    transform: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon {
+    display: flex;
+  }
+
+  .other-icon {
+    display: none;
+  }
+
+  &[data-bg] {
+    .icon {
+      display: none;
+    }
+
+    .other-icon {
+      display: flex;
+    }
+  }
+
+  svg {
+    width: 26px !important;
+    height: 26px !important;
+    overflow: visible;
+
+    rect,
+    defs,
+    filter,
+    circle {
+      display: none;
+    }
+
+    path {
+      fill: currentColor !important;
+      stroke: none !important;
+    }
+  }
+
+  &[data-bg="checkin-btn"],
+  &[data-bg="home_location"] {
+    background: var(--dr-green) !important;
+    color: white;
+  }
+
+  &[data-bg="office_location"] {
+    background: var(--dr-cyan) !important;
+    color: white;
+  }
+
+  &[data-bg="break-btn"] {
+    background: var(--dr-comment) !important;
+    color: white;
+  }
+
+  &[data-bg="lunch-btn"] {
+    background: var(--dr-orange) !important;
+    color: white;
+  }
+
+  &[data-bg="attendance-time-off-btn"],
+  &[data-bg="checkout-btn"] {
+    background: var(--dr-red) !important;
+    color: white;
+  }
+
+  &.dotted-border {
+    animation: fab-glow 2s infinite;
+  }
+}
+
+@keyframes fab-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 35%),
+      0 0 0 0 rgb(80 250 123 / 0%);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 35%),
+      0 0 0 12px rgb(80 250 123 / 15%);
+  }
+}
+
+@media (max-width: 768px) {
+  .front-assesment-btn {
+    width: 58px !important;
+    height: 58px !important;
+    right: 18px !important;
+    bottom: 18px !important;
+
+    svg {
+      width: 22px !important;
+      height: 22px !important;
+    }
+  }
+}

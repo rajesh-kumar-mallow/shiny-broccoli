@@ -1,0 +1,166 @@
+// ============================================
+//  Green Cards -> Card View
+// ============================================
+#all-cards-table {
+  background: transparent !important;
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 18px;
+    padding: 16px;
+
+    tr {
+      display: flex !important;
+      flex-direction: column;
+      background: var(--dr-bg-secondary) !important;
+      border: 1px solid var(--dr-border) !important;
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 240px;
+      // transition: all 0.2s ease;
+      box-shadow:
+        0 4px 12px rgb(0 0 0 / 15%),
+        0 12px 24px rgb(0 0 0 / 10%);
+
+      &:hover {
+        transform: translateY(-3px);
+        border-color: var(--dr-purple) !important;
+        box-shadow: 0 10px 30px rgb(0 0 0 / 20%);
+      }
+    }
+
+    td {
+      display: block;
+      width: 100%;
+      border: none !important;
+      padding: 4px 0 !important;
+      background: transparent !important;
+
+      &:nth-child(1),
+      &:nth-child(7) {
+        display: none;
+      }
+
+      &:nth-child(4) {
+        order: 1;
+        margin-bottom: 12px;
+
+        span {
+          background: rgba(106, 191, 149, 0.15) !important;
+          color: var(--dr-green) !important;
+          border: 1px solid rgba(106, 191, 149, 0.25);
+          border-radius: 999px;
+          padding: 6px 12px !important;
+          font-size: 12px;
+          font-weight: 700;
+        }
+      }
+
+      &:nth-child(3) {
+        order: 2;
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--dr-fg) !important;
+        line-height: 1.4;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      &:nth-child(2) {
+        order: 3;
+        color: var(--dr-comment) !important;
+        font-size: 13px;
+        margin-bottom: 8px;
+
+        &::before {
+          content: "📅 ";
+        }
+      }
+
+      &:nth-child(5) {
+        order: 4;
+        color: var(--dr-fg) !important;
+        font-size: 14px;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &::before {
+          content: "👤 ";
+          color: var(--dr-comment);
+        }
+      }
+
+      &:nth-child(6) {
+        order: 5;
+        color: var(--dr-fg) !important;
+        font-size: 14px;
+        margin-bottom: 8px;
+
+        &::before {
+          content: "📁 ";
+          color: var(--dr-comment);
+        }
+      }
+
+      &:nth-child(8) {
+        order: 6;
+        color: var(--dr-fg) !important;
+        font-size: 14px;
+
+        &::before {
+          content: "👨‍💼 ";
+          color: var(--dr-comment);
+        }
+      }
+
+      &:nth-child(9) {
+        order: 7;
+        margin-top: auto;
+        text-align: right;
+        padding-top: 20px !important;
+
+        a {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 42px;
+          height: 42px;
+          background: var(--dr-bg);
+          border: 1px solid var(--dr-border);
+          border-radius: 12px;
+          // transition: 0.2s;
+
+          div {
+            margin-right: 0 !important;
+          }
+
+          &:hover {
+            background: var(--dr-purple);
+            border-color: var(--dr-purple);
+
+            span {
+              color: var(--dr-bg) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  #all-cards-table tbody {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+}

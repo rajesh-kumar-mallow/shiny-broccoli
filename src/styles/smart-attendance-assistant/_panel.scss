@@ -1,0 +1,28 @@
+// ── PANEL ──────────────────────────────────────
+
+#attendance-panel {
+  position: fixed;
+  width: 340px;
+  z-index: 999999;
+  display: none;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--aw-panel-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--aw-panel-border);
+  box-shadow: var(--aw-panel-shadow);
+  font-family: "SF Pro Display", "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  animation: awSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes awSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

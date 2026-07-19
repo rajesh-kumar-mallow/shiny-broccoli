@@ -1,0 +1,181 @@
+@use "../dracula" as dr;
+@use "shared-mixins" as shared;
+
+#custom-work-log-summary-card {
+  // ── Metric grid ──
+  .wls-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .wls-block {
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid;
+  }
+
+  .wls-block-comp {
+    @include dr.tint-bg("purple");
+  }
+
+  .wls-block-ts {
+    @include dr.tint-bg("cyan");
+  }
+
+  .wls-block-hd {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+
+  .wls-block-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .icon-comp {
+    background: color-mix(in srgb, var(--dr-purple) 12%, transparent);
+    color: var(--dr-purple);
+  }
+
+  .icon-ts {
+    background: color-mix(in srgb, var(--dr-cyan) 12%, transparent);
+    color: var(--dr-cyan);
+  }
+
+  .wls-block-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dr-comment);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .wls-big {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .wls-big-c {
+    color: var(--dr-purple);
+  }
+
+  .wls-big-t {
+    color: var(--dr-cyan);
+  }
+
+  .wls-big-sub {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dr-comment);
+  }
+
+  .wls-block-sub {
+    font-size: 12px;
+    color: var(--dr-comment);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  // ── Progress bar ──
+  .wls-prog-wrap {
+    margin-top: 9px;
+  }
+
+  .wls-prog-track {
+    height: 5px;
+    background: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .wls-prog-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.9s cubic-bezier(0.22, 0.68, 0, 1.2);
+  }
+
+  .prog-ok {
+    background: linear-gradient(
+      90deg,
+      var(--dr-green),
+      color-mix(in srgb, var(--dr-green) 60%, var(--dr-fg))
+    );
+  }
+
+  .prog-over {
+    background: linear-gradient(
+      90deg,
+      var(--dr-yellow),
+      color-mix(in srgb, var(--dr-yellow) 60%, var(--dr-fg))
+    );
+  }
+
+  .prog-low {
+    background: linear-gradient(
+      90deg,
+      var(--dr-purple),
+      color-mix(in srgb, var(--dr-purple) 60%, var(--dr-fg))
+    );
+  }
+
+  .wls-prog-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dr-comment);
+  }
+
+  // ── Chips ──
+  .wls-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 9px;
+  }
+
+  .wls-chip {
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      filter 0.12s,
+      transform 0.1s;
+    border: 1px solid;
+
+    &:hover {
+      filter: brightness(0.95);
+      transform: scale(1.03);
+    }
+  }
+
+  @each $suffix, $family in shared.$accent-map {
+    .chip-#{$suffix} {
+      @include dr.tint-bg($family);
+      color: dr.token($family);
+    }
+  }
+
+  .chip-slate {
+    background: var(--dr-bg-tertiary);
+    color: var(--dr-comment);
+    border-color: var(--dr-border);
+  }
+}

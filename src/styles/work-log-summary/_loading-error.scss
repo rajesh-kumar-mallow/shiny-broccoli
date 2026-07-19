@@ -1,0 +1,42 @@
+@use "shared-mixins" as shared;
+
+#custom-work-log-summary-card {
+  // ── Expanded actions ──
+  .wls-exp-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  // ── Loading / error ──
+  .wls-loading {
+    font-size: 13px;
+    color: var(--dr-comment);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .wls-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--dr-border);
+    border-top-color: var(--dr-purple);
+    border-radius: 50%;
+    animation: wls-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .wls-error-box {
+    @include shared.error-box(10px 14px);
+  }
+}
+
+@keyframes wls-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

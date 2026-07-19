@@ -1,0 +1,33 @@
+// =========================================================
+//  Date Range Picker
+// =========================================================
+.daterangepicker,
+.daterangepicker .calendar-table,
+.daterangepicker .drp-buttons,
+.daterangepicker.show-ranges.ltr .drp-calendar.left {
+  background: var(--dr-bg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+.daterangepicker td.off,
+.daterangepicker td.off.end-date,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.daterangepicker .ranges li:hover {
+  background: var(--dr-bg-secondary) !important;
+}
+
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
+  background: var(--dr-purple) !important;
+}
+
+.daterangepicker .calendar-table .next span,
+.daterangepicker .calendar-table .prev span {
+  border-color: var(--dr-fg) !important;
+}
+
+.daterangepicker:after,
+.daterangepicker:before {
+  border-bottom-color: var(--dr-border) !important;
+}

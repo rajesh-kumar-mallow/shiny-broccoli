@@ -1,0 +1,109 @@
+@use "shared-mixins" as shared;
+
+// ── Full details modal ──
+#custom-work-log-summary-card {
+  .wls-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .wls-modal {
+    width: min(1080px, calc(100vw - 40px));
+    max-height: min(800px, calc(100vh - 40px));
+    display: flex;
+    flex-direction: column;
+    background: var(--dr-bg-secondary);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--dr-border);
+  }
+
+  .wls-modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--dr-border);
+    flex-shrink: 0;
+    background: var(--dr-bg-tertiary);
+  }
+
+  .wls-modal-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--dr-fg);
+  }
+
+  .wls-modal-subtitle {
+    font-size: 13px;
+    color: var(--dr-comment);
+    margin-top: 2px;
+  }
+
+  .wls-close-btn {
+    @include shared.close-button;
+  }
+
+  .wls-modal-body {
+    padding: 16px 18px 20px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // ── KPI strip ──
+  @include shared.kpi-strip($columns: 4, $value-size: 17px);
+
+  // ── Insights ──
+  .wls-insight-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .wls-insight {
+    background: var(--dr-bg-tertiary);
+    border: 1px solid var(--dr-border);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font-size: 13px;
+    color: var(--dr-comment);
+    line-height: 1.55;
+
+    b {
+      color: var(--dr-fg);
+      font-weight: 700;
+    }
+  }
+
+  // ── Section label ──
+  .wls-section-label {
+    @include shared.section-label;
+  }
+
+  // ── Tables ──
+  @include shared.data-table($cell-padding: 9px 12px, $header-letter-spacing: 0.2px);
+
+  .wls-modal-divider {
+    height: 1px;
+    background: var(--dr-bg);
+  }
+
+  .wls-empty {
+    @include shared.empty-state;
+  }
+}

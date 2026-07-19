@@ -1,0 +1,166 @@
+// =========================================================
+//  SVG / Charts
+// =========================================================
+.timesheet-header-shadow,
+.timesheet-filter-header {
+  svg path,
+  svg rect,
+  #user path,
+  #tracker-table svg path {
+    fill: var(--dr-fg) !important;
+  }
+
+  div rect {
+    fill: var(--dr-bg-secondary) !important;
+    stroke: var(--dr-bg-secondary) !important;
+  }
+
+  div g {
+    fill: var(--dr-fg) !important;
+    fill-opacity: 1;
+  }
+}
+
+// =========================================================
+//  Custom timeline replacement — keep the native chart hidden
+// =========================================================
+// checkout-hover/{my,all}-mode-chart.tsx hide the native chart with an
+// inline `style.display = "none"` when they mount their replacement, but
+// some Hubble page code re-shows the container later (e.g. once Google
+// Charts finishes its own async draw), silently undoing that. Our
+// replacement is always inserted as the immediately preceding sibling, so
+// this re-asserts the hide via the cascade — `!important` here beats any
+// later *non-important* inline style the native page sets, regardless of
+// when it runs. Scoped to only fire when our replacement actually mounted,
+// so a failed/blocked userscript never hides the native chart with nothing
+// to replace it.
+#checkout-hover-custom-chart + #my-checkin-detail,
+#checkout-hover-all-custom-chart + #checkin-detail,
+#checkout-hover-all-custom-chart + #all-checkin-detail,
+#checkout-hover-all-custom-chart + #all-check-in-detail {
+  display: none !important;
+}
+
+// =========================================================
+//  Check-in type legend (native color-key badges)
+// =========================================================
+// Native round icon badges (e.g. the "Check In / Check In(H) / Short Break /
+// Long Break / Time Off / Day Off" key row above the attendance timeline).
+// These sit outside #my-checkin-detail/#checkin-detail, so hiding the native
+// chart doesn't touch them — retinted to the same semantic colors our own
+// custom timeline segments already use (wfo=green, wfh=cyan/purple,
+// timeoff=yellow/pink, dayoff=red) so the key still matches what's below it.
+.bg-checkin-green {
+  background: var(--dr-green) !important;
+}
+
+.bg-checkin-blue {
+  background: color-mix(in srgb, var(--dr-cyan) 78%, var(--dr-purple)) !important;
+}
+
+.bg-break-gray {
+  background: var(--dr-comment) !important;
+}
+
+.bg-lite-orange {
+  background: var(--dr-orange) !important;
+}
+
+.bg-time0ff-orange {
+  background: color-mix(in srgb, var(--dr-yellow) 75%, var(--dr-pink)) !important;
+}
+
+.bg-day0ff-maroon {
+  background: var(--dr-red) !important;
+}
+
+// =========================================================
+//  Google Timeline
+// =========================================================
+#my-checkin-detail,
+#checkin-detail,
+#all-checkin-detail,
+#all-check-in-detail {
+  background: var(--dr-bg-secondary) !important;
+  border: 1px solid var(--dr-border) !important;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#my-checkin-detail svg,
+#checkin-detail svg,
+#all-checkin-detail svg,
+#all-check-in-detail svg {
+  background: transparent !important;
+}
+
+#my-checkin-detail svg text.htl-label,
+#checkin-detail svg text.htl-label,
+#all-checkin-detail svg text.htl-label,
+#all-check-in-detail svg text.htl-label,
+#my-checkin-detail svg text,
+#checkin-detail svg text,
+#all-checkin-detail svg text,
+#all-check-in-detail svg text {
+  fill: var(--dr-comment) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+// #my-checkin-detail svg line.htl-grid,
+// #checkin-detail svg line.htl-grid,
+// #all-checkin-detail svg line.htl-grid,
+// #all-check-in-detail svg line.htl-grid,
+// #my-checkin-detail svg path.htl-grid,
+// #checkin-detail svg path.htl-grid,
+// #all-checkin-detail svg path.htl-grid,
+// #all-check-in-detail svg path.htl-grid {
+//   stroke: var(--dr-border) !important;
+// }
+
+#my-checkin-detail svg rect.htl-row-bg,
+#checkin-detail svg rect.htl-row-bg,
+#all-checkin-detail svg rect.htl-row-bg,
+#all-check-in-detail svg rect.htl-row-bg {
+  fill: var(--dr-bg) !important;
+  stroke: var(--dr-bg) !important;
+}
+
+#my-checkin-detail svg rect.htl-wfo,
+#checkin-detail svg rect.htl-wfo,
+#all-checkin-detail svg rect.htl-wfo,
+#all-check-in-detail svg rect.htl-wfo {
+  fill: color-mix(in srgb, var(--dr-green) 82%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-green) 55%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-wfh,
+#checkin-detail svg rect.htl-wfh,
+#all-checkin-detail svg rect.htl-wfh,
+#all-check-in-detail svg rect.htl-wfh {
+  fill: color-mix(in srgb, var(--dr-cyan) 78%, var(--dr-purple)) !important;
+  stroke: color-mix(in srgb, var(--dr-cyan) 50%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-timeoff,
+#checkin-detail svg rect.htl-timeoff,
+#all-checkin-detail svg rect.htl-timeoff,
+#all-check-in-detail svg rect.htl-timeoff {
+  fill: color-mix(in srgb, var(--dr-yellow) 75%, var(--dr-pink)) !important;
+  stroke: color-mix(in srgb, var(--dr-yellow) 45%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-dayoff,
+#checkin-detail svg rect.htl-dayoff,
+#all-checkin-detail svg rect.htl-dayoff,
+#all-check-in-detail svg rect.htl-dayoff {
+  fill: color-mix(in srgb, var(--dr-red) 70%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-red) 45%, transparent) !important;
+}
+
+#my-checkin-detail svg rect.htl-other,
+#checkin-detail svg rect.htl-other,
+#all-checkin-detail svg rect.htl-other,
+#all-check-in-detail svg rect.htl-other {
+  fill: color-mix(in srgb, var(--dr-purple) 65%, var(--dr-bg-secondary)) !important;
+  stroke: color-mix(in srgb, var(--dr-purple) 40%, transparent) !important;
+}

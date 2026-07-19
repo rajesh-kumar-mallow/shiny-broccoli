@@ -1,0 +1,93 @@
+// =========================================================
+//  SweetAlert2
+// =========================================================
+.swal2-popup {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border: 1px solid var(--dr-border) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35) !important;
+}
+
+.swal2-title,
+.swal2-html-container {
+  color: var(--dr-fg) !important;
+}
+
+.swal2-close {
+  color: var(--dr-comment) !important;
+
+  &:hover {
+    color: var(--dr-fg) !important;
+  }
+}
+
+.swal2-input,
+.swal2-textarea,
+.swal2-select {
+  background: var(--dr-bg) !important;
+  color: var(--dr-fg) !important;
+  border: 1px solid var(--dr-border) !important;
+}
+
+.swal2-actions {
+  .swal2-confirm {
+    background: var(--dr-purple) !important;
+    color: var(--dr-bg) !important;
+  }
+
+  .swal2-cancel {
+    background: var(--dr-border) !important;
+    color: var(--dr-fg) !important;
+  }
+
+  .swal2-deny {
+    background: var(--dr-red) !important;
+    color: var(--dr-fg) !important;
+  }
+}
+
+.swal2-icon {
+  &.swal2-info {
+    border-color: var(--dr-cyan) !important;
+    color: var(--dr-cyan) !important;
+  }
+
+  &.swal2-warning {
+    border-color: var(--dr-yellow) !important;
+    color: var(--dr-yellow) !important;
+  }
+
+  &.swal2-error {
+    border-color: var(--dr-red) !important;
+
+    [class^="swal2-x-mark-line"] {
+      background: var(--dr-red) !important;
+    }
+  }
+
+  &.swal2-success {
+    border-color: var(--dr-green) !important;
+
+    [class^="swal2-success-line"] {
+      background: var(--dr-green) !important;
+    }
+
+    .swal2-success-ring {
+      border-color: color-mix(in srgb, var(--dr-green) 30%, transparent) !important;
+    }
+  }
+
+  &.swal2-question {
+    border-color: var(--dr-purple) !important;
+    color: var(--dr-purple) !important;
+  }
+}
+
+.swal2-timer-progress-bar {
+  background: var(--dr-purple) !important;
+}
+
+.swal2-footer {
+  color: var(--dr-comment) !important;
+  border-top-color: var(--dr-border) !important;
+}

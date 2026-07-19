@@ -255,7 +255,7 @@ function listSourceFiles(dir, acc = []) {
       listSourceFiles(fullPath, acc);
       continue;
     }
-    if (/\.(tsx|ts|js|css)$/.test(entry.name)) acc.push(fullPath);
+    if (/\.(tsx|ts|js|scss|css)$/.test(entry.name)) acc.push(fullPath);
   }
   return acc;
 }

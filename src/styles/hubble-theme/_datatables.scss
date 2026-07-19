@@ -1,0 +1,27 @@
+// =========================================================
+//  DataTables Pagination
+// =========================================================
+.page-link,
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  background: var(--dr-bg-tertiary) !important;
+  border-color: var(--dr-border) !important;
+  color: var(--dr-cyan) !important;
+}
+
+.page-item.active .page-link,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--dr-purple) !important;
+  color: var(--dr-bg) !important;
+}
+
+// ==========================================================
+//  DataTables Sorting Layout Fix
+// ==========================================================
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+  background-repeat: no-repeat !important;
+  background-position: center right !important;
+}

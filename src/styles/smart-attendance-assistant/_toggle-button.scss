@@ -1,0 +1,61 @@
+#attendance-toggle-btn {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 999999;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  background: var(--aw-btn-bg);
+  border: 1px solid var(--aw-btn-border);
+  color: var(--dr-fg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  font-family: "SF Pro Display", "Helvetica Neue", "Arial Black", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--aw-btn-shadow);
+  user-select: none;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--aw-btn-glow);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--dr-fg) 18%, transparent);
+    box-shadow:
+      0 14px 40px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent),
+      0 0 24px color-mix(in srgb, var(--dr-purple) 20%, transparent),
+      0 1px 0 color-mix(in srgb, var(--dr-fg) 12%, transparent) inset;
+  }
+
+  svg {
+    flex-shrink: 0;
+    color: color-mix(in srgb, var(--dr-cyan) 80%, transparent);
+  }
+}
+
+#attendance-btn-time {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(90deg, var(--dr-purple), var(--dr-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}

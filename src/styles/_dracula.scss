@@ -1,0 +1,32 @@
+// Shared helpers around the `--dr-*` custom properties defined in
+// hubble-theme/_tokens.scss. These wrap the color-mix() idiom already used
+// throughout hubble-theme.scss / smart-attendance-assistant.scss so semantic
+// color families stay consistent wherever they're reused.
+
+$dr-families: (
+  "purple": "purple",
+  "cyan": "cyan",
+  "green": "green",
+  "red": "red",
+  "yellow": "yellow",
+  "orange": "orange",
+  "pink": "pink",
+);
+
+@function token($name) {
+  @return var(--dr-#{$name});
+}
+
+// Tinted card/block background: a soft wash of $name over --dr-bg-secondary,
+// with a matching tinted border. Mirrors hubble-theme's `.cht-chip--accent`.
+@mixin tint-bg($name, $bg: 10%, $border: 25%) {
+  background: color-mix(in srgb, token($name) #{$bg}, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, token($name) #{$border}, transparent);
+}
+
+// Soft badge/summary background with solid text color. Mirrors
+// hubble-theme's `.alert-success` / work-log-summary's `.badge-good`.
+@mixin tint-soft($name, $pct: 15%) {
+  background: color-mix(in srgb, token($name) #{$pct}, transparent);
+  color: token($name);
+}

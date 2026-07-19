@@ -1,0 +1,353 @@
+// =========================================================
+//  Hubble Dracula Theme - Global
+// =========================================================
+html,
+body,
+#app,
+.wrapper,
+.content-wrapper,
+.main-content,
+.content-page,
+.modal,
+.bg-light-violet,
+.daterangepicker,
+.daterangepicker .calendar-table,
+.bg-mild-blue-hover:hover,
+table.dataTable tbody tr:hover,
+table.dataTable.display tbody tr.odd > .sorting_1,
+table.dataTable.display tbody tr.even > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.odd > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.even > .sorting_1 {
+  background: var(--dr-bg) !important;
+  color: var(--dr-fg) !important;
+}
+
+html {
+  color: var(--dr-fg) !important;
+}
+
+* {
+  border-color: var(--dr-border);
+}
+
+// =========================================================
+//  Containers
+// =========================================================
+.bg-white,
+.bg-light,
+.bg-mild-gray,
+.bg-mild-white,
+.bg-slate-100,
+.card,
+.panel,
+.box,
+.widget,
+.modal-content,
+.dropdown-menu,
+.list-group-item,
+.table,
+.table-responsive,
+.content,
+.container,
+.container-fluid,
+.am-placeholder,
+input,
+textarea,
+select,
+.form-control,
+#taskModalTimesheet,
+#moduleModalTimesheet {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+// =========================================================
+//  Headers / Nav
+// =========================================================
+.card-header,
+.card-footer,
+.modal-header,
+.modal-footer,
+.dropdown-header,
+.navbar,
+.topbar,
+.header,
+.sidebar,
+.main-sidebar,
+aside,
+.sidebar-wrapper,
+thead {
+  background: var(--dr-bg-tertiary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-border) !important;
+}
+
+// =========================================================
+//  Sidebar
+// =========================================================
+.sidebar a,
+.main-sidebar a,
+aside a {
+  color: var(--dr-fg) !important;
+}
+
+.sidebar a:hover,
+.sidebar .active,
+.main-sidebar .active,
+.nav-tab {
+  background: var(--dr-border) !important;
+  color: var(--dr-cyan) !important;
+}
+
+// =========================================================
+//  Text
+// =========================================================
+.text-dark-black,
+.text-dark-black-50,
+.text-gray-800,
+.text-dark-blue,
+.text-dark-black\/50,
+.placeholder-dark-black::placeholder,
+textarea::placeholder {
+  color: var(--dr-fg) !important;
+}
+
+// =========================================================
+//  Tables
+// =========================================================
+table,
+.table {
+  background: var(--dr-bg) !important;
+  color: var(--dr-fg) !important;
+}
+
+table th,
+table td,
+.table th,
+.table td,
+.table-with-no-border.no-footer,
+.table-with-no-border thead th,
+.table-with-no-border tbody td {
+  border-color: var(--dr-border) !important;
+  color: var(--dr-fg) !important;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background: var(--dr-bg-secondary) !important;
+}
+
+.table-hover tbody tr:hover,
+table.dataTable tbody tr:hover,
+.hover\:bg-mild-gray:hover,
+div > .bg-mild-blue-hover:hover,
+.multi-select .list-option.focused,
+.multi-select .list-option.selected,
+.time-dropdown {
+  background: var(--dr-border) !important;
+  color: var(--dr-fg) !important;
+}
+
+// =========================================================
+//  Inputs
+// =========================================================
+input,
+textarea,
+select,
+.form-control {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border: 1px solid var(--dr-border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--dr-comment) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus {
+  background: var(--dr-bg-secondary) !important;
+  color: var(--dr-fg) !important;
+  border-color: var(--dr-purple) !important;
+  box-shadow: 0 0 0 1px var(--dr-purple) !important;
+}
+
+// =========================================================
+//  Buttons
+// =========================================================
+.btn-primary,
+.daterangepicker .ranges li.active {
+  background: var(--dr-purple) !important;
+  border-color: var(--dr-purple) !important;
+  color: var(--dr-bg) !important;
+}
+
+.btn-success {
+  background: var(--dr-green) !important;
+  border-color: var(--dr-green) !important;
+  color: var(--dr-fg) !important;
+}
+
+.btn-danger {
+  background: var(--dr-red) !important;
+  border-color: var(--dr-red) !important;
+  color: var(--dr-fg) !important;
+}
+
+.btn-warning {
+  background: var(--dr-yellow) !important;
+  border-color: var(--dr-yellow) !important;
+  color: var(--dr-bg) !important;
+}
+
+.btn-secondary {
+  background: var(--dr-border) !important;
+  border-color: var(--dr-selection) !important;
+  color: var(--dr-fg) !important;
+}
+
+// =========================================================
+//  Alerts & Badges
+// =========================================================
+.alert-success,
+.bg-mild-green-10,
+.bg-mild-green\/10,
+.bg-maroon-10 {
+  background: rgba(106, 191, 149, 0.15) !important;
+  color: var(--dr-green) !important;
+}
+
+.alert-danger,
+.bg-dark-red-10,
+.bg-dark-red\/10 {
+  background: rgba(209, 109, 126, 0.15) !important;
+  color: var(--dr-red) !important;
+}
+
+.alert-warning,
+.bg-warning-10 {
+  background: rgba(212, 180, 131, 0.15) !important;
+  color: var(--dr-yellow) !important;
+}
+
+.bg-dark-blue-10,
+.bg-dark-blue\/10,
+.bg-primary-blue-10 {
+  background: rgba(139, 233, 253, 0.15) !important;
+  color: var(--dr-cyan) !important;
+}
+
+// =========================================================
+//  Links
+// =========================================================
+a {
+  color: var(--dr-cyan) !important;
+
+  &:hover {
+    color: var(--dr-pink) !important;
+  }
+}
+
+// =========================================================
+//  Dropdown search icon alignment
+// =========================================================
+.filter_by_project .drop-container .drop-body .search-section::after,
+.filter_by_user .drop-container .drop-body .search-section::after,
+.group_by_filter .drop-container .drop-body .search-section::after,
+.hubble-dropdown .drop-container .drop-body .search-section::after {
+  top: 21px;
+}
+
+// =========================================================
+//  Loader
+// =========================================================
+.page-loader {
+  background: rgb(40 42 54 / 70%) !important;
+}
+
+.gooey {
+  background: var(--dr-bg-secondary) !important;
+  border-radius: 10px;
+}
+
+.page-loader .gooey .dot,
+.page-loader .gooey .dots span {
+  background: var(--dr-fg) !important;
+}
+
+// =========================================================
+//  Misc Existing Fixes
+// =========================================================
+.content-page .change_groupBy_view .bg-white > div:first-child {
+  border-bottom: 1px solid var(--dr-border);
+}
+
+.timesheet-header-shadow > div {
+  border-left: 1px solid var(--dr-border);
+  border-bottom: 1px solid var(--dr-border);
+}
+
+.border-b.bg-slate-100 {
+  border: none;
+}
+
+.bg-wild-blue-yonder {
+  background: var(--dr-bg) !important;
+}
+
+.content-page .bg-mild-violet .w-full .text-center p {
+  color: var(--dr-fg) !important;
+}
+
+// =========================================================
+//  White Background Catchers
+// =========================================================
+[style*="background:#fff"],
+[style*="background-color:#fff"],
+[style*="background:white"],
+[style*="background-color:white"],
+[style*="background: #fff"],
+[style*="background-color: #fff"],
+[style*="background: white"],
+[style*="background-color: white"] {
+  background: var(--dr-bg-secondary) !important;
+}
+
+// =========================================================
+//  Utility Catchers
+// =========================================================
+[class*="bg-white"] {
+  background: var(--dr-bg-secondary) !important;
+}
+
+[class*="text-dark"] {
+  color: var(--dr-fg) !important;
+}
+
+[class*="border"] {
+  border-color: var(--dr-border) !important;
+}
+
+// =========================================================
+//  Scrollbars
+// =========================================================
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dr-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dr-selection);
+  border-radius: 10px;
+
+  &:hover {
+    background: var(--dr-purple);
+  }
+}

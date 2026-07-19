@@ -2,7 +2,7 @@ import { render } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import Icon from "./components/Icon";
 import MonthPicker from "./components/MonthPicker";
-import { initThemeSwitcher } from "./shared/theme-switcher";
+import { initTheme } from "./shared/theme-switcher";
 import { CONFIG } from "./lib/config";
 import { initDom } from "./lib/dom";
 import { loadViewState } from "./lib/data-loader";
@@ -433,7 +433,10 @@ function WorkLogSummary() {
                 <Icon name={status.icon} size={11} />
                 {status.label}
               </div>
-              <span dangerouslySetInnerHTML={{ __html: status.message }} />
+              <span
+                class="wls-status-message"
+                dangerouslySetInnerHTML={{ __html: status.message }}
+              />
             </div>
             <div class="wls-exp-actions">
               <button
@@ -492,7 +495,7 @@ function WorkLogSummary() {
   return <div ref={cardRef}>{content}</div>;
 }
 
-initThemeSwitcher();
+initTheme();
 initDom();
 const card = document.getElementById(CONFIG.cardId);
 if (card) {

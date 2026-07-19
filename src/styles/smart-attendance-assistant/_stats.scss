@@ -1,0 +1,89 @@
+// ── BODY ───────────────────────────────────────
+
+.aw-body {
+  padding: 18px;
+  background: var(--aw-body-bg);
+}
+
+// ── STAT CARDS ─────────────────────────────────
+
+.aw-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.aw-stat {
+  background: var(--aw-stat-bg);
+  border: 1px solid var(--aw-stat-border);
+  border-radius: 16px;
+  padding: 14px 12px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+
+  &:hover {
+    background: var(--aw-stat-bg-hover);
+    border-color: var(--aw-stat-border-h);
+  }
+
+  &:nth-child(1) .aw-stat-glow {
+    background: var(--dr-purple);
+  }
+  &:nth-child(2) .aw-stat-glow {
+    background: var(--dr-cyan);
+  }
+  &:nth-child(3) .aw-stat-glow {
+    background: var(--dr-pink);
+  }
+
+  &:nth-child(2) .aw-stat-value {
+    color: var(--dr-cyan);
+  }
+  &:nth-child(3) .aw-stat-value {
+    color: var(--dr-pink);
+  }
+}
+
+.aw-stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--aw-stat-label);
+  margin-bottom: 9px;
+}
+
+.aw-stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--aw-stat-value);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.aw-stat-sub {
+  font-size: 10px;
+  color: var(--aw-stat-sub);
+  margin-top: 3px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+}
+
+.aw-stat-glow {
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  opacity: 0.18;
+  pointer-events: none;
+  filter: blur(12px);
+}
+
+html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
+  opacity: 0.1;
+}

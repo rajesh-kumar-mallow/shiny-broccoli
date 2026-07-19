@@ -1,3 +1,3 @@
-import { initThemeSwitcher } from "./shared/theme-switcher.tsx";
+import { initTheme } from "./shared/theme-switcher.ts";
 
-initThemeSwitcher();
+initTheme();

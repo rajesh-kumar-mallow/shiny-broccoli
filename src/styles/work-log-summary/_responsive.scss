@@ -1,0 +1,37 @@
+// ── Responsive ──
+@media (max-width: 960px) {
+  #custom-work-log-summary-card {
+    .wls-main {
+      grid-template-columns: 1fr;
+    }
+    .wls-kpi-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .wls-insight-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .wls-inline-stats .wls-stat:nth-child(n + 8) {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  #custom-work-log-summary-card {
+    .wls-top-row {
+      flex-wrap: wrap;
+    }
+    .wls-inline-stats {
+      display: none !important;
+    }
+    .wls-kpi-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .wls-insight-row {
+      grid-template-columns: 1fr;
+    }
+    .wls-month-picker {
+      overflow-x: auto;
+    }
+  }
+}

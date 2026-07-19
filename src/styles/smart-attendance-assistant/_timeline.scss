@@ -1,0 +1,62 @@
+// ── TIMELINE BAR ───────────────────────────────
+
+.aw-timeline {
+  background: var(--aw-tl-bg);
+  border: 1px solid var(--aw-tl-border);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aw-tl-axis {
+  font-size: 9px;
+  color: var(--aw-tl-axis);
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+.aw-tl-inner {
+  flex: 1;
+}
+
+.aw-tl-segs {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.aw-tl-seg {
+  border-radius: 999px;
+  height: 100%;
+}
+
+.aw-tl-work {
+  background: linear-gradient(
+    90deg,
+    var(--dr-purple),
+    color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan))
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, var(--dr-purple) 45%, transparent);
+}
+
+.aw-tl-break {
+  background: color-mix(in srgb, var(--dr-yellow) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-yellow) 20%, transparent);
+  flex-shrink: 0;
+}
+
+.aw-tl-rem {
+  background: var(--aw-tl-rem);
+}
+
+.aw-tl-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  color: var(--aw-tl-labels);
+  margin-top: 7px;
+}

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import * as sass from "sass";
 import { getArtifactBase, STYLES } from "./shared/manifest.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -13,7 +14,7 @@ mkdirSync(join(root, "dist"), { recursive: true });
 
 for (const style of STYLES) {
   const url = `${base}/${style.file}`;
-  const css = readFileSync(join(root, "src/styles", style.src), "utf8");
+  const css = sass.compile(join(root, "src/styles", style.src), { style: "expanded" }).css;
 
   const header = `/* ==UserStyle==
 @name           ${style.name}

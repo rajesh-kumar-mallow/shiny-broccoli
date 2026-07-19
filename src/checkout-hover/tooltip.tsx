@@ -1,5 +1,5 @@
-import type { WorkModeInfo } from "./types";
-import { formatDuration } from "./shared";
+import type { SegmentKind, WorkModeInfo } from "./types";
+import { formatDuration, formatMinutesAsTime, getSegmentKindLabel } from "./shared";
 
 export function Chip({
   label,
@@ -99,6 +99,29 @@ export function WorkTooltip({
       </div>
 
       <WorkModeBadge workMode={workMode} />
+    </div>
+  );
+}
+
+export function SegmentTooltip({
+  kind,
+  startMinutes,
+  endMinutes,
+}: {
+  kind: SegmentKind;
+  startMinutes: number;
+  endMinutes: number;
+}) {
+  return (
+    <div class="cht-tooltip-body cht-seg-tooltip">
+      <div class={`cht-seg-tooltip-title cht-seg-tooltip-title--${kind}`}>
+        <span class="cht-seg-tooltip-dot"></span>
+        {getSegmentKindLabel(kind)}
+      </div>
+      <div class="cht-seg-tooltip-range">
+        {formatMinutesAsTime(startMinutes)} – {formatMinutesAsTime(endMinutes)}
+      </div>
+      <div class="cht-seg-tooltip-duration">{formatDuration(endMinutes - startMinutes)}</div>
     </div>
   );
 }

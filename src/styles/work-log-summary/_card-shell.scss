@@ -1,0 +1,123 @@
+@use "../dracula" as dr;
+@use "shared-mixins" as shared;
+
+// ── Root ──
+#custom-work-log-summary-card {
+  position: relative;
+  margin: 0 0 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--dr-fg);
+
+  * {
+    box-sizing: border-box;
+  }
+
+  // ── Card shell ──
+  .wls-card {
+    background: var(--dr-bg-secondary);
+    border: 1px solid var(--dr-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  // ── Status accent bar ──
+  .wls-accent {
+    height: 3px;
+  }
+
+  @each $suffix, $family in shared.$status-map {
+    .accent-#{$suffix} {
+      background: linear-gradient(
+        90deg,
+        dr.token($family),
+        color-mix(in srgb, dr.token($family) 60%, var(--dr-fg))
+      );
+    }
+  }
+
+  // ── Top row (always visible) ──
+  .wls-top-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+    min-height: 46px;
+
+    &:hover {
+      background: var(--dr-bg-tertiary);
+    }
+  }
+
+  .wls-chevron {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--dr-comment);
+    transition: transform 0.25s ease;
+  }
+
+  &.wls-expanded .wls-chevron {
+    transform: rotate(180deg);
+  }
+
+  .wls-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dr-fg);
+    white-space: nowrap;
+  }
+
+  // ── Top-right cluster ──
+  .wls-top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .wls-range {
+    font-size: 12px;
+    color: var(--dr-comment);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  // ── Expandable body ──
+  .wls-expandable {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+
+    .wls-body-divider {
+      display: none;
+    }
+  }
+
+  &.wls-expanded .wls-expandable {
+    max-height: 900px;
+
+    .wls-body-divider {
+      display: block;
+    }
+  }
+
+  .wls-expandable-inner {
+    padding: 0 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .wls-body-divider {
+    height: 1px;
+    background: var(--dr-bg);
+    margin: 0 14px;
+  }
+}

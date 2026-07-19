@@ -1,0 +1,60 @@
+// ── Inline stats (collapsed only) ──
+#custom-work-log-summary-card {
+  .wls-inline-stats {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    margin-left: 2px;
+  }
+
+  &.wls-expanded .wls-inline-stats {
+    display: none;
+  }
+
+  .wls-stat-sep {
+    color: var(--dr-comment);
+    font-size: 14px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  .wls-stat {
+    font-size: 13px;
+    color: var(--dr-comment);
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.12s;
+    border-bottom: 1.5px dashed transparent;
+
+    &:hover {
+      background: var(--dr-bg);
+      border-bottom-color: var(--dr-purple);
+    }
+
+    strong {
+      font-weight: 700;
+      color: var(--dr-fg);
+    }
+  }
+
+  .wls-stat-warn strong {
+    color: var(--dr-yellow);
+  }
+
+  .wls-stat-bad strong {
+    color: var(--dr-red);
+  }
+
+  .wls-stat-good strong {
+    color: var(--dr-green);
+  }
+
+  .wls-stat-purple strong {
+    color: var(--dr-purple);
+  }
+}

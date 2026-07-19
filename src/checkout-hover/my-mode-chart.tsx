@@ -1,11 +1,12 @@
 import { render } from "preact";
-import { CONFIG } from "../lib/config";
 import { fetchCheckInData } from "../lib/api";
-import { parseTimeToMinutes } from "../lib/utils";
+import { parseTimeToMinutes, waitForElement } from "../lib/utils";
 import { WORK_DAY_MINUTES } from "../shared/constants";
-import type { DayEntry, RawCheckInRow, RowTooltipData, SegmentKind, WindowRange } from "./types";
+import type { DayEntry, DaySegment, RawCheckInRow, RowTooltipData, TimelineEntry } from "./types";
 import {
   CHART_CONTAINER_ID,
+  classifySegment,
+  DAY_OFF_TYPES,
   ensureTooltip,
   formatDuration,
   formatTime,
@@ -16,22 +17,10 @@ import {
   parseDateLabel,
   parseWorkedMinutes,
 } from "./shared";
-import { WorkTooltip, DayOffTooltip } from "./tooltip";
+import { getSharedWindow, CustomTimeline } from "./timeline-components";
+import { WorkTooltip, DayOffTooltip, SegmentTooltip } from "./tooltip";
 
 const REQUIRED_WORK_MINUTES = WORK_DAY_MINUTES;
-
-const BREAK_TYPES = new Set(["Short Break", "Long Break", "break", "lunch"]);
-const DAY_OFF_TYPES = new Set([...CONFIG.dayOffLabels, "Declared Holiday"]);
-
-const classifySegment = (row: RawCheckInRow): SegmentKind | null => {
-  const type = String(row.type || "");
-
-  if (CONFIG.workTypes.has(type)) return row.work_from_office ? "wfo" : "wfh";
-  if (BREAK_TYPES.has(type)) return "break";
-  if (CONFIG.timeOffTypes.has(type)) return "timeoff";
-
-  return null;
-};
 
 const groupMyDays = (rows: RawCheckInRow[]): DayEntry[] => {
   const dayMap = new Map<string, DayEntry>();
@@ -70,37 +59,15 @@ const groupMyDays = (rows: RawCheckInRow[]): DayEntry[] => {
   return [...dayMap.values()].sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
 };
 
-const getSharedWindow = (days: DayEntry[]): WindowRange => {
-  let min = Infinity;
-  let max = -Infinity;
-
-  days.forEach((day) => {
-    day.segments.forEach((seg) => {
-      min = Math.min(min, seg.startMinutes);
-      max = Math.max(max, seg.endMinutes);
-    });
-  });
-
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
-    return { startMinutes: 9 * 60, endMinutes: 19 * 60 };
-  }
-
-  const pad = 15;
-  return {
-    startMinutes: Math.max(0, Math.floor(min / 30) * 30 - pad),
-    endMinutes: Math.min(24 * 60, Math.ceil(max / 30) * 30 + pad),
-  };
-};
-
-const getAxisLabels = (windowRange: WindowRange) => {
-  const count = 5;
-  const span = windowRange.endMinutes - windowRange.startMinutes;
-
-  return Array.from({ length: count }, (_, index) => {
-    const minutes = windowRange.startMinutes + (span * index) / (count - 1);
-    return formatTime(new Date(0, 0, 0, Math.floor(minutes / 60), Math.round(minutes % 60)));
-  });
-};
+const toTimelineEntry = (day: DayEntry, isToday: boolean): TimelineEntry => ({
+  key: day.dateLabel,
+  label: day.dateLabel,
+  sublabel: formatDuration(day.workedMinutes),
+  segments: day.segments,
+  isDayOff: day.isDayOff,
+  dayOffType: day.dayOffType,
+  isHighlighted: isToday,
+});
 
 const buildDayTooltipData = ({
   day,
@@ -109,7 +76,7 @@ const buildDayTooltipData = ({
   day: DayEntry;
   isToday: boolean;
 }): RowTooltipData => {
-  const sum = (kind: SegmentKind) =>
+  const sum = (kind: DaySegment["kind"]) =>
     day.segments
       .filter((seg) => seg.kind === kind)
       .reduce((total, seg) => total + (seg.endMinutes - seg.startMinutes), 0);
@@ -203,97 +170,6 @@ const buildDayTooltipData = ({
   };
 };
 
-function TimelineRow({
-  day,
-  windowRange,
-  isToday,
-  onHover,
-  onMove,
-  onLeave,
-}: {
-  day: DayEntry;
-  windowRange: WindowRange;
-  isToday: boolean;
-  onHover: (event: MouseEvent, day: DayEntry) => void;
-  onMove: (event: MouseEvent) => void;
-  onLeave: () => void;
-}) {
-  const span = windowRange.endMinutes - windowRange.startMinutes;
-  const toPct = (minutes: number) =>
-    Math.min(100, Math.max(0, ((minutes - windowRange.startMinutes) / span) * 100));
-
-  return (
-    <div
-      class={`cht-chart-row${isToday ? " cht-chart-row--today" : ""}`}
-      onMouseEnter={(event) => onHover(event, day)}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-    >
-      <div class="cht-chart-row-label">
-        <span class="cht-chart-row-date">{day.dateLabel}</span>
-        <span class="cht-chart-row-worked">{formatDuration(day.workedMinutes)}</span>
-      </div>
-      <div class="cht-chart-row-track">
-        {day.isDayOff ? (
-          <div class="cht-chart-seg cht-chart-seg--dayoff" style="left:0%;width:100%">
-            {day.dayOffType || "Day Off"}
-          </div>
-        ) : (
-          day.segments.map((seg, index) => (
-            <div
-              key={index}
-              class={`cht-chart-seg cht-chart-seg--${seg.kind}`}
-              style={`left:${toPct(seg.startMinutes)}%;width:${
-                toPct(seg.endMinutes) - toPct(seg.startMinutes)
-              }%`}
-            />
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CustomTimeline({
-  days,
-  windowRange,
-  onHover,
-  onMove,
-  onLeave,
-}: {
-  days: DayEntry[];
-  windowRange: WindowRange;
-  onHover: (event: MouseEvent, day: DayEntry) => void;
-  onMove: (event: MouseEvent) => void;
-  onLeave: () => void;
-}) {
-  const axisLabels = getAxisLabels(windowRange);
-  const today = new Date();
-
-  return (
-    <div class="cht-chart">
-      <div class="cht-chart-axis">
-        {axisLabels.map((label, index) => (
-          <span key={index}>{label}</span>
-        ))}
-      </div>
-      <div class="cht-chart-rows">
-        {days.map((day) => (
-          <TimelineRow
-            key={day.dateLabel}
-            day={day}
-            windowRange={windowRange}
-            isToday={isSameDate(day.dateObj, today)}
-            onHover={onHover}
-            onMove={onMove}
-            onLeave={onLeave}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const ensureChartContainer = (nativeContainer: HTMLElement): HTMLElement => {
   let container = document.getElementById(CHART_CONTAINER_ID) as HTMLElement | null;
   if (container) return container;
@@ -310,7 +186,10 @@ let myRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
 const renderCustomTimeline = async () => {
   const nativeContainer = document.getElementById("my-checkin-detail");
-  if (!nativeContainer) return;
+  if (!nativeContainer) {
+    waitForElement("#my-checkin-detail", () => renderCustomTimeline());
+    return;
+  }
 
   nativeContainer.style.display = "none";
   const chartContainer = ensureChartContainer(nativeContainer);
@@ -329,9 +208,15 @@ const renderCustomTimeline = async () => {
   const days = groupMyDays(rows);
   if (!days.length) return;
 
+  const today = new Date();
+  const entries = days.map((day) => toTimelineEntry(day, isSameDate(day.dateObj, today)));
   const windowRange = getSharedWindow(days);
+  const dayByKey = new Map(days.map((day) => [day.dateLabel, day]));
 
-  const handleHover = (event: MouseEvent, day: DayEntry) => {
+  const handleHoverLabel = (event: MouseEvent, entry: TimelineEntry) => {
+    const day = dayByKey.get(entry.key);
+    if (!day) return;
+
     const isToday = isSameDate(day.dateObj, new Date());
     const data = buildDayTooltipData({ day, isToday });
 
@@ -363,11 +248,25 @@ const renderCustomTimeline = async () => {
     moveTooltip(tooltip, event);
   };
 
+  const handleHoverSegment = (event: MouseEvent, _entry: TimelineEntry, segment: DaySegment) => {
+    render(
+      <SegmentTooltip
+        kind={segment.kind}
+        startMinutes={segment.startMinutes}
+        endMinutes={segment.endMinutes}
+      />,
+      tooltip,
+    );
+    tooltip.style.display = "block";
+    moveTooltip(tooltip, event);
+  };
+
   render(
     <CustomTimeline
-      days={days}
+      entries={entries}
       windowRange={windowRange}
-      onHover={handleHover}
+      onHoverLabel={handleHoverLabel}
+      onHoverSegment={handleHoverSegment}
       onMove={(event) => moveTooltip(tooltip, event)}
       onLeave={() => {
         tooltip.style.display = "none";
@@ -391,4 +290,8 @@ export const teardownMyMode = () => {
 
   if (myRefreshTimer) window.clearInterval(myRefreshTimer);
   myRefreshTimer = null;
+
+  const nativeContainer = document.getElementById("my-checkin-detail");
+  if (nativeContainer) nativeContainer.style.display = "";
+  document.getElementById(CHART_CONTAINER_ID)?.remove();
 };

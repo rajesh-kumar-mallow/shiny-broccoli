@@ -1,0 +1,58 @@
+#advanced-attendance-widget {
+  --aw-btn-bg: color-mix(in srgb, var(--dr-bg-secondary) 92%, transparent);
+  --aw-btn-border: color-mix(in srgb, var(--dr-border) 80%, transparent);
+  --aw-btn-shadow: 0 8px 32px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent);
+  --aw-btn-glow: radial-gradient(
+    ellipse 120% 100% at 0% 50%,
+    color-mix(in srgb, var(--dr-purple) 25%, transparent) 0%,
+    transparent 65%
+  );
+  --aw-panel-bg: color-mix(in srgb, var(--dr-bg-secondary) 94%, transparent);
+  --aw-panel-border: color-mix(in srgb, var(--dr-border) 70%, transparent);
+  --aw-panel-shadow: 0 40px 80px color-mix(in srgb, var(--dr-bg-tertiary) 55%, transparent);
+  --aw-header-bg: linear-gradient(145deg, var(--dr-bg-secondary) 0%, var(--dr-bg-tertiary) 100%);
+  --aw-aurora1:
+    radial-gradient(
+      ellipse 130% 90% at 5% -10%,
+      color-mix(in srgb, var(--dr-purple) 35%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 110% at 95% 110%,
+      color-mix(in srgb, var(--dr-cyan) 22%, transparent) 0%,
+      transparent 55%
+    );
+  --aw-grid: color-mix(in srgb, var(--dr-fg) 2.5%, transparent);
+  --aw-label-color: color-mix(in srgb, var(--dr-purple) 50%, transparent);
+  --aw-time-color: var(--dr-fg);
+  --aw-ampm-color: color-mix(in srgb, var(--dr-fg) 35%, transparent);
+  --aw-badge-color: color-mix(in srgb, var(--dr-cyan) 80%, transparent);
+  --aw-badge-bg: color-mix(in srgb, var(--dr-cyan) 8%, transparent);
+  --aw-badge-border: color-mix(in srgb, var(--dr-cyan) 18%, transparent);
+  --aw-prog-track: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-prog-label: color-mix(in srgb, var(--dr-fg) 22%, transparent);
+  --aw-body-bg: color-mix(in srgb, var(--dr-bg) 50%, transparent);
+  --aw-stat-bg: color-mix(in srgb, var(--dr-fg) 2.5%, transparent);
+  --aw-stat-border: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-stat-bg-hover: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+  --aw-stat-border-h: color-mix(in srgb, var(--dr-fg) 12%, transparent);
+  --aw-stat-label: color-mix(in srgb, var(--dr-fg) 25%, transparent);
+  --aw-stat-value: var(--dr-fg);
+  --aw-stat-sub: color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  --aw-tl-bg: color-mix(in srgb, var(--dr-fg) 2%, transparent);
+  --aw-tl-border: color-mix(in srgb, var(--dr-fg) 5%, transparent);
+  --aw-tl-axis: color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  --aw-tl-rem: color-mix(in srgb, var(--dr-fg) 6%, transparent);
+  --aw-tl-labels: color-mix(in srgb, var(--dr-fg) 18%, transparent);
+  --aw-footer-bg: color-mix(in srgb, var(--dr-bg-tertiary) 50%, transparent);
+  --aw-footer-border: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+  --aw-clock-color: color-mix(in srgb, var(--dr-fg) 38%, transparent);
+  --aw-req-color: color-mix(in srgb, var(--dr-purple) 45%, transparent);
+  --aw-req-bg: color-mix(in srgb, var(--dr-purple) 8%, transparent);
+  --aw-req-border: color-mix(in srgb, var(--dr-purple) 14%, transparent);
+  --aw-done-text: var(--dr-cyan);
+  --aw-done-icon-bg: color-mix(in srgb, var(--dr-cyan) 12%, transparent);
+  --aw-done-icon-bdr: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
+  --aw-live-dot: var(--dr-cyan);
+  --aw-live-ring: color-mix(in srgb, var(--dr-cyan) 30%, transparent);
+}

@@ -191,6 +191,43 @@ export const getLoggedInUserId = () => {
 export const getTimesheetRecordTitle = (row: Record<string, unknown>) =>
   [row.project_name, row.module_name, row.task_name].filter(Boolean).join(" / ") || "-";
 
+const pendingElementWaits = new Set<string>();
+
+// Resolves immediately if `selector` is already in the DOM, otherwise
+// watches for it to appear (bounded by `timeoutMs`) and resolves once.
+// Repeat calls for the same selector while one is already pending are a
+// no-op, so callers can invoke this freely (e.g. on every retry) without
+// piling up duplicate observers.
+export const waitForElement = <T extends Element = HTMLElement>(
+  selector: string,
+  onFound: (el: T) => void,
+  timeoutMs = 10000,
+) => {
+  const existing = document.querySelector<T>(selector);
+  if (existing) {
+    onFound(existing);
+    return;
+  }
+
+  if (pendingElementWaits.has(selector)) return;
+  pendingElementWaits.add(selector);
+
+  const stop = () => {
+    observer.disconnect();
+    pendingElementWaits.delete(selector);
+  };
+
+  const observer = new MutationObserver(() => {
+    const el = document.querySelector<T>(selector);
+    if (!el) return;
+    stop();
+    onFound(el);
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.setTimeout(stop, timeoutMs);
+};
+
 export const removePreviousArtifacts = () => {
   CONFIG.oldIds.forEach((id) => document.getElementById(id)?.remove());
 };

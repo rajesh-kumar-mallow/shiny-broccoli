@@ -1,0 +1,207 @@
+@use "sass:map";
+@use "../dracula" as dr;
+
+// Status vocabulary shared by `.wls-accent` (accent bar) and `.wls-summary`
+// (summary panel) — the five states a work-log day/period can be in. These
+// are the larger surfaces, so "mismatch" gets its own distinct orange to
+// stand apart from "warn".
+$status-map: (
+  "good": "green",
+  "warn": "yellow",
+  "mismatch": "orange",
+  "bad": "red",
+  "muted": "purple",
+);
+
+// Same vocabulary for the smaller, text-forward surfaces (`.wls-badge`,
+// `.wls-summary-label`) — "mismatch" reuses the "warn" yellow here, matching
+// the original design's distinction between the two.
+$status-map-label: (
+  "good": "green",
+  "warn": "yellow",
+  "mismatch": "yellow",
+  "bad": "red",
+  "muted": "purple",
+);
+
+// Color vocabulary shared by chips (`.chip-*`) and KPI tiles (`.kpi-*`).
+$accent-map: (
+  "purple": "purple",
+  "pink": "pink",
+  "blue": "cyan",
+  "green": "green",
+  "red": "red",
+  "amber": "yellow",
+);
+
+// `.wls-section-label` is identical wherever it's used (full details modal,
+// mini-modal).
+@mixin section-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--dr-comment);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// `.wls-empty` is identical wherever it's used.
+@mixin empty-state {
+  font-size: 13px;
+  color: var(--dr-comment);
+  padding: 8px 2px;
+  font-style: italic;
+}
+
+// `.wls-error-box` is identical wherever it's used, aside from the card-level
+// instance adding outer margin (it isn't already inset in a modal body).
+@mixin error-box($margin: null) {
+  font-size: 13px;
+  color: var(--dr-red);
+  background: color-mix(in srgb, var(--dr-red) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-red) 30%, transparent);
+  border-radius: 10px;
+  padding: 10px 13px;
+
+  @if $margin {
+    margin: $margin;
+  }
+}
+
+// `.wls-close-btn` (full modal) / `.wmm-close` (mini-modal) are the same
+// button, just with a slightly different horizontal padding.
+@mixin close-button($padding: 5px 11px) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--dr-border);
+  outline: none;
+  cursor: pointer;
+  border-radius: 8px;
+  background: var(--dr-bg-secondary);
+  color: var(--dr-comment);
+  font-size: 13px;
+  font-weight: 600;
+  padding: $padding;
+  font-family: inherit;
+  transition: all 0.12s;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--dr-bg);
+    color: var(--dr-fg);
+  }
+}
+
+// The `.wls-kpi-row` / `.wls-kpi` / `kpi-*` strip, reused by the full
+// details modal (4 columns, no red variant) and the mini-modal (3 columns,
+// adds a red variant for error states).
+@mixin kpi-strip($columns, $value-size: 17px, $extra-variants: ()) {
+  .wls-kpi-row {
+    display: grid;
+    grid-template-columns: repeat($columns, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .wls-kpi {
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid;
+  }
+
+  .kpi-slate {
+    background: var(--dr-bg-tertiary);
+    border-color: var(--dr-border);
+  }
+
+  @each $suffix in "purple", "blue", "green", "amber" {
+    .kpi-#{$suffix} {
+      @include dr.tint-bg(map.get($accent-map, $suffix));
+    }
+  }
+
+  @each $suffix in $extra-variants {
+    .kpi-#{$suffix} {
+      @include dr.tint-bg(map.get($accent-map, $suffix));
+    }
+  }
+
+  .wls-kpi-label {
+    font-size: 11px;
+    color: var(--dr-comment);
+    font-weight: 700;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .wls-kpi-value {
+    font-size: $value-size;
+    font-weight: 800;
+    color: var(--dr-fg);
+    letter-spacing: -0.3px;
+  }
+}
+
+// `.wls-table-wrap` / `table` / `th`/`td` / `.t-ok`/`.t-bad`/`.t-skip`,
+// reused by the full details modal and the mini-modal (only cell padding
+// and the header's letter-spacing differ between the two).
+@mixin data-table($cell-padding: 9px 12px, $header-letter-spacing: 0.2px) {
+  .wls-table-wrap {
+    border: 1px solid var(--dr-border);
+    border-radius: 10px;
+    overflow: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: $cell-padding;
+    border-bottom: 1px solid var(--dr-border);
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: top;
+  }
+
+  th {
+    color: var(--dr-comment);
+    background: var(--dr-bg-tertiary);
+    font-weight: 700;
+    font-size: 12px;
+
+    @if $header-letter-spacing {
+      letter-spacing: $header-letter-spacing;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: color-mix(in srgb, var(--dr-fg) 4%, transparent);
+  }
+
+  .t-ok {
+    color: var(--dr-green);
+    font-weight: 700;
+  }
+
+  .t-bad {
+    color: var(--dr-red);
+    font-weight: 700;
+  }
+
+  .t-skip {
+    color: var(--dr-comment);
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,45 @@
+// ── Buttons ──
+#custom-work-log-summary-card {
+  .wls-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid var(--dr-border);
+    outline: none;
+    cursor: pointer;
+    border-radius: 8px;
+    background: var(--dr-bg-tertiary);
+    color: var(--dr-comment);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 12px;
+    font-family: inherit;
+    transition: all 0.12s;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--dr-bg);
+      border-color: var(--dr-comment);
+      color: var(--dr-fg);
+    }
+  }
+
+  .wls-btn-primary {
+    background: linear-gradient(
+      135deg,
+      var(--dr-purple),
+      color-mix(in srgb, var(--dr-purple) 70%, var(--dr-pink))
+    );
+    color: var(--dr-bg);
+    border-color: transparent;
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--dr-purple) 30%, transparent);
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--dr-purple) 80%, var(--dr-bg-tertiary)),
+        color-mix(in srgb, var(--dr-purple) 55%, var(--dr-pink))
+      );
+    }
+  }
+}

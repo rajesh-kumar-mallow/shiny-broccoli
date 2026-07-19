@@ -1,7 +1,37 @@
-import type { Mode, WorkModeInfo } from "./types";
+import { CONFIG } from "../lib/config";
+import type { Mode, SegmentKind, WorkModeInfo } from "./types";
 
 export const TOOLTIP_ID = "checkout-hover-tooltip";
 export const CHART_CONTAINER_ID = "checkout-hover-custom-chart";
+export const ALL_CHART_CONTAINER_ID = "checkout-hover-all-custom-chart";
+
+export const BREAK_TYPES = new Set(["Short Break", "Long Break", "break", "lunch"]);
+export const DAY_OFF_TYPES = new Set([...CONFIG.dayOffLabels, "Declared Holiday"]);
+
+export const classifySegment = (row: {
+  type?: string;
+  work_from_office?: boolean | null;
+}): SegmentKind | null => {
+  const type = String(row.type || "");
+
+  if (CONFIG.workTypes.has(type)) return row.work_from_office ? "wfo" : "wfh";
+  if (BREAK_TYPES.has(type)) return "break";
+  if (CONFIG.timeOffTypes.has(type)) return "timeoff";
+
+  return null;
+};
+
+const KIND_LABELS: Record<SegmentKind, string> = {
+  wfo: "Work from office",
+  wfh: "Work from home",
+  break: "Break",
+  timeoff: "Time off",
+};
+
+export const getSegmentKindLabel = (kind: SegmentKind) => KIND_LABELS[kind];
+
+export const formatMinutesAsTime = (minutes: number) =>
+  formatTime(new Date(0, 0, 0, Math.floor(minutes / 60), Math.round(minutes % 60)));
 
 export const MONTHS: Record<string, number> = {
   jan: 0,

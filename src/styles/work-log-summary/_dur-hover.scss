@@ -1,0 +1,13 @@
+// ── Hoverable duration ──
+#custom-work-log-summary-card .wls-dur {
+  cursor: pointer;
+  border-bottom: 1.5px dashed color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  padding: 0 1px;
+  border-radius: 2px;
+  transition: background 0.1s;
+
+  &:hover {
+    background: color-mix(in srgb, var(--dr-purple) 8%, transparent);
+    border-bottom-color: var(--dr-purple);
+  }
+}

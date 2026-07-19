@@ -1,0 +1,126 @@
+// =========================================================
+//  Dracula tokens — always defined on html (no JS required)
+// =========================================================
+html {
+  --dr-bg: #282a36;
+  --dr-bg-secondary: #313442;
+  --dr-bg-tertiary: #21222c;
+  --dr-border: #44475a;
+  --dr-selection: #6272a4;
+  --dr-fg: #f8f8f2;
+  --dr-comment: #6272a4;
+  --dr-cyan: #8be9fd;
+  --dr-purple: #bd93f9;
+  --dr-pink: #ff79c6;
+  --dr-green: #6abf95;
+  --dr-red: #d16d7e;
+  --dr-yellow: #d4b483;
+  --dr-orange: #ffb86c;
+  color-scheme: dark;
+}
+
+// =========================================================
+//  Dracula tokens — dark (explicit)
+// =========================================================
+html[data-hubble-theme="dark"] {
+  --dr-bg: #282a36;
+  --dr-bg-secondary: #313442;
+  --dr-bg-tertiary: #21222c;
+  --dr-border: #44475a;
+  --dr-selection: #6272a4;
+  --dr-fg: #f8f8f2;
+  --dr-comment: #6272a4;
+  --dr-cyan: #8be9fd;
+  --dr-purple: #bd93f9;
+  --dr-pink: #ff79c6;
+  --dr-green: #6abf95;
+  --dr-red: #d16d7e;
+  --dr-yellow: #d4b483;
+  --dr-orange: #ffb86c;
+  color-scheme: dark;
+}
+
+// =========================================================
+//  Dracula tokens — light
+// =========================================================
+html[data-hubble-theme="light"] {
+  --dr-bg: #f8f8f2;
+  --dr-bg-secondary: #eff0eb;
+  --dr-bg-tertiary: #e4e5e0;
+  --dr-border: #c8c9c4;
+  --dr-selection: #6272a4;
+  --dr-fg: #282a36;
+  --dr-comment: #6272a4;
+  --dr-cyan: #0997b5;
+  --dr-purple: #7c4dff;
+  --dr-pink: #d63384;
+  --dr-green: #2d8a5e;
+  --dr-red: #c0395b;
+  --dr-yellow: #9a7b3c;
+  --dr-orange: #e67e22;
+  color-scheme: light;
+}
+
+// =========================================================
+//  Ayu Mirage tokens — explicit selection only (not part of
+//  the system-preference dark/light pair)
+// =========================================================
+html[data-hubble-theme="ayu-mirage"] {
+  --dr-bg: #1f2430;
+  --dr-bg-secondary: #242936;
+  --dr-bg-tertiary: #181c26;
+  --dr-border: #282e3b;
+  --dr-selection: #69758c;
+  --dr-fg: #cbccc6;
+  --dr-comment: #5c6773;
+  --dr-cyan: #95e6cb;
+  --dr-purple: #dfbfff;
+  --dr-pink: #f28779;
+  --dr-green: #d5ff80;
+  --dr-red: #ff6666;
+  --dr-yellow: #ffcd66;
+  --dr-orange: #ffa659;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-hubble-theme]),
+  html[data-hubble-theme="system"] {
+    --dr-bg: #282a36;
+    --dr-bg-secondary: #313442;
+    --dr-bg-tertiary: #21222c;
+    --dr-border: #44475a;
+    --dr-selection: #6272a4;
+    --dr-fg: #f8f8f2;
+    --dr-comment: #6272a4;
+    --dr-cyan: #8be9fd;
+    --dr-purple: #bd93f9;
+    --dr-pink: #ff79c6;
+    --dr-green: #6abf95;
+    --dr-red: #d16d7e;
+    --dr-yellow: #d4b483;
+    --dr-orange: #ffb86c;
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-hubble-theme]),
+  html[data-hubble-theme="system"] {
+    --dr-bg: #f8f8f2;
+    --dr-bg-secondary: #eff0eb;
+    --dr-bg-tertiary: #e4e5e0;
+    --dr-border: #c8c9c4;
+    --dr-selection: #6272a4;
+    --dr-fg: #282a36;
+    --dr-comment: #6272a4;
+    --dr-cyan: #0997b5;
+    --dr-purple: #7c4dff;
+    --dr-pink: #d63384;
+    --dr-green: #2d8a5e;
+    --dr-red: #c0395b;
+    --dr-yellow: #9a7b3c;
+    --dr-orange: #e67e22;
+    color-scheme: light;
+  }
+}

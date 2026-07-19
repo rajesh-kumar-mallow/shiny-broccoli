@@ -1,0 +1,68 @@
+// ── Light-themed popover ──
+#wls-popover-el {
+  position: fixed;
+  z-index: 99999;
+  background: var(--dr-bg-secondary);
+  color: var(--dr-fg);
+  border: 1px solid var(--dr-border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  max-width: 250px;
+  min-width: 170px;
+  transition: opacity 0.1s;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .pop-title {
+    font-weight: 700;
+    color: var(--dr-fg);
+    margin-bottom: 7px;
+    font-size: 13px;
+  }
+
+  .pop-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--dr-border);
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  .pop-lbl {
+    color: var(--dr-comment);
+  }
+
+  .pop-val {
+    color: var(--dr-fg);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .pop-note {
+    margin-top: 7px;
+    font-size: 12px;
+    color: var(--dr-comment);
+    line-height: 1.4;
+    border-top: 1px solid var(--dr-border);
+    padding-top: 6px;
+  }
+
+  .pop-hint {
+    margin-top: 5px;
+    font-size: 11px;
+    color: color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan));
+    font-weight: 600;
+  }
+}

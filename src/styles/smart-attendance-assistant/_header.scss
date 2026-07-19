@@ -1,0 +1,75 @@
+// ── HEADER ─────────────────────────────────────
+
+.aw-header {
+  padding: 26px 24px 22px;
+  position: relative;
+  overflow: hidden;
+  background: var(--aw-header-bg);
+}
+
+.aw-header-aurora {
+  position: absolute;
+  inset: 0;
+  background: var(--aw-aurora1);
+  pointer-events: none;
+}
+
+.aw-header-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--aw-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--aw-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.1));
+}
+
+.aw-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--aw-label-color);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.aw-checkout-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.aw-checkout-time {
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--aw-time-color);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.aw-checkout-ampm {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--aw-ampm-color);
+  letter-spacing: 1px;
+  align-self: flex-end;
+  padding-bottom: 5px;
+}
+
+.aw-checkin-badge {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  font-size: 11px;
+  color: var(--aw-badge-color);
+  background: var(--aw-badge-bg);
+  border: 1px solid var(--aw-badge-border);
+  border-radius: 8px;
+  padding: 5px 11px;
+  letter-spacing: 0.5px;
+}

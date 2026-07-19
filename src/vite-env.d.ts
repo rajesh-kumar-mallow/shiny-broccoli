@@ -8,7 +8,9 @@ declare const jQuery: any;
 
 interface Window {
   moment?: typeof moment;
-  __hubbleThemeSwitcherInit?: boolean;
+  __hubbleThemeInit?: boolean;
   __hubbleTimelineThemeInit?: boolean;
   __checkoutHoverHelper?: { destroy?: () => void };
+  __hubbleProfileSettingsInit?: boolean;
+  __hubbleAllModeInterceptorInit?: boolean;
 }

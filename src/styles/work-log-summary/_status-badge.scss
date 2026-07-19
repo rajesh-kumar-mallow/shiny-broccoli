@@ -1,0 +1,23 @@
+@use "../dracula" as dr;
+@use "shared-mixins" as shared;
+
+// ── Status badge ──
+#custom-work-log-summary-card {
+  .wls-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  @each $suffix, $family in shared.$status-map-label {
+    .badge-#{$suffix} {
+      @include dr.tint-soft($family);
+    }
+  }
+}

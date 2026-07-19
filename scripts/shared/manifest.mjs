@@ -25,7 +25,7 @@ export const PLAIN_SCRIPTS = [
     userscript: {
       name: "Hubble Dracula Theme Host",
       namespace: "https://hubble.mallow-tech.com",
-      description: "Applies saved Dracula theme (Auto/Dark/Light) on all Hubble pages",
+      description: "Applies saved theme (Auto/Dark/Light/Ayu Mirage) on all Hubble pages",
       author: "Neon Raven",
       match: ["*://hubble.mallow-tech.com/*"],
       "run-at": "document-start",
@@ -67,29 +67,50 @@ export const PLAIN_SCRIPTS = [
       tag: ["timesheet"],
     },
   },
+  {
+    entry: "src/ProfileSettings.tsx",
+    fileName: "hubble-profile-settings.user.js",
+    userscript: {
+      name: "Hubble Profile Settings",
+      namespace: "https://hubble.mallow-tech.com",
+      description: 'Adds a "User Config" entry to the profile sidebar for theme/preferences',
+      author: "Neon Raven",
+      match: ["https://hubble.mallow-tech.com/users/*"],
+      "run-at": "document-idle",
+      grant: "none",
+      tag: ["theme"],
+    },
+  },
 ];
 
 export const STYLES = [
   {
     name: "Check-in summary with compensation V2 (styles)",
     file: "check-in-summary-with-compensation-v2.user.css",
-    src: "work-log-summary.css",
+    src: "work-log-summary.scss",
     document: 'url-prefix("https://hubble.mallow-tech.com/attendance/my-check-in-data")',
     description: "Styles for Hubble work log summary card",
   },
   {
     name: "Hubble Smart Attendance Assistant (styles)",
     file: "hubble-smart-attendance-assistant.user.css",
-    src: "smart-attendance-assistant.css",
+    src: "smart-attendance-assistant.scss",
     document: 'domain("hubble.mallow-tech.com")',
     description: "Styles for Hubble Smart Attendance Assistant widget",
   },
   {
     name: "Hubble Dracula Theme",
     file: "hubble-theme.user.css",
-    src: "hubble-theme.css",
+    src: "hubble-theme.scss",
     document: 'domain("hubble.mallow-tech.com")',
-    description: "Dracula theme for Hubble with system/dark/light modes",
+    description: "Theme for Hubble with system/dark/light/ayu-mirage modes",
+  },
+  {
+    name: "Hubble Profile Settings (styles)",
+    file: "hubble-profile-settings.user.css",
+    src: "profile-settings.scss",
+    document: 'domain("hubble.mallow-tech.com")',
+    description: "Styles for the profile sidebar's User Config entry and settings modal",
   },
 ];
 

@@ -1,0 +1,49 @@
+// ── PROGRESS ───────────────────────────────────
+
+.aw-progress-wrap {
+  position: relative;
+}
+
+.aw-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--aw-prog-label);
+  margin-bottom: 7px;
+  font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.aw-progress-track {
+  height: 5px;
+  background: var(--aw-prog-track);
+  border-radius: 999px;
+  position: relative;
+  overflow: visible;
+}
+
+.aw-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--dr-purple), var(--dr-cyan));
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--dr-purple) 70%, transparent),
+    0 0 6px color-mix(in srgb, var(--dr-cyan) 50%, transparent);
+  position: relative;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aw-progress-dot {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--dr-cyan);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--dr-cyan) 85%, transparent),
+    0 0 0 2.5px color-mix(in srgb, var(--dr-bg-secondary) 95%, transparent);
+}
