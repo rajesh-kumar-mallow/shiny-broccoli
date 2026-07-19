@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Hubble Checkout Hover Helper
 // @namespace    https://hubble.mallow-tech.com
-// @version      1.0.0
+// @version      1.0.1
 // @author       Neon Raven
 // @description  Auto checkout helper for Hubble attendance pages
+// @license      Unlicense
 // @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js
 // @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-checkout-hover-helper.user.js
 // @match        https://hubble.mallow-tech.com/attendance/all-check-in-data*
@@ -19,9 +20,10 @@
   // ==UserScript==
   // @name         Check-in summary with compensation V2
   // @namespace    https://hubble.mallow-tech.com
-  // @version      1.0.0
+  // @version      1.0.1
   // @author       Neon Raven
   // @description  Work log summary with month filter, tooltips, and mini-modals
+  // @license      Unlicense
   // @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
   // @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
   // @match        https://hubble.mallow-tech.com/attendance/my-check-in-data*
@@ -31,6 +33,338 @@
 
   (function () {
 
+    const TIMELINE_CONTAINER_IDS = [
+      "my-checkin-detail",
+      "checkin-detail",
+      "all-checkin-detail",
+      "all-check-in-detail"
+    ];
+    const BAR_CLASSES = ["htl-row-bg", "htl-wfo", "htl-wfh", "htl-timeoff", "htl-dayoff", "htl-other"];
+    function getRgb(color) {
+      const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (!rgbMatch) return null;
+      return {
+        r: Number(rgbMatch[1]),
+        g: Number(rgbMatch[2]),
+        b: Number(rgbMatch[3])
+      };
+    }
+    function getFill(rect) {
+      const fill = (rect.getAttribute("fill") || "").trim().toLowerCase();
+      if (fill && fill !== "none") return fill;
+      return (getComputedStyle(rect).fill || "").trim().toLowerCase();
+    }
+    function isRowBackground(color) {
+      if (!color || color === "none") return false;
+      if (["#fff", "#ffffff", "white", "#f5f5f5", "#fafafa", "#f8f9fa", "#f1f5f9"].includes(color)) {
+        return true;
+      }
+      const rgb = getRgb(color);
+      if (!rgb) return false;
+      return rgb.r >= 235 && rgb.g >= 235 && rgb.b >= 235;
+    }
+    function isTimeOffColor(color) {
+      if (!color) return false;
+      if (["#ff4f00", "#ff5000", "#f4511e", "#e24301", "#ff5722"].includes(color)) return true;
+      const rgb = getRgb(color);
+      if (!rgb) return false;
+      return rgb.r >= 180 && rgb.g <= 120 && rgb.b <= 90;
+    }
+    function isDayOffColor(color) {
+      if (!color) return false;
+      if (["#cd0404", "#b91c1c", "#dc2626"].includes(color)) return true;
+      const rgb = getRgb(color);
+      if (!rgb) return false;
+      return rgb.r >= 150 && rgb.g <= 60 && rgb.b <= 60;
+    }
+    function isWfoColor(color) {
+      if (!color) return false;
+      if (["#22914b", "#22c55e", "#16a34a", "#15803d", "#008000", "green"].includes(color)) {
+        return true;
+      }
+      const rgb = getRgb(color);
+      if (!rgb) return false;
+      return rgb.g >= 110 && rgb.r <= 90 && rgb.b <= 120;
+    }
+    function isWfhColor(color) {
+      if (!color) return false;
+      if (["#0066cc", "#1976d2", "#2563eb", "#1d4ed8", "#0ea5e9", "blue"].includes(color)) {
+        return true;
+      }
+      const rgb = getRgb(color);
+      if (!rgb) return false;
+      return rgb.b >= 140 && rgb.r <= 100 && rgb.g <= 170;
+    }
+    function classifyRect(rect) {
+      const fill = getFill(rect);
+      const width = Number(rect.getAttribute("width") || 0);
+      const height = Number(rect.getAttribute("height") || 0);
+      if (width < 1 || height < 1) return null;
+      if (isRowBackground(fill)) return "htl-row-bg";
+      const area = width * height;
+      if (area < 8) return null;
+      if (isWfoColor(fill)) return "htl-wfo";
+      if (isWfhColor(fill)) return "htl-wfh";
+      if (isTimeOffColor(fill)) return "htl-timeoff";
+      if (isDayOffColor(fill)) return "htl-dayoff";
+      if (fill && fill !== "none") return "htl-other";
+      return null;
+    }
+    function themeTimelineContainer(container) {
+      if (!container) return;
+      container.querySelectorAll("svg rect").forEach((rect) => {
+        rect.classList.remove(...BAR_CLASSES);
+        const cls = classifyRect(rect);
+        if (cls) rect.classList.add(cls);
+      });
+      container.querySelectorAll("svg text").forEach((text) => {
+        text.classList.add("htl-label");
+      });
+      container.querySelectorAll("svg line, svg path").forEach((el) => {
+        const fill = (el.getAttribute("fill") || "").toLowerCase();
+        if (!fill || fill === "none") {
+          el.classList.add("htl-grid");
+        }
+      });
+    }
+    function themeAllTimelines() {
+      for (const id of TIMELINE_CONTAINER_IDS) {
+        themeTimelineContainer(document.getElementById(id));
+      }
+    }
+    function debounce(fn, ms = 120) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+      };
+    }
+    const scheduleTheme = debounce(themeAllTimelines);
+    function initTimelineTheme() {
+      if (window.__hubbleTimelineThemeInit) return;
+      window.__hubbleTimelineThemeInit = true;
+      const boot = () => {
+        themeAllTimelines();
+        const observer = new MutationObserver(() => {
+          scheduleTheme();
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["fill", "width", "height"]
+        });
+        window.addEventListener("load", scheduleTheme);
+      };
+      if (document.body) boot();
+      else document.addEventListener("DOMContentLoaded", boot);
+    }
+    const STORAGE_KEY = "hubble-theme";
+    const MODES = ["system", "dark", "light", "ayu-mirage"];
+    function getStoredMode() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return MODES.includes(stored || "") ? stored : "system";
+    }
+    function applyTheme(mode) {
+      document.documentElement.dataset.hubbleTheme = mode;
+    }
+    const COLORS_STORAGE_KEY = "hubble-custom-colors";
+    const ACCENT_KEYS = ["cyan", "purple", "pink", "green", "red", "yellow", "orange"];
+    const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
+    function getCustomColors() {
+      let parsed;
+      try {
+        parsed = JSON.parse(localStorage.getItem(COLORS_STORAGE_KEY) || "{}");
+      } catch {
+        return {};
+      }
+      if (!parsed || typeof parsed !== "object") return {};
+      const result = {};
+      for (const key of ACCENT_KEYS) {
+        const value = parsed[key];
+        if (typeof value === "string" && HEX_COLOR_RE.test(value)) result[key] = value;
+      }
+      return result;
+    }
+    function applyCustomColors(colors = getCustomColors()) {
+      const style = document.documentElement.style;
+      for (const key of ACCENT_KEYS) {
+        const value = colors[key];
+        if (value) style.setProperty(`--dr-${key}`, value);
+        else style.removeProperty(`--dr-${key}`);
+      }
+    }
+    function initTheme() {
+      if (window.__hubbleThemeInit) return;
+      window.__hubbleThemeInit = true;
+      applyTheme(getStoredMode());
+      applyCustomColors();
+      const boot = () => {
+        applyTheme(getStoredMode());
+        applyCustomColors();
+        initTimelineTheme();
+      };
+      if (document.body) boot();
+      else document.addEventListener("DOMContentLoaded", boot);
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        if (getStoredMode() === "system") applyTheme("system");
+      });
+    }
+    const WORK_DAY_MINUTES = 8 * 60;
+    const CONFIG = {
+      checkInApiUrl: "https://hubble.mallow-tech.com/attendance/get-my-check-in-data",
+      timeOffTypes: /* @__PURE__ */ new Set([
+        "Time Off",
+        "Day Start Time Off",
+        "Attendance Time Off",
+        "attendance-time-off",
+        "day-start-time-off"
+      ]),
+      workTypes: /* @__PURE__ */ new Set(["login", "Check In", "Check In Office", "Check In Home"]),
+      dayOffLabels: /* @__PURE__ */ new Set(["Day Off", "Comp Off", "On Duty"])
+    };
+    const TOOLTIP_ID = "checkout-hover-tooltip";
+    const CHART_CONTAINER_ID = "checkout-hover-custom-chart";
+    const ALL_CHART_CONTAINER_ID = "checkout-hover-all-custom-chart";
+    const BREAK_TYPES = /* @__PURE__ */ new Set(["Short Break", "Long Break", "break", "lunch"]);
+    const DAY_OFF_TYPES = /* @__PURE__ */ new Set([...CONFIG.dayOffLabels, "Declared Holiday"]);
+    const classifySegment = (row) => {
+      const type = String(row.type || "");
+      if (CONFIG.workTypes.has(type)) return row.work_from_office ? "wfo" : "wfh";
+      if (BREAK_TYPES.has(type)) return "break";
+      if (CONFIG.timeOffTypes.has(type)) return "timeoff";
+      return null;
+    };
+    const KIND_LABELS = {
+      wfo: "Work from office",
+      wfh: "Work from home",
+      break: "Break",
+      timeoff: "Time off"
+    };
+    const getSegmentKindLabel = (kind) => KIND_LABELS[kind];
+    const formatMinutesAsTime = (minutes) => formatTime(new Date(0, 0, 0, Math.floor(minutes / 60), Math.round(minutes % 60)));
+    const MONTHS = {
+      jan: 0,
+      feb: 1,
+      mar: 2,
+      apr: 3,
+      may: 4,
+      jun: 5,
+      jul: 6,
+      aug: 7,
+      sep: 8,
+      oct: 9,
+      nov: 10,
+      dec: 11
+    };
+    const getMode = () => {
+      const path = window.location.pathname;
+      if (path.includes("/attendance/my-check-in-data") || document.querySelector("#my-checkin-detail")) {
+        return "my";
+      }
+      return "all";
+    };
+    const parseWorkedMinutes = (text) => {
+      const match = text.match(/\(\s*(\d+)\s*hrs?\s+(\d+)\s*mins?\s*\)/i);
+      if (!match) return null;
+      return Number(match[1]) * 60 + Number(match[2]);
+    };
+    const getCleanLabel = (text) => text.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const parseDateLabel = (label) => {
+      const match = label.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
+      if (!match) return null;
+      const day = Number(match[1]);
+      const month = MONTHS[match[2].toLowerCase()];
+      const year = Number(match[3]);
+      if (month === void 0) return null;
+      return new Date(year, month, day);
+    };
+    const isSameDate = (a2, b2) => !!a2 && !!b2 && a2.getFullYear() === b2.getFullYear() && a2.getMonth() === b2.getMonth() && a2.getDate() === b2.getDate();
+    const formatDuration = (minutes) => {
+      const total = Math.max(0, Math.round(minutes));
+      const hrs = Math.floor(total / 60);
+      const mins = total % 60;
+      if (hrs === 0) return `${mins}m`;
+      if (mins === 0) return `${hrs}h`;
+      return `${hrs}h ${mins}m`;
+    };
+    const formatTime = (date) => date.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+    const getWorkModeInfo = ({
+      officeMinutes,
+      homeMinutes
+    }) => {
+      const office = Math.max(0, Math.round(officeMinutes));
+      const home = Math.max(0, Math.round(homeMinutes));
+      const hasOffice = office > 0;
+      const hasHome = home > 0;
+      if (hasOffice && hasHome) {
+        return {
+          type: "hybrid",
+          label: "Hybrid",
+          subtitle: `WFO ${formatDuration(office)} · WFH ${formatDuration(home)}`,
+          officeMinutes: office,
+          homeMinutes: home
+        };
+      }
+      if (hasOffice) {
+        return {
+          type: "wfo",
+          label: "WFO",
+          subtitle: `Office · ${formatDuration(office)}`,
+          officeMinutes: office,
+          homeMinutes: home
+        };
+      }
+      if (hasHome) {
+        return {
+          type: "wfh",
+          label: "WFH",
+          subtitle: `Home · ${formatDuration(home)}`,
+          officeMinutes: office,
+          homeMinutes: home
+        };
+      }
+      return {
+        type: "none",
+        label: "No check-in mode",
+        subtitle: "No WFO/WFH check-in found",
+        officeMinutes: office,
+        homeMinutes: home
+      };
+    };
+    const ensureTooltip = () => {
+      let tooltip = document.getElementById(TOOLTIP_ID);
+      if (tooltip) return tooltip;
+      tooltip = document.createElement("div");
+      tooltip.id = TOOLTIP_ID;
+      tooltip.className = "cht-tooltip";
+      Object.assign(tooltip.style, {
+        position: "fixed",
+        zIndex: "999999",
+        display: "none",
+        pointerEvents: "none"
+      });
+      document.body.appendChild(tooltip);
+      return tooltip;
+    };
+    const moveTooltip = (tooltip, event) => {
+      const offset = 16;
+      const tooltipRect = tooltip.getBoundingClientRect();
+      let left = event.clientX + offset;
+      let top = event.clientY + offset;
+      if (left + tooltipRect.width > window.innerWidth - 12) {
+        left = event.clientX - tooltipRect.width - offset;
+      }
+      if (top + tooltipRect.height > window.innerHeight - 12) {
+        top = event.clientY - tooltipRect.height - offset;
+      }
+      tooltip.style.left = `${Math.max(12, left)}px`;
+      tooltip.style.top = `${Math.max(12, top)}px`;
+    };
     var n, l, u$1, i, r, o, e, f$1, c, a, s, h, p, v, d = {}, w = [], _ = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, g = Array.isArray;
     function m(n2, l2) {
       for (var u2 in l2) n2[u2] = l2[u2];
@@ -274,319 +608,172 @@
       if ("function" == typeof e2 && (a2 = e2.defaultProps)) for (c2 in a2) void 0 === p2[c2] && (p2[c2] = a2[c2]);
       return l.vnode && l.vnode(l$1), l$1;
     }
-    const TIMELINE_CONTAINER_IDS = [
-      "my-checkin-detail",
-      "checkin-detail",
-      "all-checkin-detail",
-      "all-check-in-detail"
-    ];
-    const BAR_CLASSES = ["htl-row-bg", "htl-wfo", "htl-wfh", "htl-timeoff", "htl-dayoff", "htl-other"];
-    function getRgb$1(color) {
-      const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-      if (!rgbMatch) return null;
+    const pad = (v2) => String(v2).padStart(2, "0");
+    const stripHtml = (v2) => {
+      const d2 = document.createElement("div");
+      d2.innerHTML = String(v2 ?? "");
+      return d2.textContent || d2.innerText || "";
+    };
+    const toYMD = (d2) => `${d2.getFullYear()}-${pad(d2.getMonth() + 1)}-${pad(d2.getDate())}`;
+    const getMonthRange = (offset = 0) => {
+      const now = /* @__PURE__ */ new Date();
+      const y = now.getFullYear();
+      const m2 = now.getMonth() + offset;
+      const start = new Date(y, m2, 1);
+      const end = new Date(y, m2 + 1, 0);
+      return { startDate: toYMD(start), endDate: toYMD(end) };
+    };
+    const parseTimeToMinutes = (time) => {
+      var _a;
+      if (!time) return null;
+      const v2 = stripHtml(time).trim();
+      const m2 = v2.match(/^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s?(AM|PM))?$/i);
+      if (!m2) return null;
+      let h2 = Number(m2[1]);
+      const min = Number(m2[2]);
+      const mer = (_a = m2[3]) == null ? void 0 : _a.toUpperCase();
+      if (mer === "PM" && h2 !== 12) h2 += 12;
+      if (mer === "AM" && h2 === 12) h2 = 0;
+      return h2 * 60 + min;
+    };
+    const flattenAttendanceData = (data) => Object.entries(data || {}).flatMap(
+      ([key, rows]) => (rows || []).map((r2) => ({
+        ...r2,
+        date: r2.my_check_in_date || key
+      }))
+    );
+    const pendingElementWaits = /* @__PURE__ */ new Set();
+    const waitForElement = (selector, onFound, timeoutMs = 1e4) => {
+      const existing = document.querySelector(selector);
+      if (existing) {
+        onFound(existing);
+        return;
+      }
+      if (pendingElementWaits.has(selector)) return;
+      pendingElementWaits.add(selector);
+      const stop = () => {
+        observer.disconnect();
+        pendingElementWaits.delete(selector);
+      };
+      const observer = new MutationObserver(() => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        stop();
+        onFound(el);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      window.setTimeout(stop, timeoutMs);
+    };
+    const getSharedWindow = (entries) => {
+      let min = Infinity;
+      let max = -Infinity;
+      entries.forEach((entry) => {
+        entry.segments.forEach((seg) => {
+          min = Math.min(min, seg.startMinutes);
+          max = Math.max(max, seg.endMinutes);
+        });
+      });
+      if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+        return { startMinutes: 9 * 60, endMinutes: 19 * 60 };
+      }
+      const pad2 = 15;
       return {
-        r: Number(rgbMatch[1]),
-        g: Number(rgbMatch[2]),
-        b: Number(rgbMatch[3])
-      };
-    }
-    function getFill$1(rect) {
-      const fill = (rect.getAttribute("fill") || "").trim().toLowerCase();
-      if (fill && fill !== "none") return fill;
-      return (getComputedStyle(rect).fill || "").trim().toLowerCase();
-    }
-    function isRowBackground(color) {
-      if (!color || color === "none") return false;
-      if (["#fff", "#ffffff", "white", "#f5f5f5", "#fafafa", "#f8f9fa", "#f1f5f9"].includes(color)) {
-        return true;
-      }
-      const rgb = getRgb$1(color);
-      if (!rgb) return false;
-      return rgb.r >= 235 && rgb.g >= 235 && rgb.b >= 235;
-    }
-    function isTimeOffColor$1(color) {
-      if (!color) return false;
-      if (["#ff4f00", "#ff5000", "#f4511e", "#e24301", "#ff5722"].includes(color)) return true;
-      const rgb = getRgb$1(color);
-      if (!rgb) return false;
-      return rgb.r >= 180 && rgb.g <= 120 && rgb.b <= 90;
-    }
-    function isDayOffColor$1(color) {
-      if (!color) return false;
-      if (["#cd0404", "#b91c1c", "#dc2626"].includes(color)) return true;
-      const rgb = getRgb$1(color);
-      if (!rgb) return false;
-      return rgb.r >= 150 && rgb.g <= 60 && rgb.b <= 60;
-    }
-    function isWfoColor$1(color) {
-      if (!color) return false;
-      if (["#22914b", "#22c55e", "#16a34a", "#15803d", "#008000", "green"].includes(color)) {
-        return true;
-      }
-      const rgb = getRgb$1(color);
-      if (!rgb) return false;
-      return rgb.g >= 110 && rgb.r <= 90 && rgb.b <= 120;
-    }
-    function isWfhColor$1(color) {
-      if (!color) return false;
-      if (["#0066cc", "#1976d2", "#2563eb", "#1d4ed8", "#0ea5e9", "blue"].includes(color)) {
-        return true;
-      }
-      const rgb = getRgb$1(color);
-      if (!rgb) return false;
-      return rgb.b >= 140 && rgb.r <= 100 && rgb.g <= 170;
-    }
-    function classifyRect(rect) {
-      const fill = getFill$1(rect);
-      const width = Number(rect.getAttribute("width") || 0);
-      const height = Number(rect.getAttribute("height") || 0);
-      if (width < 1 || height < 1) return null;
-      if (isRowBackground(fill)) return "htl-row-bg";
-      const area = width * height;
-      if (area < 8) return null;
-      if (isWfoColor$1(fill)) return "htl-wfo";
-      if (isWfhColor$1(fill)) return "htl-wfh";
-      if (isTimeOffColor$1(fill)) return "htl-timeoff";
-      if (isDayOffColor$1(fill)) return "htl-dayoff";
-      if (fill && fill !== "none") return "htl-other";
-      return null;
-    }
-    function themeTimelineContainer(container) {
-      if (!container) return;
-      container.querySelectorAll("svg rect").forEach((rect) => {
-        rect.classList.remove(...BAR_CLASSES);
-        const cls = classifyRect(rect);
-        if (cls) rect.classList.add(cls);
-      });
-      container.querySelectorAll("svg text").forEach((text) => {
-        text.classList.add("htl-label");
-      });
-      container.querySelectorAll("svg line, svg path").forEach((el) => {
-        const fill = (el.getAttribute("fill") || "").toLowerCase();
-        if (!fill || fill === "none") {
-          el.classList.add("htl-grid");
-        }
-      });
-    }
-    function themeAllTimelines() {
-      for (const id of TIMELINE_CONTAINER_IDS) {
-        themeTimelineContainer(document.getElementById(id));
-      }
-    }
-    function debounce(fn, ms = 120) {
-      let timer;
-      return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), ms);
-      };
-    }
-    const scheduleTheme = debounce(themeAllTimelines);
-    function initTimelineTheme() {
-      if (window.__hubbleTimelineThemeInit) return;
-      window.__hubbleTimelineThemeInit = true;
-      const boot = () => {
-        themeAllTimelines();
-        const observer = new MutationObserver(() => {
-          scheduleTheme();
-        });
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          attributeFilter: ["fill", "width", "height"]
-        });
-        window.addEventListener("load", scheduleTheme);
-      };
-      if (document.body) boot();
-      else document.addEventListener("DOMContentLoaded", boot);
-    }
-    const STORAGE_KEY = "hubble-theme";
-    const MODES = ["system", "dark", "light"];
-    const SWITCHER_ID = "hubble-theme-switcher";
-    function getStoredMode() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return MODES.includes(stored || "") ? stored : "system";
-    }
-    function applyTheme(mode) {
-      document.documentElement.dataset.hubbleTheme = mode;
-      const root = document.getElementById(SWITCHER_ID);
-      if (root) {
-        root.querySelectorAll("[data-mode]").forEach((btn) => {
-          btn.classList.toggle("hts-active", btn.dataset.mode === mode);
-        });
-      }
-    }
-    function setMode(mode) {
-      if (!MODES.includes(mode)) return;
-      localStorage.setItem(STORAGE_KEY, mode);
-      applyTheme(mode);
-    }
-    const MODE_LABELS = {
-      system: { label: "Auto", title: "System theme" },
-      dark: { label: "Dark", title: "Dark Dracula" },
-      light: { label: "Light", title: "Light Dracula" }
-    };
-    function ThemeSwitcher() {
-      return /* @__PURE__ */ u(S, { children: MODES.map((mode) => /* @__PURE__ */ u(
-        "button",
-        {
-          type: "button",
-          "data-mode": mode,
-          title: MODE_LABELS[mode].title,
-          onClick: () => setMode(mode),
-          children: MODE_LABELS[mode].label
-        },
-        mode
-      )) });
-    }
-    function ensureSwitcher() {
-      if (document.getElementById(SWITCHER_ID)) return;
-      const root = document.createElement("div");
-      root.id = SWITCHER_ID;
-      document.body.appendChild(root);
-      R(/* @__PURE__ */ u(ThemeSwitcher, {}), root);
-      applyTheme(getStoredMode());
-    }
-    function initThemeSwitcher() {
-      if (window.__hubbleThemeSwitcherInit) return;
-      window.__hubbleThemeSwitcherInit = true;
-      applyTheme(getStoredMode());
-      const boot = () => {
-        ensureSwitcher();
-        applyTheme(getStoredMode());
-        initTimelineTheme();
-      };
-      if (document.body) boot();
-      else document.addEventListener("DOMContentLoaded", boot);
-      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-        if (getStoredMode() === "system") applyTheme("system");
-      });
-    }
-    const TOOLTIP_ID = "checkout-hover-tooltip";
-    const CHART_CONTAINER_ID = "checkout-hover-custom-chart";
-    const MONTHS = {
-      jan: 0,
-      feb: 1,
-      mar: 2,
-      apr: 3,
-      may: 4,
-      jun: 5,
-      jul: 6,
-      aug: 7,
-      sep: 8,
-      oct: 9,
-      nov: 10,
-      dec: 11
-    };
-    const getMode = () => {
-      const path = window.location.pathname;
-      if (path.includes("/attendance/my-check-in-data") || document.querySelector("#my-checkin-detail")) {
-        return "my";
-      }
-      return "all";
-    };
-    const parseWorkedMinutes = (text) => {
-      const match = text.match(/\(\s*(\d+)\s*hrs?\s+(\d+)\s*mins?\s*\)/i);
-      if (!match) return null;
-      return Number(match[1]) * 60 + Number(match[2]);
-    };
-    const getCleanLabel = (text) => text.replace(/\s*\([^)]*\)\s*$/, "").trim();
-    const parseDateLabel = (label) => {
-      const match = label.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
-      if (!match) return null;
-      const day = Number(match[1]);
-      const month = MONTHS[match[2].toLowerCase()];
-      const year = Number(match[3]);
-      if (month === void 0) return null;
-      return new Date(year, month, day);
-    };
-    const isSameDate = (a2, b2) => !!a2 && !!b2 && a2.getFullYear() === b2.getFullYear() && a2.getMonth() === b2.getMonth() && a2.getDate() === b2.getDate();
-    const formatDuration = (minutes) => {
-      const total = Math.max(0, Math.round(minutes));
-      const hrs = Math.floor(total / 60);
-      const mins = total % 60;
-      if (hrs === 0) return `${mins}m`;
-      if (mins === 0) return `${hrs}h`;
-      return `${hrs}h ${mins}m`;
-    };
-    const formatTime = (date) => date.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    });
-    const getWorkModeInfo = ({
-      officeMinutes,
-      homeMinutes
-    }) => {
-      const office = Math.max(0, Math.round(officeMinutes));
-      const home = Math.max(0, Math.round(homeMinutes));
-      const hasOffice = office > 0;
-      const hasHome = home > 0;
-      if (hasOffice && hasHome) {
-        return {
-          type: "hybrid",
-          label: "Hybrid",
-          subtitle: `WFO ${formatDuration(office)} · WFH ${formatDuration(home)}`,
-          officeMinutes: office,
-          homeMinutes: home
-        };
-      }
-      if (hasOffice) {
-        return {
-          type: "wfo",
-          label: "WFO",
-          subtitle: `Office · ${formatDuration(office)}`,
-          officeMinutes: office,
-          homeMinutes: home
-        };
-      }
-      if (hasHome) {
-        return {
-          type: "wfh",
-          label: "WFH",
-          subtitle: `Home · ${formatDuration(home)}`,
-          officeMinutes: office,
-          homeMinutes: home
-        };
-      }
-      return {
-        type: "none",
-        label: "No check-in mode",
-        subtitle: "No WFO/WFH check-in found",
-        officeMinutes: office,
-        homeMinutes: home
+        startMinutes: Math.max(0, Math.floor(min / 30) * 30 - pad2),
+        endMinutes: Math.min(24 * 60, Math.ceil(max / 30) * 30 + pad2)
       };
     };
-    const ensureTooltip = () => {
-      let tooltip = document.getElementById(TOOLTIP_ID);
-      if (tooltip) return tooltip;
-      tooltip = document.createElement("div");
-      tooltip.id = TOOLTIP_ID;
-      tooltip.className = "cht-tooltip";
-      Object.assign(tooltip.style, {
-        position: "fixed",
-        zIndex: "999999",
-        display: "none",
-        pointerEvents: "none"
-      });
-      document.body.appendChild(tooltip);
-      return tooltip;
+    const getAxisLabels = (windowRange) => {
+      const count = 5;
+      const span = windowRange.endMinutes - windowRange.startMinutes;
+      return Array.from(
+        { length: count },
+        (_2, index) => formatMinutesAsTime(windowRange.startMinutes + span * index / (count - 1))
+      );
     };
-    const moveTooltip = (tooltip, event) => {
-      const offset = 16;
-      const tooltipRect = tooltip.getBoundingClientRect();
-      let left = event.clientX + offset;
-      let top = event.clientY + offset;
-      if (left + tooltipRect.width > window.innerWidth - 12) {
-        left = event.clientX - tooltipRect.width - offset;
-      }
-      if (top + tooltipRect.height > window.innerHeight - 12) {
-        top = event.clientY - tooltipRect.height - offset;
-      }
-      tooltip.style.left = `${Math.max(12, left)}px`;
-      tooltip.style.top = `${Math.max(12, top)}px`;
-    };
-    const WORK_DAY_MINUTES = 8 * 60;
+    function TimelineRow({
+      entry,
+      windowRange,
+      onHoverLabel,
+      onHoverSegment,
+      onMove,
+      onLeave
+    }) {
+      const span = windowRange.endMinutes - windowRange.startMinutes;
+      const toPct = (minutes) => Math.min(100, Math.max(0, (minutes - windowRange.startMinutes) / span * 100));
+      const sortedSegments = [...entry.segments].sort((a2, b2) => a2.startMinutes - b2.startMinutes);
+      return /* @__PURE__ */ u("div", { class: `cht-chart-row${entry.isHighlighted ? " cht-chart-row--today" : ""}`, children: [
+        /* @__PURE__ */ u(
+          "div",
+          {
+            class: "cht-chart-row-label",
+            onMouseEnter: (event) => onHoverLabel(event, entry),
+            onMouseMove: onMove,
+            onMouseLeave: onLeave,
+            children: [
+              /* @__PURE__ */ u("span", { class: "cht-chart-row-date", title: entry.label, children: entry.label }),
+              /* @__PURE__ */ u("span", { class: "cht-chart-row-worked", children: entry.sublabel })
+            ]
+          }
+        ),
+        /* @__PURE__ */ u("div", { class: "cht-chart-row-track", children: entry.isDayOff ? /* @__PURE__ */ u(
+          "div",
+          {
+            class: "cht-chart-seg cht-chart-seg--dayoff",
+            style: "left:0%;width:100%",
+            onMouseEnter: (event) => onHoverLabel(event, entry),
+            onMouseMove: onMove,
+            onMouseLeave: onLeave,
+            children: entry.dayOffType || "Day Off"
+          }
+        ) : sortedSegments.map((seg, index) => {
+          const prev = sortedSegments[index - 1];
+          const next = sortedSegments[index + 1];
+          const touchesPrev = !!prev && prev.endMinutes === seg.startMinutes;
+          const touchesNext = !!next && next.startMinutes === seg.endMinutes;
+          const modifiers = [
+            `cht-chart-seg--${seg.kind}`,
+            touchesPrev && "cht-chart-seg--sq-l",
+            touchesNext && "cht-chart-seg--sq-r"
+          ].filter(Boolean).join(" ");
+          return /* @__PURE__ */ u(
+            "div",
+            {
+              class: `cht-chart-seg ${modifiers}`,
+              style: `left:${toPct(seg.startMinutes)}%;width:${toPct(seg.endMinutes) - toPct(seg.startMinutes)}%`,
+              onMouseEnter: (event) => onHoverSegment(event, entry, seg),
+              onMouseMove: onMove,
+              onMouseLeave: onLeave
+            },
+            index
+          );
+        }) })
+      ] });
+    }
+    function CustomTimeline({
+      entries,
+      windowRange,
+      onHoverLabel,
+      onHoverSegment,
+      onMove,
+      onLeave
+    }) {
+      const axisLabels = getAxisLabels(windowRange);
+      return /* @__PURE__ */ u("div", { class: "cht-chart", children: [
+        /* @__PURE__ */ u("div", { class: "cht-chart-axis", children: axisLabels.map((label, index) => /* @__PURE__ */ u("span", { children: label }, index)) }),
+        /* @__PURE__ */ u("div", { class: "cht-chart-rows", children: entries.map((entry) => /* @__PURE__ */ u(
+          TimelineRow,
+          {
+            entry,
+            windowRange,
+            onHoverLabel,
+            onHoverSegment,
+            onMove,
+            onLeave
+          },
+          entry.key
+        )) })
+      ] });
+    }
     function Chip({
       label,
       value,
@@ -649,6 +836,24 @@
         /* @__PURE__ */ u(WorkModeBadge, { workMode })
       ] });
     }
+    function SegmentTooltip({
+      kind,
+      startMinutes,
+      endMinutes
+    }) {
+      return /* @__PURE__ */ u("div", { class: "cht-tooltip-body cht-seg-tooltip", children: [
+        /* @__PURE__ */ u("div", { class: `cht-seg-tooltip-title cht-seg-tooltip-title--${kind}`, children: [
+          /* @__PURE__ */ u("span", { class: "cht-seg-tooltip-dot" }),
+          getSegmentKindLabel(kind)
+        ] }),
+        /* @__PURE__ */ u("div", { class: "cht-seg-tooltip-range", children: [
+          formatMinutesAsTime(startMinutes),
+          " – ",
+          formatMinutesAsTime(endMinutes)
+        ] }),
+        /* @__PURE__ */ u("div", { class: "cht-seg-tooltip-duration", children: formatDuration(endMinutes - startMinutes) })
+      ] });
+    }
     function DayOffTooltip({
       title,
       subtitle,
@@ -669,315 +874,87 @@
       ] });
     }
     const REQUIRED_WORK_MINUTES$1 = WORK_DAY_MINUTES;
-    const round = (value, precision = 3) => Math.round(value * 10 ** precision) / 10 ** precision;
-    const toNumber = (value) => Number(value || 0);
-    const median = (values) => {
-      const sorted = values.slice().sort((a2, b2) => a2 - b2);
-      return sorted[Math.floor(sorted.length / 2)];
-    };
-    const parseTimeLabelMinutes = (text) => {
-      const match = text.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-      if (!match) return null;
-      let hours = Number(match[1]);
-      const minutes = Number(match[2]);
-      const meridiem = match[3].toUpperCase();
-      if (meridiem === "PM" && hours !== 12) hours += 12;
-      if (meridiem === "AM" && hours === 12) hours = 0;
-      return hours * 60 + minutes;
-    };
-    const getRoot = () => document.querySelector("#all-checkin-detail") || document.querySelector("#all-check-in-detail") || document.body;
-    const getBBoxSafe = (el) => {
-      try {
-        return el.getBBox();
-      } catch {
-        return null;
-      }
-    };
-    const getFill = (el) => {
-      const fill = (el.getAttribute("fill") || "").trim().toLowerCase();
-      if (fill) return fill;
-      return (window.getComputedStyle(el).fill || "").trim().toLowerCase();
-    };
-    const getRgb = (color) => {
-      const rgbMatch = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
-      if (!rgbMatch) return null;
-      return {
-        r: Number(rgbMatch[1]),
-        g: Number(rgbMatch[2]),
-        b: Number(rgbMatch[3])
+    const NO_DATA_TYPE = "No Data Found for Attendance";
+    const TARGET_URL_FRAGMENT = "get-all-check-in-data";
+    const NATIVE_CONTAINER_SELECTOR = "#checkin-detail, #all-checkin-detail, #all-check-in-detail";
+    const installAjaxInterceptor = (onData) => {
+      if (window.__hubbleAllModeInterceptorInit) return;
+      window.__hubbleAllModeInterceptorInit = true;
+      const originalOpen = XMLHttpRequest.prototype.open;
+      const originalSend = XMLHttpRequest.prototype.send;
+      XMLHttpRequest.prototype.open = function(...args) {
+        this.__hpsInterceptUrl = String(args[1]);
+        return originalOpen.apply(this, args);
+      };
+      XMLHttpRequest.prototype.send = function(...args) {
+        var _a;
+        if ((_a = this.__hpsInterceptUrl) == null ? void 0 : _a.includes(TARGET_URL_FRAGMENT)) {
+          this.addEventListener("load", () => {
+            try {
+              onData(JSON.parse(this.responseText));
+            } catch (error) {
+              console.error("[checkout-hover-helper] Failed to parse all check-in data.", error);
+            }
+          });
+        }
+        return originalSend.apply(this, args);
       };
     };
-    const isTimeOffColor = (color) => {
-      if (!color) return false;
-      const normalizedColor = color.toLowerCase();
-      if (["#ff4f00", "#ff5000", "#f4511e", "#e24301", "#ff5722"].includes(normalizedColor)) {
-        return true;
+    const groupAllEmployees = (data) => Object.entries(data).map(([userIdStr, rows]) => {
+      var _a, _b;
+      const userId = Number(userIdStr);
+      const rawName = String(((_a = rows[0]) == null ? void 0 : _a.name) || "");
+      const hasNoData = rows.every((row) => row.type === NO_DATA_TYPE);
+      const dayOffRow = rows.find((row) => row.type && DAY_OFF_TYPES.has(row.type));
+      const segments = [];
+      if (!hasNoData && !dayOffRow) {
+        rows.forEach((row) => {
+          const kind = classifySegment(row);
+          if (!kind) return;
+          const startMinutes = parseTimeToMinutes(row.start_time);
+          const endMinutes = parseTimeToMinutes(row.end_time);
+          if (startMinutes === null || endMinutes === null || endMinutes <= startMinutes) return;
+          segments.push({ kind, startMinutes, endMinutes });
+        });
       }
-      const rgb = getRgb(normalizedColor);
-      if (!rgb) return false;
-      return rgb.r >= 180 && rgb.g <= 120 && rgb.b <= 90;
-    };
-    const isDayOffColor = (color) => {
-      if (!color) return false;
-      const normalizedColor = color.toLowerCase();
-      if (["#cd0404", "#b91c1c", "#dc2626"].includes(normalizedColor)) {
-        return true;
-      }
-      const rgb = getRgb(normalizedColor);
-      if (!rgb) return false;
-      return rgb.r >= 150 && rgb.g <= 60 && rgb.b <= 60;
-    };
-    const isWfoColor = (color) => {
-      if (!color) return false;
-      const normalizedColor = color.toLowerCase();
-      if (["#22914b", "#22c55e", "#16a34a", "#15803d", "#008000", "green"].includes(normalizedColor)) {
-        return true;
-      }
-      const rgb = getRgb(normalizedColor);
-      if (!rgb) return false;
-      return rgb.g >= 110 && rgb.r <= 90 && rgb.b <= 120;
-    };
-    const isWfhColor = (color) => {
-      if (!color) return false;
-      const normalizedColor = color.toLowerCase();
-      if (["#0066cc", "#1976d2", "#2563eb", "#1d4ed8", "#0ea5e9", "blue"].includes(normalizedColor)) {
-        return true;
-      }
-      const rgb = getRgb(normalizedColor);
-      if (!rgb) return false;
-      return rgb.b >= 140 && rgb.r <= 100 && rgb.g <= 170;
-    };
-    const isDayOffText = (text) => {
-      const value = text.trim().toLowerCase();
-      if (value.includes("time off")) return false;
-      return /day\s*off|week\s*off|weekly\s*off|holiday|off\s*day/i.test(value);
-    };
-    const pickAttendanceSvg = (root) => {
-      var _a;
-      const svgs = [...root.querySelectorAll("svg")];
-      return (_a = svgs.map((svg) => {
-        const workedTextCount = [...svg.querySelectorAll("text")].filter(
-          (text) => parseWorkedMinutes((text.textContent || "").trim()) !== null
-        ).length;
-        const barCount = [...svg.querySelectorAll("rect")].filter((rect) => {
-          const x2 = toNumber(rect.getAttribute("x"));
-          const width = toNumber(rect.getAttribute("width"));
-          const height = toNumber(rect.getAttribute("height"));
-          return x2 > 100 && width > 2 && height > 5;
-        }).length;
-        const verticalLineCount = [...svg.querySelectorAll("path")].filter((path) => {
-          const box = getBBoxSafe(path);
-          return box && box.x > 100 && box.width <= 2 && box.height > 20;
-        }).length;
-        return {
-          svg,
-          score: workedTextCount * 100 + barCount * 10 + verticalLineCount
-        };
-      }).sort((a2, b2) => b2.score - a2.score)[0]) == null ? void 0 : _a.svg;
-    };
-    const getVerticalGridXs = (svg) => {
-      const xs = [];
-      [...svg.querySelectorAll("path")].forEach((path) => {
-        const box = getBBoxSafe(path);
-        if (!box) return;
-        const isVerticalGridLine = box.x > 100 && box.width <= 2 && box.height > 20;
-        if (isVerticalGridLine) {
-          xs.push(round(box.x));
-        }
-      });
-      const sortedXs = xs.sort((a2, b2) => a2 - b2);
-      const uniqueXs = [];
-      sortedXs.forEach((x2) => {
-        const lastX = uniqueXs[uniqueXs.length - 1];
-        if (lastX === void 0 || Math.abs(x2 - lastX) > 1) {
-          uniqueXs.push(x2);
-        }
-      });
-      return uniqueXs;
-    };
-    const getDominantGridGap = (xs) => {
-      const diffs = xs.slice(1).map((x2, index) => x2 - xs[index]).filter((diff) => diff > 20 && diff < 220);
-      if (!diffs.length) return null;
-      const buckets = /* @__PURE__ */ new Map();
-      diffs.forEach((diff) => {
-        const key = Math.round(diff);
-        const bucket = buckets.get(key) || {
-          count: 0,
-          total: 0
-        };
-        bucket.count += 1;
-        bucket.total += diff;
-        buckets.set(key, bucket);
-      });
-      const dominantBucket = [...buckets.values()].sort((a2, b2) => b2.count - a2.count)[0];
-      return dominantBucket.total / dominantBucket.count;
-    };
-    const inferPxPerMinuteFromTimeLabels = (root) => {
-      const points = [...root.querySelectorAll("svg text")].map((text) => {
-        const minutes = parseTimeLabelMinutes(text.textContent || "");
-        if (minutes === null) return null;
-        return {
-          x: toNumber(text.getAttribute("x")),
-          minutes
-        };
-      }).filter((p2) => p2 !== null).sort((a2, b2) => a2.x - b2.x);
-      const candidates = [];
-      for (let index = 0; index < points.length - 1; index += 1) {
-        const current = points[index];
-        const next = points[index + 1];
-        const pxDiff = next.x - current.x;
-        const minuteDiff = next.minutes - current.minutes;
-        if (pxDiff > 20 && minuteDiff > 0 && minuteDiff <= 180) {
-          candidates.push(pxDiff / minuteDiff);
-        }
-      }
-      if (!candidates.length) return null;
-      return median(candidates);
-    };
-    const inferPxPerMinute = ({ root, gridXs }) => {
-      const fromTimeLabels = inferPxPerMinuteFromTimeLabels(root);
-      if (fromTimeLabels) return fromTimeLabels;
-      const gridGapPx = getDominantGridGap(gridXs);
-      if (!gridGapPx) return null;
-      return gridGapPx / 60;
-    };
-    const getAxisTicks = (root) => {
-      const ticks = [...root.querySelectorAll("svg text")].map((text) => {
-        const minutes = parseTimeLabelMinutes(text.textContent || "");
-        if (minutes === null) return null;
-        return {
-          x: toNumber(text.getAttribute("x")),
-          minutes
-        };
-      }).filter((p2) => p2 !== null).sort((a2, b2) => a2.x - b2.x);
-      const uniqueTicks = [];
-      ticks.forEach((tick) => {
-        const lastTick = uniqueTicks[uniqueTicks.length - 1];
-        if (!lastTick || Math.abs(lastTick.x - tick.x) > 1) {
-          uniqueTicks.push(tick);
-        }
-      });
-      return uniqueTicks;
-    };
-    const getNearestAxisTick = ({
-      x: x2,
-      axisTicks,
-      pxPerMinute
-    }) => {
-      const tolerancePx = Math.max(4, pxPerMinute * 4);
-      let nearestTick = null;
-      let nearestDiff = Infinity;
-      axisTicks.forEach((tick) => {
-        const diff = Math.abs(tick.x - x2);
-        if (diff < nearestDiff) {
-          nearestDiff = diff;
-          nearestTick = tick;
-        }
-      });
-      return nearestDiff <= tolerancePx ? nearestTick : null;
-    };
-    const getMinutesFromX = ({
-      x: x2,
-      axisTicks,
-      pxPerMinute
-    }) => {
-      const nearestTick = getNearestAxisTick({
-        x: x2,
-        axisTicks,
-        pxPerMinute
-      });
-      if (nearestTick) {
-        return nearestTick.minutes;
-      }
-      const previousTick = [...axisTicks].reverse().find((tick) => tick.x <= x2);
-      const nextTick = axisTicks.find((tick) => tick.x >= x2);
-      if (!previousTick || !nextTick || previousTick.x === nextTick.x) {
-        return null;
-      }
-      const progress = (x2 - previousTick.x) / (nextTick.x - previousTick.x);
-      return previousTick.minutes + progress * (nextTick.minutes - previousTick.minutes);
-    };
-    const getRectDurationMinutes = ({
-      rect,
-      axisTicks,
-      pxPerMinute
-    }) => {
-      const startMinutes = getMinutesFromX({
-        x: rect.x,
-        axisTicks,
-        pxPerMinute
-      });
-      const endMinutes = getMinutesFromX({
-        x: rect.x + rect.width,
-        axisTicks,
-        pxPerMinute
-      });
-      if (Number.isFinite(startMinutes) && Number.isFinite(endMinutes) && endMinutes >= startMinutes) {
-        return endMinutes - startMinutes;
-      }
-      return rect.width / pxPerMinute;
-    };
-    const getTotalRectDurationMinutes = ({
-      rowRects,
-      predicate,
-      axisTicks,
-      pxPerMinute
-    }) => {
-      return rowRects.filter((rect) => predicate(rect.fill)).reduce(
-        (total, rect) => total + getRectDurationMinutes({
-          rect,
-          axisTicks,
-          pxPerMinute
-        }),
-        0
-      );
-    };
-    const getRowTexts = ({ allTexts, row }) => {
-      return allTexts.filter((text) => {
-        if (text === row.text) return false;
-        const y = toNumber(text.getAttribute("y"));
-        return Math.abs(y - row.y) <= 30;
-      });
-    };
-    const buildRowTooltipData = ({
-      row,
-      rowRects,
-      rowTexts,
-      pxPerMinute,
-      axisTicks
-    }) => {
-      const timeOffMinutes = getTotalRectDurationMinutes({
-        rowRects,
-        predicate: isTimeOffColor,
-        axisTicks,
-        pxPerMinute
-      });
-      const officeMinutes = getTotalRectDurationMinutes({
-        rowRects,
-        predicate: isWfoColor,
-        axisTicks,
-        pxPerMinute
-      });
-      const homeMinutes = getTotalRectDurationMinutes({
-        rowRects,
-        predicate: isWfhColor,
-        axisTicks,
-        pxPerMinute
-      });
+      const entry = {
+        userId,
+        name: getCleanLabel(rawName),
+        team: (_b = rows[0]) == null ? void 0 : _b.team,
+        workedMinutes: parseWorkedMinutes(rawName) || 0,
+        isDayOff: !!dayOffRow,
+        dayOffType: dayOffRow == null ? void 0 : dayOffRow.type,
+        hasNoData,
+        segments
+      };
+      return entry;
+    }).sort((a2, b2) => a2.name.localeCompare(b2.name));
+    const toTimelineEntry$1 = (employee) => ({
+      key: String(employee.userId),
+      label: employee.name,
+      sublabel: employee.hasNoData ? "No data" : formatDuration(employee.workedMinutes),
+      segments: employee.segments,
+      isDayOff: employee.isDayOff,
+      dayOffType: employee.dayOffType
+    });
+    const buildEmployeeTooltipData = (employee) => {
+      const sum = (kind) => employee.segments.filter((seg) => seg.kind === kind).reduce((total, seg) => total + (seg.endMinutes - seg.startMinutes), 0);
+      const officeMinutes = sum("wfo");
+      const homeMinutes = sum("wfh");
+      const timeOffMinutes = sum("timeoff");
       const workMode = getWorkModeInfo({ officeMinutes, homeMinutes });
       const requiredMinutes = Math.max(0, Math.round(REQUIRED_WORK_MINUTES$1 - timeOffMinutes));
-      const remainingMinutes = Math.max(0, requiredMinutes - (row.workedMinutes || 0));
-      const isDayOffRow = rowTexts.some((text) => isDayOffText(text.textContent || "")) || rowRects.some((rect) => isDayOffColor(rect.fill));
+      const remainingMinutes = Math.max(0, requiredMinutes - employee.workedMinutes);
       const base = {
-        title: row.label,
-        worked: formatDuration(row.workedMinutes || 0),
+        title: employee.team ? `${employee.name} · ${employee.team}` : employee.name,
+        worked: formatDuration(employee.workedMinutes),
         timeOff: formatDuration(timeOffMinutes),
         required: formatDuration(requiredMinutes),
         remaining: formatDuration(remainingMinutes),
         workMode,
-        isDayOffRow
+        isDayOffRow: employee.isDayOff
       };
-      if (isDayOffRow) {
+      if (employee.isDayOff) {
         return {
           ...base,
           dayOffSubtitle: "No checkout needed today",
@@ -1017,190 +994,124 @@
         primaryChipLabel: "Remaining"
       };
     };
-    const applyCheckoutHover = (helperState) => {
-      helperState.isApplying = true;
-      try {
-        const root = getRoot();
-        const tooltip = ensureTooltip();
-        const svg = pickAttendanceSvg(root);
-        if (!svg) return;
-        const gridXs = getVerticalGridXs(svg);
-        const leftBoundary = gridXs.length ? Math.min(...gridXs) : 250;
-        const pxPerMinute = inferPxPerMinute({ root, gridXs });
-        const axisTicks = getAxisTicks(root);
-        if (!pxPerMinute || !axisTicks.length) {
-          console.error("Unable to calculate chart time scale.");
-          console.log("Detected grid X values:", gridXs);
-          console.log("Detected axis ticks:", axisTicks);
+    function NoDataTooltip({ name }) {
+      return /* @__PURE__ */ u("div", { class: "cht-tooltip-body", children: [
+        /* @__PURE__ */ u("div", { class: "cht-tooltip-title", children: name }),
+        /* @__PURE__ */ u("div", { class: "cht-tooltip-subtitle", children: "No attendance data for today" })
+      ] });
+    }
+    const ensureAllChartContainer = (nativeContainer) => {
+      var _a;
+      let container = document.getElementById(ALL_CHART_CONTAINER_ID);
+      if (container) return container;
+      container = document.createElement("div");
+      container.id = ALL_CHART_CONTAINER_ID;
+      (_a = nativeContainer.parentElement) == null ? void 0 : _a.insertBefore(container, nativeContainer);
+      return container;
+    };
+    let allModeActive = false;
+    let lastResponse = null;
+    const renderAllTimeline = (response) => {
+      const nativeContainer = document.querySelector(NATIVE_CONTAINER_SELECTOR);
+      if (!nativeContainer) {
+        waitForElement(NATIVE_CONTAINER_SELECTOR, () => renderAllTimeline(response));
+        return;
+      }
+      nativeContainer.style.display = "none";
+      const chartContainer = ensureAllChartContainer(nativeContainer);
+      const tooltip = ensureTooltip();
+      const employees = groupAllEmployees(response.data || {});
+      if (!employees.length) return;
+      const entries = employees.map(toTimelineEntry$1);
+      const windowRange = getSharedWindow(employees);
+      const employeeByKey = new Map(employees.map((employee) => [String(employee.userId), employee]));
+      const handleHoverLabel = (event, entry) => {
+        const employee = employeeByKey.get(entry.key);
+        if (!employee) return;
+        if (employee.hasNoData) {
+          R(/* @__PURE__ */ u(NoDataTooltip, { name: employee.name }), tooltip);
+          tooltip.style.display = "block";
+          moveTooltip(tooltip, event);
           return;
         }
-        const allTexts = [...svg.querySelectorAll("text")];
-        const rowTexts = allTexts.filter((text) => {
-          const content = (text.textContent || "").trim();
-          const x2 = toNumber(text.getAttribute("x"));
-          return parseWorkedMinutes(content) !== null && x2 < leftBoundary + 20;
-        });
-        const rows = rowTexts.map((text) => ({
-          text,
-          content: (text.textContent || "").trim(),
-          label: getCleanLabel((text.textContent || "").trim()),
-          x: toNumber(text.getAttribute("x")),
-          y: toNumber(text.getAttribute("y")),
-          workedMinutes: parseWorkedMinutes((text.textContent || "").trim())
-        }));
-        const rects = [...svg.querySelectorAll("rect")].map((rect) => ({
-          el: rect,
-          x: toNumber(rect.getAttribute("x")),
-          y: toNumber(rect.getAttribute("y")),
-          width: toNumber(rect.getAttribute("width")),
-          height: toNumber(rect.getAttribute("height")),
-          fill: getFill(rect)
-        })).filter((rect) => rect.x > leftBoundary - 5 && rect.width > 2 && rect.height > 5);
-        const findNearestRow = (rect) => {
-          const rectCenterY = rect.y + rect.height / 2;
-          let nearestRow = null;
-          let nearestDiff = Infinity;
-          rows.forEach((row) => {
-            const diff = Math.abs(row.y - rectCenterY);
-            if (diff < nearestDiff) {
-              nearestDiff = diff;
-              nearestRow = row;
-            }
-          });
-          return nearestDiff <= 45 ? nearestRow : null;
-        };
-        const rectsByRow = /* @__PURE__ */ new Map();
-        rects.forEach((rect) => {
-          var _a;
-          const row = findNearestRow(rect);
-          if (!row) return;
-          if (!rectsByRow.has(row)) {
-            rectsByRow.set(row, []);
+        const data = buildEmployeeTooltipData(employee);
+        const tooltipVNode = data.isDayOffRow ? /* @__PURE__ */ u(
+          DayOffTooltip,
+          {
+            title: data.title,
+            subtitle: data.dayOffSubtitle,
+            message: data.dayOffMessage
           }
-          (_a = rectsByRow.get(row)) == null ? void 0 : _a.push(rect);
-        });
-        const results = [];
-        rows.forEach((row) => {
-          const rowRects = rectsByRow.get(row) || [];
-          const relatedRowTexts = getRowTexts({
-            allTexts,
-            row
-          });
-          row.text.style.cursor = "";
-          row.text.style.textDecoration = "";
-          row.text.style.textDecorationLine = "";
-          row.text.style.textDecorationStyle = "";
-          row.text.style.textDecorationColor = "";
-          row.text.onmouseenter = null;
-          row.text.onmousemove = null;
-          row.text.onmouseleave = null;
-          const data = buildRowTooltipData({
-            row,
-            rowRects,
-            rowTexts: relatedRowTexts,
-            pxPerMinute,
-            axisTicks
-          });
-          const tooltipVNode = data.isDayOffRow ? /* @__PURE__ */ u(
-            DayOffTooltip,
-            {
-              title: data.title,
-              subtitle: data.dayOffSubtitle,
-              message: data.dayOffMessage
-            }
-          ) : /* @__PURE__ */ u(
-            WorkTooltip,
-            {
-              title: data.title,
-              subtitle: data.subtitle,
-              worked: data.worked,
-              timeOff: data.timeOff,
-              required: data.required,
-              remaining: data.remaining,
-              heroTitle: data.heroTitle,
-              heroValue: data.heroValue,
-              badgeText: data.badgeText,
-              status: data.status,
-              primaryChipLabel: data.primaryChipLabel,
-              workMode: data.workMode
-            }
-          );
-          row.text.onmouseenter = (event) => {
-            R(tooltipVNode, tooltip);
-            tooltip.style.display = "block";
-            moveTooltip(tooltip, event);
-          };
-          row.text.onmousemove = (event) => {
-            moveTooltip(tooltip, event);
-          };
-          row.text.onmouseleave = () => {
-            tooltip.style.display = "none";
-          };
-          results.push({
-            label: row.label,
-            workMode: data.workMode.label,
-            workModeSplit: data.workMode.subtitle,
+        ) : /* @__PURE__ */ u(
+          WorkTooltip,
+          {
+            title: data.title,
+            subtitle: data.subtitle,
             worked: data.worked,
             timeOff: data.timeOff,
             required: data.required,
             remaining: data.remaining,
-            status: data.isDayOffRow ? data.dayOffMessage : data.heroValue
-          });
-        });
-        console.table(results);
-        console.log(`Checkout hover enabled for ${results.length} rows on all check-in page`);
-      } finally {
-        window.setTimeout(() => {
-          helperState.isApplying = false;
-        }, 100);
-      }
+            heroTitle: data.heroTitle,
+            heroValue: data.heroValue,
+            badgeText: data.badgeText,
+            status: data.status,
+            primaryChipLabel: data.primaryChipLabel,
+            workMode: data.workMode
+          }
+        );
+        R(tooltipVNode, tooltip);
+        tooltip.style.display = "block";
+        moveTooltip(tooltip, event);
+      };
+      const handleHoverSegment = (event, _entry, segment) => {
+        R(
+          /* @__PURE__ */ u(
+            SegmentTooltip,
+            {
+              kind: segment.kind,
+              startMinutes: segment.startMinutes,
+              endMinutes: segment.endMinutes
+            }
+          ),
+          tooltip
+        );
+        tooltip.style.display = "block";
+        moveTooltip(tooltip, event);
+      };
+      R(
+        /* @__PURE__ */ u(
+          CustomTimeline,
+          {
+            entries,
+            windowRange,
+            onHoverLabel: handleHoverLabel,
+            onHoverSegment: handleHoverSegment,
+            onMove: (event) => moveTooltip(tooltip, event),
+            onLeave: () => {
+              tooltip.style.display = "none";
+            }
+          }
+        ),
+        chartContainer
+      );
     };
-    const CONFIG = {
-      checkInApiUrl: "https://hubble.mallow-tech.com/attendance/get-my-check-in-data",
-      timeOffTypes: /* @__PURE__ */ new Set([
-        "Time Off",
-        "Day Start Time Off",
-        "Attendance Time Off",
-        "attendance-time-off",
-        "day-start-time-off"
-      ]),
-      workTypes: /* @__PURE__ */ new Set(["login", "Check In", "Check In Office", "Check In Home"]),
-      dayOffLabels: /* @__PURE__ */ new Set(["Day Off", "Comp Off", "On Duty"])
+    const ensureAllModeChartActive = () => {
+      if (allModeActive) return;
+      allModeActive = true;
+      installAjaxInterceptor((data) => {
+        lastResponse = data;
+        renderAllTimeline(data);
+      });
+      if (lastResponse) renderAllTimeline(lastResponse);
     };
-    const pad = (v2) => String(v2).padStart(2, "0");
-    const stripHtml = (v2) => {
-      const d2 = document.createElement("div");
-      d2.innerHTML = String(v2 ?? "");
-      return d2.textContent || d2.innerText || "";
-    };
-    const toYMD = (d2) => `${d2.getFullYear()}-${pad(d2.getMonth() + 1)}-${pad(d2.getDate())}`;
-    const getMonthRange = (offset = 0) => {
-      const now = /* @__PURE__ */ new Date();
-      const y = now.getFullYear();
-      const m2 = now.getMonth() + offset;
-      const start = new Date(y, m2, 1);
-      const end = new Date(y, m2 + 1, 0);
-      return { startDate: toYMD(start), endDate: toYMD(end) };
-    };
-    const parseTimeToMinutes = (time) => {
+    const teardownAllModeChart = () => {
       var _a;
-      if (!time) return null;
-      const v2 = stripHtml(time).trim();
-      const m2 = v2.match(/^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s?(AM|PM))?$/i);
-      if (!m2) return null;
-      let h2 = Number(m2[1]);
-      const min = Number(m2[2]);
-      const mer = (_a = m2[3]) == null ? void 0 : _a.toUpperCase();
-      if (mer === "PM" && h2 !== 12) h2 += 12;
-      if (mer === "AM" && h2 === 12) h2 = 0;
-      return h2 * 60 + min;
+      if (!allModeActive) return;
+      allModeActive = false;
+      const nativeContainer = document.querySelector(NATIVE_CONTAINER_SELECTOR);
+      if (nativeContainer) nativeContainer.style.display = "";
+      (_a = document.getElementById(ALL_CHART_CONTAINER_ID)) == null ? void 0 : _a.remove();
     };
-    const flattenAttendanceData = (data) => Object.entries(data || {}).flatMap(
-      ([key, rows]) => (rows || []).map((r2) => ({
-        ...r2,
-        date: r2.my_check_in_date || key
-      }))
-    );
     const fetchCheckInData = async (offset = 0) => {
       const { startDate, endDate } = getMonthRange(offset);
       const url = new URL(CONFIG.checkInApiUrl);
@@ -1216,15 +1127,6 @@
       return { startDate, endDate, rows: flattenAttendanceData(result.data || {}) };
     };
     const REQUIRED_WORK_MINUTES = WORK_DAY_MINUTES;
-    const BREAK_TYPES = /* @__PURE__ */ new Set(["Short Break", "Long Break", "break", "lunch"]);
-    const DAY_OFF_TYPES = /* @__PURE__ */ new Set([...CONFIG.dayOffLabels, "Declared Holiday"]);
-    const classifySegment = (row) => {
-      const type = String(row.type || "");
-      if (CONFIG.workTypes.has(type)) return row.work_from_office ? "wfo" : "wfh";
-      if (BREAK_TYPES.has(type)) return "break";
-      if (CONFIG.timeOffTypes.has(type)) return "timeoff";
-      return null;
-    };
     const groupMyDays = (rows) => {
       const dayMap = /* @__PURE__ */ new Map();
       rows.forEach((row) => {
@@ -1255,32 +1157,15 @@
       });
       return [...dayMap.values()].sort((a2, b2) => b2.dateObj.getTime() - a2.dateObj.getTime());
     };
-    const getSharedWindow = (days) => {
-      let min = Infinity;
-      let max = -Infinity;
-      days.forEach((day) => {
-        day.segments.forEach((seg) => {
-          min = Math.min(min, seg.startMinutes);
-          max = Math.max(max, seg.endMinutes);
-        });
-      });
-      if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
-        return { startMinutes: 9 * 60, endMinutes: 19 * 60 };
-      }
-      const pad2 = 15;
-      return {
-        startMinutes: Math.max(0, Math.floor(min / 30) * 30 - pad2),
-        endMinutes: Math.min(24 * 60, Math.ceil(max / 30) * 30 + pad2)
-      };
-    };
-    const getAxisLabels = (windowRange) => {
-      const count = 5;
-      const span = windowRange.endMinutes - windowRange.startMinutes;
-      return Array.from({ length: count }, (_2, index) => {
-        const minutes = windowRange.startMinutes + span * index / (count - 1);
-        return formatTime(new Date(0, 0, 0, Math.floor(minutes / 60), Math.round(minutes % 60)));
-      });
-    };
+    const toTimelineEntry = (day, isToday) => ({
+      key: day.dateLabel,
+      label: day.dateLabel,
+      sublabel: formatDuration(day.workedMinutes),
+      segments: day.segments,
+      isDayOff: day.isDayOff,
+      dayOffType: day.dayOffType,
+      isHighlighted: isToday
+    });
     const buildDayTooltipData = ({
       day,
       isToday
@@ -1363,65 +1248,6 @@
         primaryChipLabel: "Shortfall"
       };
     };
-    function TimelineRow({
-      day,
-      windowRange,
-      isToday,
-      onHover,
-      onMove,
-      onLeave
-    }) {
-      const span = windowRange.endMinutes - windowRange.startMinutes;
-      const toPct = (minutes) => Math.min(100, Math.max(0, (minutes - windowRange.startMinutes) / span * 100));
-      return /* @__PURE__ */ u(
-        "div",
-        {
-          class: `cht-chart-row${isToday ? " cht-chart-row--today" : ""}`,
-          onMouseEnter: (event) => onHover(event, day),
-          onMouseMove: onMove,
-          onMouseLeave: onLeave,
-          children: [
-            /* @__PURE__ */ u("div", { class: "cht-chart-row-label", children: [
-              /* @__PURE__ */ u("span", { class: "cht-chart-row-date", children: day.dateLabel }),
-              /* @__PURE__ */ u("span", { class: "cht-chart-row-worked", children: formatDuration(day.workedMinutes) })
-            ] }),
-            /* @__PURE__ */ u("div", { class: "cht-chart-row-track", children: day.isDayOff ? /* @__PURE__ */ u("div", { class: "cht-chart-seg cht-chart-seg--dayoff", style: "left:0%;width:100%", children: day.dayOffType || "Day Off" }) : day.segments.map((seg, index) => /* @__PURE__ */ u(
-              "div",
-              {
-                class: `cht-chart-seg cht-chart-seg--${seg.kind}`,
-                style: `left:${toPct(seg.startMinutes)}%;width:${toPct(seg.endMinutes) - toPct(seg.startMinutes)}%`
-              },
-              index
-            )) })
-          ]
-        }
-      );
-    }
-    function CustomTimeline({
-      days,
-      windowRange,
-      onHover,
-      onMove,
-      onLeave
-    }) {
-      const axisLabels = getAxisLabels(windowRange);
-      const today = /* @__PURE__ */ new Date();
-      return /* @__PURE__ */ u("div", { class: "cht-chart", children: [
-        /* @__PURE__ */ u("div", { class: "cht-chart-axis", children: axisLabels.map((label, index) => /* @__PURE__ */ u("span", { children: label }, index)) }),
-        /* @__PURE__ */ u("div", { class: "cht-chart-rows", children: days.map((day) => /* @__PURE__ */ u(
-          TimelineRow,
-          {
-            day,
-            windowRange,
-            isToday: isSameDate(day.dateObj, today),
-            onHover,
-            onMove,
-            onLeave
-          },
-          day.dateLabel
-        )) })
-      ] });
-    }
     const ensureChartContainer = (nativeContainer) => {
       var _a;
       let container = document.getElementById(CHART_CONTAINER_ID);
@@ -1435,7 +1261,10 @@
     let myRefreshTimer = null;
     const renderCustomTimeline = async () => {
       const nativeContainer = document.getElementById("my-checkin-detail");
-      if (!nativeContainer) return;
+      if (!nativeContainer) {
+        waitForElement("#my-checkin-detail", () => renderCustomTimeline());
+        return;
+      }
       nativeContainer.style.display = "none";
       const chartContainer = ensureChartContainer(nativeContainer);
       const tooltip = ensureTooltip();
@@ -1449,8 +1278,13 @@
       }
       const days = groupMyDays(rows);
       if (!days.length) return;
+      const today = /* @__PURE__ */ new Date();
+      const entries = days.map((day) => toTimelineEntry(day, isSameDate(day.dateObj, today)));
       const windowRange = getSharedWindow(days);
-      const handleHover = (event, day) => {
+      const dayByKey = new Map(days.map((day) => [day.dateLabel, day]));
+      const handleHoverLabel = (event, entry) => {
+        const day = dayByKey.get(entry.key);
+        if (!day) return;
         const isToday = isSameDate(day.dateObj, /* @__PURE__ */ new Date());
         const data = buildDayTooltipData({ day, isToday });
         const tooltipVNode = data.isDayOffRow ? /* @__PURE__ */ u(
@@ -1481,13 +1315,29 @@
         tooltip.style.display = "block";
         moveTooltip(tooltip, event);
       };
+      const handleHoverSegment = (event, _entry, segment) => {
+        R(
+          /* @__PURE__ */ u(
+            SegmentTooltip,
+            {
+              kind: segment.kind,
+              startMinutes: segment.startMinutes,
+              endMinutes: segment.endMinutes
+            }
+          ),
+          tooltip
+        );
+        tooltip.style.display = "block";
+        moveTooltip(tooltip, event);
+      };
       R(
         /* @__PURE__ */ u(
           CustomTimeline,
           {
-            days,
+            entries,
             windowRange,
-            onHover: handleHover,
+            onHoverLabel: handleHoverLabel,
+            onHoverSegment: handleHoverSegment,
             onMove: (event) => moveTooltip(tooltip, event),
             onLeave: () => {
               tooltip.style.display = "none";
@@ -1504,101 +1354,54 @@
       myRefreshTimer = window.setInterval(renderCustomTimeline, 6e4);
     };
     const teardownMyMode = () => {
+      var _a;
       if (!myModeActive) return;
       myModeActive = false;
       if (myRefreshTimer) window.clearInterval(myRefreshTimer);
       myRefreshTimer = null;
+      const nativeContainer = document.getElementById("my-checkin-detail");
+      if (nativeContainer) nativeContainer.style.display = "";
+      (_a = document.getElementById(CHART_CONTAINER_ID)) == null ? void 0 : _a.remove();
     };
-    initThemeSwitcher();
+    initTheme();
     (() => {
       var _a, _b;
       (_b = (_a = window.__checkoutHoverHelper) == null ? void 0 : _a.destroy) == null ? void 0 : _b.call(_a);
-      const MAX_APPLIES_PER_WINDOW = 6;
-      const RATE_WINDOW_MS = 4e3;
-      const COOLDOWN_MS = 8e3;
       const helperState = {
-        applyTimer: null,
-        observer: null,
-        isApplying: false,
-        applyTimestamps: [],
-        circuitOpenUntil: 0,
         originalPushState: history.pushState,
         originalReplaceState: history.replaceState
       };
       window.__checkoutHoverHelper = helperState;
-      const scheduleApply = () => {
-        window.clearTimeout(helperState.applyTimer ?? void 0);
-        helperState.applyTimer = window.setTimeout(() => {
-          if (getMode() === "my") {
-            ensureMyModeActive();
-            return;
-          }
+      const applyForCurrentMode = () => {
+        if (getMode() === "my") {
+          teardownAllModeChart();
+          ensureMyModeActive();
+        } else {
           teardownMyMode();
-          const now = Date.now();
-          if (now < helperState.circuitOpenUntil) return;
-          helperState.applyTimestamps = helperState.applyTimestamps.filter(
-            (timestamp) => now - timestamp < RATE_WINDOW_MS
-          );
-          helperState.applyTimestamps.push(now);
-          if (helperState.applyTimestamps.length > MAX_APPLIES_PER_WINDOW) {
-            helperState.circuitOpenUntil = now + COOLDOWN_MS;
-            helperState.applyTimestamps = [];
-            console.warn(
-              `[checkout-hover-helper] Re-apply loop detected. Pausing auto re-sync for ${COOLDOWN_MS}ms.`
-            );
-            return;
-          }
-          applyCheckoutHover(helperState);
-        }, 250);
+          ensureAllModeChartActive();
+        }
       };
       history.pushState = function patchedPushState(...args) {
         const result = helperState.originalPushState.apply(this, args);
-        scheduleApply();
+        applyForCurrentMode();
         return result;
       };
       history.replaceState = function patchedReplaceState(...args) {
         const result = helperState.originalReplaceState.apply(this, args);
-        scheduleApply();
+        applyForCurrentMode();
         return result;
       };
-      window.addEventListener("popstate", scheduleApply);
-      window.addEventListener("resize", scheduleApply);
-      const OWN_NODE_SELECTOR = `#${TOOLTIP_ID}, #${CHART_CONTAINER_ID}`;
-      const isOwnNode = (node) => node instanceof Element && (node.matches(OWN_NODE_SELECTOR) || Boolean(node.closest(OWN_NODE_SELECTOR)));
-      const isOwnMutation = (record) => {
-        if (isOwnNode(record.target)) return true;
-        const changedNodes = [...record.addedNodes, ...record.removedNodes];
-        return changedNodes.length > 0 && changedNodes.every(isOwnNode);
-      };
-      helperState.observer = new MutationObserver((records) => {
-        if (helperState.isApplying) return;
-        if (getMode() === "my") return;
-        if (records.every(isOwnMutation)) return;
-        scheduleApply();
-      });
-      helperState.observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
+      window.addEventListener("popstate", applyForCurrentMode);
       helperState.destroy = () => {
-        var _a2, _b2, _c, _d;
-        window.clearTimeout(helperState.applyTimer ?? void 0);
-        (_b2 = (_a2 = helperState.observer) == null ? void 0 : _a2.disconnect) == null ? void 0 : _b2.call(_a2);
+        var _a2;
         teardownMyMode();
-        const nativeMyChart = document.getElementById("my-checkin-detail");
-        if (nativeMyChart) nativeMyChart.style.display = "";
-        (_c = document.getElementById(CHART_CONTAINER_ID)) == null ? void 0 : _c.remove();
+        teardownAllModeChart();
         history.pushState = helperState.originalPushState;
         history.replaceState = helperState.originalReplaceState;
-        window.removeEventListener("popstate", scheduleApply);
-        window.removeEventListener("resize", scheduleApply);
-        (_d = document.getElementById(TOOLTIP_ID)) == null ? void 0 : _d.remove();
+        window.removeEventListener("popstate", applyForCurrentMode);
+        (_a2 = document.getElementById(TOOLTIP_ID)) == null ? void 0 : _a2.remove();
       };
-      if (getMode() === "my") {
-        ensureMyModeActive();
-      } else {
-        applyCheckoutHover(helperState);
-      }
+      applyForCurrentMode();
     })();
 
   })();

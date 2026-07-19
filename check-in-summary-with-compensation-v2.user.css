@@ -1,14 +1,13 @@
 /* ==UserStyle==
 @name           Check-in summary with compensation V2 (styles)
 @namespace      https://hubble.mallow-tech.com
-@version        1.0.0
+@version        1.0.1
 @description    Styles for Hubble work log summary card
 @updateURL      https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css
 @downloadURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.css
 ==/UserStyle== */
 
 @-moz-document url-prefix("https://hubble.mallow-tech.com/attendance/my-check-in-data") {
-/* ── Root ── */
 #custom-work-log-summary-card {
   position: relative;
   margin: 0 0 12px;
@@ -19,8 +18,6 @@
 #custom-work-log-summary-card * {
   box-sizing: border-box;
 }
-
-/* ── Card shell ── */
 #custom-work-log-summary-card .wls-card {
   background: var(--dr-bg-secondary);
   border: 1px solid var(--dr-border);
@@ -28,28 +25,24 @@
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
-
-/* ── Status accent bar ── */
 #custom-work-log-summary-card .wls-accent {
   height: 3px;
 }
 #custom-work-log-summary-card .accent-good {
-  background: linear-gradient(90deg, #22c55e, #86efac);
+  background: linear-gradient(90deg, var(--dr-green), color-mix(in srgb, var(--dr-green) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .accent-warn {
-  background: linear-gradient(90deg, #f59e0b, #fcd34d);
+  background: linear-gradient(90deg, var(--dr-yellow), color-mix(in srgb, var(--dr-yellow) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .accent-mismatch {
-  background: linear-gradient(90deg, #f97316, #fb923c);
+  background: linear-gradient(90deg, var(--dr-orange), color-mix(in srgb, var(--dr-orange) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .accent-bad {
-  background: linear-gradient(90deg, #ef4444, #fca5a5);
+  background: linear-gradient(90deg, var(--dr-red), color-mix(in srgb, var(--dr-red) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .accent-muted {
-  background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+  background: linear-gradient(90deg, var(--dr-purple), color-mix(in srgb, var(--dr-purple) 60%, var(--dr-fg)));
 }
-
-/* ── Top row (always visible) ── */
 #custom-work-log-summary-card .wls-top-row {
   display: flex;
   align-items: center;
@@ -63,7 +56,6 @@
 #custom-work-log-summary-card .wls-top-row:hover {
   background: var(--dr-bg-tertiary);
 }
-
 #custom-work-log-summary-card .wls-chevron {
   display: inline-flex;
   width: 16px;
@@ -75,15 +67,51 @@
 #custom-work-log-summary-card.wls-expanded .wls-chevron {
   transform: rotate(180deg);
 }
-
 #custom-work-log-summary-card .wls-title {
   font-size: 14px;
   font-weight: 700;
   color: var(--dr-fg);
   white-space: nowrap;
 }
+#custom-work-log-summary-card .wls-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+#custom-work-log-summary-card .wls-range {
+  font-size: 12px;
+  color: var(--dr-comment);
+  font-weight: 500;
+  white-space: nowrap;
+}
+#custom-work-log-summary-card .wls-expandable {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#custom-work-log-summary-card .wls-expandable .wls-body-divider {
+  display: none;
+}
+#custom-work-log-summary-card.wls-expanded .wls-expandable {
+  max-height: 900px;
+}
+#custom-work-log-summary-card.wls-expanded .wls-expandable .wls-body-divider {
+  display: block;
+}
+#custom-work-log-summary-card .wls-expandable-inner {
+  padding: 0 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#custom-work-log-summary-card .wls-body-divider {
+  height: 1px;
+  background: var(--dr-bg);
+  margin: 0 14px;
+}
 
-/* ── Status badge ── */
 #custom-work-log-summary-card .wls-badge {
   display: inline-flex;
   align-items: center;
@@ -104,7 +132,7 @@
   color: var(--dr-yellow);
 }
 #custom-work-log-summary-card .badge-mismatch {
-  background: color-mix(in srgb, var(--dr-yellow) 18%, transparent);
+  background: color-mix(in srgb, var(--dr-yellow) 15%, transparent);
   color: var(--dr-yellow);
 }
 #custom-work-log-summary-card .badge-bad {
@@ -112,11 +140,10 @@
   color: var(--dr-red);
 }
 #custom-work-log-summary-card .badge-muted {
-  background: color-mix(in srgb, var(--dr-purple) 10%, transparent);
-  color: #6d28d9;
+  background: color-mix(in srgb, var(--dr-purple) 15%, transparent);
+  color: var(--dr-purple);
 }
 
-/* ── Month picker ── */
 #custom-work-log-summary-card .wls-month-picker {
   display: flex;
   align-items: center;
@@ -151,11 +178,10 @@
 }
 #custom-work-log-summary-card .wls-month-btn.active {
   background: var(--dr-bg-secondary);
-  color: #4f46e5;
+  color: var(--dr-purple);
   font-weight: 800;
-  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.18);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--dr-purple) 25%, transparent);
 }
-/* dot indicator on active month */
 #custom-work-log-summary-card .wls-month-btn.active::after {
   content: "";
   position: absolute;
@@ -165,17 +191,12 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #6366f1;
+  background: var(--dr-purple);
 }
-/* Past-month badge styling — slightly faded */
-#custom-work-log-summary-card .wls-month-btn.past {
-  color: var(--dr-comment);
-}
-#custom-work-log-summary-card .wls-month-btn.past:hover {
+#custom-work-log-summary-card .wls-month-btn.past, #custom-work-log-summary-card .wls-month-btn.past:hover {
   color: var(--dr-comment);
 }
 
-/* ── Inline stats (collapsed only) ── */
 #custom-work-log-summary-card .wls-inline-stats {
   display: flex;
   align-items: center;
@@ -188,9 +209,8 @@
 #custom-work-log-summary-card.wls-expanded .wls-inline-stats {
   display: none;
 }
-
 #custom-work-log-summary-card .wls-stat-sep {
-  color: #cbd5e1;
+  color: var(--dr-comment);
   font-size: 14px;
   padding: 0 6px;
   flex-shrink: 0;
@@ -207,14 +227,14 @@
 }
 #custom-work-log-summary-card .wls-stat:hover {
   background: var(--dr-bg);
-  border-bottom-color: #6366f1;
+  border-bottom-color: var(--dr-purple);
 }
 #custom-work-log-summary-card .wls-stat strong {
   font-weight: 700;
   color: var(--dr-fg);
 }
 #custom-work-log-summary-card .wls-stat-warn strong {
-  color: #b45309;
+  color: var(--dr-yellow);
 }
 #custom-work-log-summary-card .wls-stat-bad strong {
   color: var(--dr-red);
@@ -223,25 +243,21 @@
   color: var(--dr-green);
 }
 #custom-work-log-summary-card .wls-stat-purple strong {
-  color: #7c3aed;
+  color: var(--dr-purple);
 }
 
-/* ── Top-right cluster ── */
-#custom-work-log-summary-card .wls-top-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  flex-shrink: 0;
+#custom-work-log-summary-card .wls-dur {
+  cursor: pointer;
+  border-bottom: 1.5px dashed color-mix(in srgb, var(--dr-fg) 20%, transparent);
+  padding: 0 1px;
+  border-radius: 2px;
+  transition: background 0.1s;
 }
-#custom-work-log-summary-card .wls-range {
-  font-size: 12px;
-  color: var(--dr-comment);
-  font-weight: 500;
-  white-space: nowrap;
+#custom-work-log-summary-card .wls-dur:hover {
+  background: color-mix(in srgb, var(--dr-purple) 8%, transparent);
+  border-bottom-color: var(--dr-purple);
 }
 
-/* ── Buttons ── */
 #custom-work-log-summary-card .wls-btn {
   display: inline-flex;
   align-items: center;
@@ -261,49 +277,19 @@
 }
 #custom-work-log-summary-card .wls-btn:hover {
   background: var(--dr-bg);
-  border-color: #cbd5e1;
+  border-color: var(--dr-comment);
   color: var(--dr-fg);
 }
 #custom-work-log-summary-card .wls-btn-primary {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
+  background: linear-gradient(135deg, var(--dr-purple), color-mix(in srgb, var(--dr-purple) 70%, var(--dr-pink)));
+  color: var(--dr-bg);
   border-color: transparent;
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.28);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--dr-purple) 30%, transparent);
 }
 #custom-work-log-summary-card .wls-btn-primary:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--dr-purple) 80%, var(--dr-bg-tertiary)), color-mix(in srgb, var(--dr-purple) 55%, var(--dr-pink)));
 }
 
-/* ── Expandable body ── */
-#custom-work-log-summary-card .wls-expandable {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-}
-#custom-work-log-summary-card.wls-expanded .wls-expandable {
-  max-height: 900px;
-}
-
-#custom-work-log-summary-card .wls-expandable-inner {
-  padding: 0 14px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#custom-work-log-summary-card .wls-body-divider {
-  height: 1px;
-  background: var(--dr-bg);
-  margin: 0 14px;
-}
-#custom-work-log-summary-card .wls-expandable .wls-body-divider {
-  display: none;
-}
-#custom-work-log-summary-card.wls-expanded .wls-expandable .wls-body-divider {
-  display: block;
-}
-
-/* ── Metric grid ── */
 #custom-work-log-summary-card .wls-main {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -316,14 +302,13 @@
   border: 1px solid;
 }
 #custom-work-log-summary-card .wls-block-comp {
-  background: #fdf8ff;
-  border-color: #e9d5ff;
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-purple) 25%, transparent);
 }
 #custom-work-log-summary-card .wls-block-ts {
-  background: #f0f9ff;
-  border-color: #bae6fd;
+  background: color-mix(in srgb, var(--dr-cyan) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
 }
-
 #custom-work-log-summary-card .wls-block-hd {
   display: flex;
   align-items: center;
@@ -341,11 +326,11 @@
 }
 #custom-work-log-summary-card .icon-comp {
   background: color-mix(in srgb, var(--dr-purple) 12%, transparent);
-  color: #9333ea;
+  color: var(--dr-purple);
 }
 #custom-work-log-summary-card .icon-ts {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: color-mix(in srgb, var(--dr-cyan) 12%, transparent);
+  color: var(--dr-cyan);
 }
 #custom-work-log-summary-card .wls-block-label {
   font-size: 12px;
@@ -354,7 +339,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
 #custom-work-log-summary-card .wls-big {
   font-size: 22px;
   font-weight: 800;
@@ -362,10 +346,10 @@
   line-height: 1.1;
 }
 #custom-work-log-summary-card .wls-big-c {
-  color: #9333ea;
+  color: var(--dr-purple);
 }
 #custom-work-log-summary-card .wls-big-t {
-  color: #0284c7;
+  color: var(--dr-cyan);
 }
 #custom-work-log-summary-card .wls-big-sub {
   font-size: 14px;
@@ -378,14 +362,12 @@
   margin-top: 2px;
   font-weight: 500;
 }
-
-/* ── Progress bar ── */
 #custom-work-log-summary-card .wls-prog-wrap {
   margin-top: 9px;
 }
 #custom-work-log-summary-card .wls-prog-track {
   height: 5px;
-  background: #e0f2fe;
+  background: color-mix(in srgb, var(--dr-fg) 6%, transparent);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -395,13 +377,13 @@
   transition: width 0.9s cubic-bezier(0.22, 0.68, 0, 1.2);
 }
 #custom-work-log-summary-card .prog-ok {
-  background: linear-gradient(90deg, #22c55e, #4ade80);
+  background: linear-gradient(90deg, var(--dr-green), color-mix(in srgb, var(--dr-green) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .prog-over {
-  background: linear-gradient(90deg, #f59e0b, #fcd34d);
+  background: linear-gradient(90deg, var(--dr-yellow), color-mix(in srgb, var(--dr-yellow) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .prog-low {
-  background: linear-gradient(90deg, #6366f1, #a5b4fc);
+  background: linear-gradient(90deg, var(--dr-purple), color-mix(in srgb, var(--dr-purple) 60%, var(--dr-fg)));
 }
 #custom-work-log-summary-card .wls-prog-labels {
   display: flex;
@@ -411,8 +393,6 @@
   font-weight: 600;
   color: var(--dr-comment);
 }
-
-/* ── Chips ── */
 #custom-work-log-summary-card .wls-chips {
   display: flex;
   flex-wrap: wrap;
@@ -428,9 +408,7 @@
   gap: 4px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    filter 0.12s,
-    transform 0.1s;
+  transition: filter 0.12s, transform 0.1s;
   border: 1px solid;
 }
 #custom-work-log-summary-card .wls-chip:hover {
@@ -438,39 +416,34 @@
   transform: scale(1.03);
 }
 #custom-work-log-summary-card .chip-purple {
-  background: #faf5ff;
-  color: #7c3aed;
-  border-color: #ddd6fe;
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-purple) 25%, transparent);
+  color: var(--dr-purple);
 }
 #custom-work-log-summary-card .chip-pink {
-  background: #fdf2f8;
-  color: #be185d;
-  border-color: #fbcfe8;
+  background: color-mix(in srgb, var(--dr-pink) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-pink) 25%, transparent);
+  color: var(--dr-pink);
 }
 #custom-work-log-summary-card .chip-blue {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border-color: #bfdbfe;
-}
-#custom-work-log-summary-card .chip-sky {
-  background: #f0f9ff;
-  color: #0369a1;
-  border-color: #bae6fd;
+  background: color-mix(in srgb, var(--dr-cyan) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
+  color: var(--dr-cyan);
 }
 #custom-work-log-summary-card .chip-green {
-  background: #f0fdf4;
+  background: color-mix(in srgb, var(--dr-green) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-green) 25%, transparent);
   color: var(--dr-green);
-  border-color: #bbf7d0;
 }
 #custom-work-log-summary-card .chip-red {
-  background: var(--dr-bg-secondary) 1f2;
-  color: #be123c;
-  border-color: #fecdd3;
+  background: color-mix(in srgb, var(--dr-red) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-red) 25%, transparent);
+  color: var(--dr-red);
 }
 #custom-work-log-summary-card .chip-amber {
-  background: var(--dr-bg-secondary) beb;
-  color: #b45309;
-  border-color: #fde68a;
+  background: color-mix(in srgb, var(--dr-yellow) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-yellow) 25%, transparent);
+  color: var(--dr-yellow);
 }
 #custom-work-log-summary-card .chip-slate {
   background: var(--dr-bg-tertiary);
@@ -478,34 +451,45 @@
   border-color: var(--dr-border);
 }
 
-/* ── Summary panel ── */
 #custom-work-log-summary-card .wls-summary {
   border-radius: 10px;
   padding: 11px 14px;
   font-size: 13.5px;
   line-height: 1.65;
-  color: #374151;
+  color: var(--dr-fg);
   border-left: 3px solid transparent;
 }
+#custom-work-log-summary-card .wls-summary strong {
+  font-weight: 700;
+  color: var(--dr-fg);
+}
+#custom-work-log-summary-card .wls-summary em {
+  font-style: normal;
+  background: color-mix(in srgb, var(--dr-fg) 8%, transparent);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-weight: 700;
+  font-size: 13px;
+}
 #custom-work-log-summary-card .summary-good {
-  background: #f0fdf4;
-  border-left-color: #22c55e;
+  background: color-mix(in srgb, var(--dr-green) 10%, transparent);
+  border-left-color: var(--dr-green);
 }
 #custom-work-log-summary-card .summary-warn {
-  background: #fefce8;
-  border-left-color: #f59e0b;
+  background: color-mix(in srgb, var(--dr-yellow) 10%, transparent);
+  border-left-color: var(--dr-yellow);
 }
 #custom-work-log-summary-card .summary-mismatch {
-  background: var(--dr-bg-secondary) 7ed;
-  border-left-color: #f97316;
+  background: color-mix(in srgb, var(--dr-orange) 10%, transparent);
+  border-left-color: var(--dr-orange);
 }
 #custom-work-log-summary-card .summary-bad {
-  background: var(--dr-bg-secondary) 1f2;
-  border-left-color: #ef4444;
+  background: color-mix(in srgb, var(--dr-red) 10%, transparent);
+  border-left-color: var(--dr-red);
 }
 #custom-work-log-summary-card .summary-muted {
-  background: #f5f3ff;
-  border-left-color: #8b5cf6;
+  background: color-mix(in srgb, var(--dr-purple) 10%, transparent);
+  border-left-color: var(--dr-purple);
 }
 #custom-work-log-summary-card .wls-summary-label {
   font-size: 11px;
@@ -530,22 +514,9 @@
   color: var(--dr-red);
 }
 #custom-work-log-summary-card .slabel-muted {
-  color: #6d28d9;
-}
-#custom-work-log-summary-card .wls-summary strong {
-  font-weight: 700;
-  color: #111827;
-}
-#custom-work-log-summary-card .wls-summary em {
-  font-style: normal;
-  background: rgba(0, 0, 0, 0.07);
-  border-radius: 4px;
-  padding: 1px 5px;
-  font-weight: 700;
-  font-size: 13px;
+  color: var(--dr-purple);
 }
 
-/* ── Expanded actions ── */
 #custom-work-log-summary-card .wls-exp-actions {
   display: flex;
   align-items: center;
@@ -553,8 +524,6 @@
   gap: 8px;
   padding-top: 2px;
 }
-
-/* ── Loading / error ── */
 #custom-work-log-summary-card .wls-loading {
   font-size: 13px;
   color: var(--dr-comment);
@@ -566,41 +535,58 @@
 #custom-work-log-summary-card .wls-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid #e2e8f0;
-  border-top-color: #6366f1;
+  border: 2px solid var(--dr-border);
+  border-top-color: var(--dr-purple);
   border-radius: 50%;
   animation: wls-spin 0.7s linear infinite;
   flex-shrink: 0;
 }
-@keyframes wls-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 #custom-work-log-summary-card .wls-error-box {
   font-size: 13px;
   color: var(--dr-red);
-  background: var(--dr-bg-secondary) 1f2;
-  border: 1px solid #fecdd3;
+  background: color-mix(in srgb, var(--dr-red) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-red) 30%, transparent);
   border-radius: 10px;
   padding: 10px 13px;
   margin: 10px 14px;
 }
 
-/* ── Hoverable duration ── */
-#custom-work-log-summary-card .wls-dur {
-  cursor: pointer;
-  border-bottom: 1.5px dashed rgba(0, 0, 0, 0.2);
-  padding: 0 1px;
-  border-radius: 2px;
-  transition: background 0.1s;
+@keyframes wls-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
-#custom-work-log-summary-card .wls-dur:hover {
-  background: rgba(99, 102, 241, 0.08);
-  border-bottom-color: #6366f1;
+@media (max-width: 960px) {
+  #custom-work-log-summary-card .wls-main {
+    grid-template-columns: 1fr;
+  }
+  #custom-work-log-summary-card .wls-kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-insight-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-inline-stats .wls-stat:nth-child(n+8) {
+    display: none;
+  }
 }
-
-/* ── Full details modal ── */
+@media (max-width: 700px) {
+  #custom-work-log-summary-card .wls-top-row {
+    flex-wrap: wrap;
+  }
+  #custom-work-log-summary-card .wls-inline-stats {
+    display: none !important;
+  }
+  #custom-work-log-summary-card .wls-kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #custom-work-log-summary-card .wls-insight-row {
+    grid-template-columns: 1fr;
+  }
+  #custom-work-log-summary-card .wls-month-picker {
+    overflow-x: auto;
+  }
+}
 #custom-work-log-summary-card .wls-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -616,8 +602,8 @@
   display: none;
 }
 #custom-work-log-summary-card .wls-modal {
-  width: min(1080px, calc(100vw - 40px));
-  max-height: min(800px, calc(100vh - 40px));
+  width: min(1080px, 100vw - 40px);
+  max-height: min(800px, 100vh - 40px);
   display: flex;
   flex-direction: column;
   background: var(--dr-bg-secondary);
@@ -632,9 +618,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--dr-border);
   flex-shrink: 0;
-  background: #fafafa;
+  background: var(--dr-bg-tertiary);
 }
 #custom-work-log-summary-card .wls-modal-title {
   font-size: 15px;
@@ -661,6 +647,7 @@
   padding: 5px 11px;
   font-family: inherit;
   transition: all 0.12s;
+  white-space: nowrap;
 }
 #custom-work-log-summary-card .wls-close-btn:hover {
   background: var(--dr-bg);
@@ -673,8 +660,6 @@
   flex-direction: column;
   gap: 16px;
 }
-
-/* ── KPI strip ── */
 #custom-work-log-summary-card .wls-kpi-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -685,25 +670,25 @@
   padding: 10px 12px;
   border: 1px solid;
 }
-#custom-work-log-summary-card .kpi-purple {
-  background: #faf5ff;
-  border-color: #ddd6fe;
-}
-#custom-work-log-summary-card .kpi-blue {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-}
-#custom-work-log-summary-card .kpi-green {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-}
-#custom-work-log-summary-card .kpi-amber {
-  background: var(--dr-bg-secondary) beb;
-  border-color: #fde68a;
-}
 #custom-work-log-summary-card .kpi-slate {
   background: var(--dr-bg-tertiary);
   border-color: var(--dr-border);
+}
+#custom-work-log-summary-card .kpi-purple {
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-purple) 25%, transparent);
+}
+#custom-work-log-summary-card .kpi-blue {
+  background: color-mix(in srgb, var(--dr-cyan) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
+}
+#custom-work-log-summary-card .kpi-green {
+  background: color-mix(in srgb, var(--dr-green) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-green) 25%, transparent);
+}
+#custom-work-log-summary-card .kpi-amber {
+  background: color-mix(in srgb, var(--dr-yellow) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-yellow) 25%, transparent);
 }
 #custom-work-log-summary-card .wls-kpi-label {
   font-size: 11px;
@@ -719,8 +704,6 @@
   color: var(--dr-fg);
   letter-spacing: -0.3px;
 }
-
-/* ── Insights ── */
 #custom-work-log-summary-card .wls-insight-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -739,8 +722,6 @@
   color: var(--dr-fg);
   font-weight: 700;
 }
-
-/* ── Section label ── */
 #custom-work-log-summary-card .wls-section-label {
   font-size: 12px;
   font-weight: 800;
@@ -752,10 +733,8 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-/* ── Tables ── */
 #custom-work-log-summary-card .wls-table-wrap {
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--dr-border);
   border-radius: 10px;
   overflow: auto;
 }
@@ -767,14 +746,14 @@
 #custom-work-log-summary-card th,
 #custom-work-log-summary-card td {
   padding: 9px 12px;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--dr-border);
   text-align: left;
   white-space: nowrap;
   vertical-align: top;
 }
 #custom-work-log-summary-card th {
   color: var(--dr-comment);
-  background: #fafafa;
+  background: var(--dr-bg-tertiary);
   font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.2px;
@@ -783,7 +762,7 @@
   border-bottom: none;
 }
 #custom-work-log-summary-card tr:hover td {
-  background: #fafeff;
+  background: color-mix(in srgb, var(--dr-fg) 4%, transparent);
 }
 #custom-work-log-summary-card .t-ok {
   color: var(--dr-green);
@@ -794,7 +773,7 @@
   font-weight: 700;
 }
 #custom-work-log-summary-card .t-skip {
-  color: #cbd5e1;
+  color: var(--dr-comment);
   font-weight: 600;
 }
 #custom-work-log-summary-card .wls-modal-divider {
@@ -803,45 +782,11 @@
 }
 #custom-work-log-summary-card .wls-empty {
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--dr-comment);
   padding: 8px 2px;
   font-style: italic;
 }
 
-/* ── Responsive ── */
-@media (max-width: 960px) {
-  #custom-work-log-summary-card .wls-main {
-    grid-template-columns: 1fr;
-  }
-  #custom-work-log-summary-card .wls-kpi-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  #custom-work-log-summary-card .wls-insight-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  #custom-work-log-summary-card .wls-inline-stats .wls-stat:nth-child(n + 8) {
-    display: none;
-  }
-}
-@media (max-width: 700px) {
-  #custom-work-log-summary-card .wls-top-row {
-    flex-wrap: wrap;
-  }
-  #custom-work-log-summary-card .wls-inline-stats {
-    display: none !important;
-  }
-  #custom-work-log-summary-card .wls-kpi-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  #custom-work-log-summary-card .wls-insight-row {
-    grid-template-columns: 1fr;
-  }
-  #custom-work-log-summary-card .wls-month-picker {
-    overflow-x: auto;
-  }
-}
-
-/* ── Light-themed popover ── */
 #wls-popover-el {
   position: fixed;
   z-index: 99999;
@@ -852,9 +797,7 @@
   padding: 11px 13px;
   font-size: 13px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  box-shadow:
-    0 6px 24px rgba(0, 0, 0, 0.1),
-    0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
   pointer-events: none;
   max-width: 250px;
   min-width: 170px;
@@ -874,7 +817,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 3px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--dr-border);
 }
 #wls-popover-el .pop-row:last-of-type {
   border-bottom: none;
@@ -892,17 +835,16 @@
   font-size: 12px;
   color: var(--dr-comment);
   line-height: 1.4;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--dr-border);
   padding-top: 6px;
 }
 #wls-popover-el .pop-hint {
   margin-top: 5px;
   font-size: 11px;
-  color: #a5b4fc;
+  color: color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan));
   font-weight: 600;
 }
 
-/* ── Mini-modal ── */
 #wls-mini-modal-el {
   display: none;
 }
@@ -923,8 +865,8 @@
 #wls-mini-modal-el .wmm-box {
   background: var(--dr-bg-secondary);
   border-radius: 14px;
-  width: min(680px, calc(100vw - 40px));
-  max-height: min(580px, calc(100vh - 40px));
+  width: min(680px, 100vw - 40px);
+  max-height: min(580px, 100vh - 40px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -943,9 +885,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--dr-border);
   flex-shrink: 0;
-  background: #fafafa;
+  background: var(--dr-bg-tertiary);
 }
 #wls-mini-modal-el .wmm-title {
   font-size: 15px;
@@ -986,7 +928,7 @@
   gap: 12px;
 }
 #wls-mini-modal-el .wls-table-wrap {
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--dr-border);
   border-radius: 10px;
   overflow: auto;
 }
@@ -998,14 +940,14 @@
 #wls-mini-modal-el th,
 #wls-mini-modal-el td {
   padding: 8px 11px;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--dr-border);
   text-align: left;
   white-space: nowrap;
   vertical-align: top;
 }
 #wls-mini-modal-el th {
   color: var(--dr-comment);
-  background: #fafafa;
+  background: var(--dr-bg-tertiary);
   font-weight: 700;
   font-size: 12px;
 }
@@ -1013,7 +955,7 @@
   border-bottom: none;
 }
 #wls-mini-modal-el tr:hover td {
-  background: #fafeff;
+  background: color-mix(in srgb, var(--dr-fg) 4%, transparent);
 }
 #wls-mini-modal-el .t-ok {
   color: var(--dr-green);
@@ -1024,43 +966,42 @@
   font-weight: 700;
 }
 #wls-mini-modal-el .t-skip {
-  color: #cbd5e1;
+  color: var(--dr-comment);
   font-weight: 600;
 }
 #wls-mini-modal-el .wls-kpi-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  margin-bottom: 4px;
 }
 #wls-mini-modal-el .wls-kpi {
   border-radius: 10px;
   padding: 10px 12px;
   border: 1px solid;
 }
-#wls-mini-modal-el .kpi-purple {
-  background: #faf5ff;
-  border-color: #ddd6fe;
-}
-#wls-mini-modal-el .kpi-blue {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-}
-#wls-mini-modal-el .kpi-green {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-}
-#wls-mini-modal-el .kpi-amber {
-  background: var(--dr-bg-secondary) beb;
-  border-color: #fde68a;
-}
 #wls-mini-modal-el .kpi-slate {
   background: var(--dr-bg-tertiary);
   border-color: var(--dr-border);
 }
+#wls-mini-modal-el .kpi-purple {
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-purple) 25%, transparent);
+}
+#wls-mini-modal-el .kpi-blue {
+  background: color-mix(in srgb, var(--dr-cyan) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-cyan) 25%, transparent);
+}
+#wls-mini-modal-el .kpi-green {
+  background: color-mix(in srgb, var(--dr-green) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-green) 25%, transparent);
+}
+#wls-mini-modal-el .kpi-amber {
+  background: color-mix(in srgb, var(--dr-yellow) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-yellow) 25%, transparent);
+}
 #wls-mini-modal-el .kpi-red {
-  background: var(--dr-bg-secondary) 1f2;
-  border-color: #fecdd3;
+  background: color-mix(in srgb, var(--dr-red) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-red) 25%, transparent);
 }
 #wls-mini-modal-el .wls-kpi-label {
   font-size: 11px;
@@ -1074,6 +1015,10 @@
   font-size: 16px;
   font-weight: 800;
   color: var(--dr-fg);
+  letter-spacing: -0.3px;
+}
+#wls-mini-modal-el .wls-kpi-row {
+  margin-bottom: 4px;
 }
 #wls-mini-modal-el .wls-section-label {
   font-size: 12px;
@@ -1088,15 +1033,15 @@
 }
 #wls-mini-modal-el .wls-empty {
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--dr-comment);
   padding: 8px 2px;
   font-style: italic;
 }
 #wls-mini-modal-el .wls-error-box {
   font-size: 13px;
   color: var(--dr-red);
-  background: var(--dr-bg-secondary) 1f2;
-  border: 1px solid #fecdd3;
+  background: color-mix(in srgb, var(--dr-red) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dr-red) 30%, transparent);
   border-radius: 10px;
   padding: 10px 13px;
 }

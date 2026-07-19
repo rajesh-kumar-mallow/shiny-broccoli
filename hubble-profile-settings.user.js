@@ -1,17 +1,16 @@
 // ==UserScript==
-// @name         Hubble Smart Attendance Assistant
+// @name         Hubble Profile Settings
 // @namespace    https://hubble.mallow-tech.com
 // @version      1.0.1
 // @author       Neon Raven
-// @description  Smart draggable checkout assistant with Dracula-themed UI
+// @description  Adds a "User Config" entry to the profile sidebar for theme/preferences
 // @license      Unlicense
-// @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js
-// @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.js
-// @match        *://hubble.mallow-tech.com/attendance/my-check-in-data
-// @match        *://hubble.mallow-tech.com/attendance/all-check-in-data
-// @match        *://hubble.mallow-tech.com/v2/timesheet
-// @tag          timesheet
+// @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-profile-settings.user.js
+// @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-profile-settings.user.js
+// @match        https://hubble.mallow-tech.com/users/*
+// @tag          theme
 // @grant        none
+// @run-at       document-idle
 // ==/UserScript==
 
 (function () {
@@ -57,15 +56,15 @@
     function C(n2, l2) {
       this.props = n2, this.context = l2;
     }
-    function $$1(n2, l2) {
-      if (null == l2) return n2.__ ? $$1(n2.__, n2.__i + 1) : null;
+    function $(n2, l2) {
+      if (null == l2) return n2.__ ? $(n2.__, n2.__i + 1) : null;
       for (var u2; l2 < n2.__k.length; l2++) if (null != (u2 = n2.__k[l2]) && null != u2.__e) return u2.__e;
-      return "function" == typeof n2.type ? $$1(n2) : null;
+      return "function" == typeof n2.type ? $(n2) : null;
     }
     function I(n2) {
       if (n2.__P && n2.__d) {
         var u2 = n2.__v, t = u2.__e, i2 = [], r2 = [], o2 = m({}, u2);
-        o2.__v = u2.__v + 1, l.vnode && l.vnode(o2), q(n2.__P, o2, u2, n2.__n, n2.__P.namespaceURI, 32 & u2.__u ? [t] : null, i2, null == t ? $$1(u2) : t, !!(32 & u2.__u), r2), o2.__v = u2.__v, o2.__.__k[o2.__i] = o2, D(i2, o2, r2), u2.__e = u2.__ = null, o2.__e != t && P(o2);
+        o2.__v = u2.__v + 1, l.vnode && l.vnode(o2), q(n2.__P, o2, u2, n2.__n, n2.__P.namespaceURI, 32 & u2.__u ? [t] : null, i2, null == t ? $(u2) : t, !!(32 & u2.__u), r2), o2.__v = u2.__v, o2.__.__k[o2.__i] = o2, D(i2, o2, r2), u2.__e = u2.__ = null, o2.__e != t && P(o2);
       }
     }
     function P(n2) {
@@ -91,7 +90,7 @@
     function T(n2, l2, u2, t, i2) {
       var r2, o2, e2, f2, c2, a2 = u2.length, s2 = a2, h2 = 0;
       for (n2.__k = new Array(i2), r2 = 0; r2 < i2; r2++) null != (o2 = l2[r2]) && "boolean" != typeof o2 && "function" != typeof o2 ? ("string" == typeof o2 || "number" == typeof o2 || "bigint" == typeof o2 || o2.constructor == String ? o2 = n2.__k[r2] = x(null, o2, null, null, null) : g(o2) ? o2 = n2.__k[r2] = x(S, { children: o2 }, null, null, null) : void 0 === o2.constructor && o2.__b > 0 ? o2 = n2.__k[r2] = x(o2.type, o2.props, o2.key, o2.ref ? o2.ref : null, o2.__v) : n2.__k[r2] = o2, f2 = r2 + h2, o2.__ = n2, o2.__b = n2.__b + 1, e2 = null, -1 != (c2 = o2.__i = O(o2, u2, f2, s2)) && (s2--, (e2 = u2[c2]) && (e2.__u |= 2)), null == e2 || null == e2.__v ? (-1 == c2 && (i2 > a2 ? h2-- : i2 < a2 && h2++), "function" != typeof o2.type && (o2.__u |= 4)) : c2 != f2 && (c2 == f2 - 1 ? h2-- : c2 == f2 + 1 ? h2++ : (c2 > f2 ? h2-- : h2++, o2.__u |= 4))) : n2.__k[r2] = null;
-      if (s2) for (r2 = 0; r2 < a2; r2++) null != (e2 = u2[r2]) && 0 == (2 & e2.__u) && (e2.__e == t && (t = $$1(e2)), K(e2, e2));
+      if (s2) for (r2 = 0; r2 < a2; r2++) null != (e2 = u2[r2]) && 0 == (2 & e2.__u) && (e2.__e == t && (t = $(e2)), K(e2, e2));
       return t;
     }
     function j(n2, l2, u2, t) {
@@ -100,7 +99,7 @@
         for (i2 = n2.__k, r2 = 0; i2 && r2 < i2.length; r2++) i2[r2] && (i2[r2].__ = n2, l2 = j(i2[r2], l2, u2, t));
         return l2;
       }
-      n2.__e != l2 && (t && (l2 && n2.type && !l2.parentNode && (l2 = $$1(n2)), u2.insertBefore(n2.__e, l2 || null)), l2 = n2.__e);
+      n2.__e != l2 && (t && (l2 && n2.type && !l2.parentNode && (l2 = $(n2)), u2.insertBefore(n2.__e, l2 || null)), l2 = n2.__e);
       do {
         l2 = l2 && l2.nextSibling;
       } while (null != l2 && 8 == l2.nodeType);
@@ -217,7 +216,7 @@
         for (s2 in m2) y = m2[s2], "dangerouslySetInnerHTML" == s2 ? p2 = y : "children" == s2 || s2 in k2 || "value" == s2 && "defaultValue" in k2 || "checked" == s2 && "defaultChecked" in k2 || N(u2, s2, null, y, o2);
         for (s2 in k2) y = k2[s2], "children" == s2 ? v2 = y : "dangerouslySetInnerHTML" == s2 ? h2 = y : "value" == s2 ? w2 = y : "checked" == s2 ? _2 = y : c2 && "function" != typeof y || m2[s2] === y || N(u2, s2, y, m2[s2], o2);
         if (h2) c2 || p2 && (h2.__html == p2.__html || h2.__html == u2.innerHTML) || (u2.innerHTML = h2.__html), t.__k = [];
-        else if (p2 && (u2.innerHTML = ""), L("template" == t.type ? u2.content : u2, g(v2) ? v2 : [v2], t, i2, r2, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o2, e2, f2, e2 ? e2[0] : i2.__k && $$1(i2, 0), c2, a2), null != e2) for (s2 = e2.length; s2--; ) b(e2[s2]);
+        else if (p2 && (u2.innerHTML = ""), L("template" == t.type ? u2.content : u2, g(v2) ? v2 : [v2], t, i2, r2, "foreignObject" == x2 ? "http://www.w3.org/1999/xhtml" : o2, e2, f2, e2 ? e2[0] : i2.__k && $(i2, 0), c2, a2), null != e2) for (s2 = e2.length; s2--; ) b(e2[s2]);
         c2 && "textarea" != x2 || (s2 = "value", "progress" == x2 && null == w2 ? u2.removeAttribute("value") : null != w2 && (w2 !== u2[s2] || "progress" == x2 && !w2 || "option" == x2 && w2 != m2[s2]) && N(u2, s2, w2, m2[s2], o2), s2 = "checked", null != _2 && _2 != u2[s2] && N(u2, s2, _2, m2[s2], o2));
       }
       return u2;
@@ -276,6 +275,28 @@
       if ("function" == typeof e2 && (a2 = e2.defaultProps)) for (c2 in a2) void 0 === p2[c2] && (p2[c2] = a2[c2]);
       return l.vnode && l.vnode(l$1), l$1;
     }
+    const pendingElementWaits = /* @__PURE__ */ new Set();
+    const waitForElement = (selector, onFound, timeoutMs = 1e4) => {
+      const existing = document.querySelector(selector);
+      if (existing) {
+        onFound(existing);
+        return;
+      }
+      if (pendingElementWaits.has(selector)) return;
+      pendingElementWaits.add(selector);
+      const stop = () => {
+        observer.disconnect();
+        pendingElementWaits.delete(selector);
+      };
+      const observer = new MutationObserver(() => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        stop();
+        onFound(el);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      window.setTimeout(stop, timeoutMs);
+    };
     const TIMELINE_CONTAINER_IDS = [
       "my-checkin-detail",
       "checkin-detail",
@@ -386,7 +407,7 @@
     function initTimelineTheme() {
       if (window.__hubbleTimelineThemeInit) return;
       window.__hubbleTimelineThemeInit = true;
-      const boot = () => {
+      const boot2 = () => {
         themeAllTimelines();
         const observer = new MutationObserver(() => {
           scheduleTheme();
@@ -399,8 +420,8 @@
         });
         window.addEventListener("load", scheduleTheme);
       };
-      if (document.body) boot();
-      else document.addEventListener("DOMContentLoaded", boot);
+      if (document.body) boot2();
+      else document.addEventListener("DOMContentLoaded", boot2);
     }
     const STORAGE_KEY = "hubble-theme";
     const MODES = ["system", "dark", "light", "ayu-mirage"];
@@ -410,6 +431,11 @@
     }
     function applyTheme(mode) {
       document.documentElement.dataset.hubbleTheme = mode;
+    }
+    function setMode(mode) {
+      if (!MODES.includes(mode)) return;
+      localStorage.setItem(STORAGE_KEY, mode);
+      applyTheme(mode);
     }
     const COLORS_STORAGE_KEY = "hubble-custom-colors";
     const ACCENT_KEYS = ["cyan", "purple", "pink", "green", "red", "yellow", "orange"];
@@ -437,382 +463,341 @@
         else style.removeProperty(`--dr-${key}`);
       }
     }
+    function setCustomColor(key, value) {
+      const colors = getCustomColors();
+      if (value && HEX_COLOR_RE.test(value)) colors[key] = value;
+      else delete colors[key];
+      localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(colors));
+      applyCustomColors(colors);
+    }
+    function setCustomColors(colors) {
+      const validated = {};
+      for (const key of ACCENT_KEYS) {
+        const value = colors[key];
+        if (value && HEX_COLOR_RE.test(value)) validated[key] = value;
+      }
+      localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(validated));
+      applyCustomColors(validated);
+    }
+    function resetCustomColors() {
+      localStorage.removeItem(COLORS_STORAGE_KEY);
+      applyCustomColors({});
+    }
+    const MODE_LABELS = {
+      system: { label: "Auto", title: "System theme" },
+      dark: { label: "Dark", title: "Dark Dracula" },
+      light: { label: "Light", title: "Light Dracula" },
+      "ayu-mirage": { label: "Ayu", title: "Ayu Mirage" }
+    };
     function initTheme() {
       if (window.__hubbleThemeInit) return;
       window.__hubbleThemeInit = true;
       applyTheme(getStoredMode());
       applyCustomColors();
-      const boot = () => {
+      const boot2 = () => {
         applyTheme(getStoredMode());
         applyCustomColors();
         initTimelineTheme();
       };
-      if (document.body) boot();
-      else document.addEventListener("DOMContentLoaded", boot);
+      if (document.body) boot2();
+      else document.addEventListener("DOMContentLoaded", boot2);
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
         if (getStoredMode() === "system") applyTheme("system");
       });
     }
-    const WORK_DAY_MINUTES = 8 * 60;
-    initTheme();
-    function ButtonContent() {
-      return /* @__PURE__ */ u(S, { children: [
+    const MODAL_ROOT_ID = "hubble-profile-settings-modal";
+    const ACCENT_LABELS = {
+      cyan: "Cyan",
+      purple: "Purple",
+      pink: "Pink",
+      green: "Green",
+      red: "Red",
+      yellow: "Yellow",
+      orange: "Orange"
+    };
+    const PRESETS = [
+      { key: "default", label: "Default", colors: {} },
+      {
+        key: "dracula-classic",
+        label: "Dracula Classic",
+        colors: {
+          cyan: "#8be9fd",
+          purple: "#bd93f9",
+          pink: "#ff79c6",
+          green: "#50fa7b",
+          red: "#ff5555",
+          yellow: "#f1fa8c",
+          orange: "#ffb86c"
+        }
+      },
+      {
+        key: "nord",
+        label: "Nord",
+        colors: {
+          cyan: "#88c0d0",
+          purple: "#b48ead",
+          pink: "#d0819c",
+          green: "#a3be8c",
+          red: "#bf616a",
+          yellow: "#ebcb8b",
+          orange: "#d08770"
+        }
+      },
+      {
+        key: "monokai",
+        label: "Monokai",
+        colors: {
+          cyan: "#66d9ef",
+          purple: "#ae81ff",
+          pink: "#fd5ff0",
+          green: "#a6e22e",
+          red: "#f92672",
+          yellow: "#e6db74",
+          orange: "#fd971f"
+        }
+      }
+    ];
+    const presetsMatch = (a2, b2) => ACCENT_KEYS.every((key) => (a2[key] || "") === (b2[key] || ""));
+    const getEffectiveColor = (key) => getComputedStyle(document.documentElement).getPropertyValue(`--dr-${key}`).trim() || "#000000";
+    const PREVIEW = {
+      system: {
+        bg: "linear-gradient(135deg, #282a36 50%, #f8f8f2 50%)",
+        dots: ["#bd93f9", "#8be9fd", "#7c4dff"]
+      },
+      dark: { bg: "#282a36", dots: ["#bd93f9", "#8be9fd", "#ff79c6"] },
+      light: { bg: "#f8f8f2", dots: ["#7c4dff", "#0997b5", "#d63384"] },
+      "ayu-mirage": { bg: "#1f2430", dots: ["#dfbfff", "#95e6cb", "#ffa659"] }
+    };
+    function CloseIcon() {
+      return /* @__PURE__ */ u(
+        "svg",
+        {
+          viewBox: "0 0 16 16",
+          fill: "none",
+          stroke: "currentColor",
+          "stroke-width": "2",
+          "stroke-linecap": "round",
+          children: [
+            /* @__PURE__ */ u("line", { x1: "3", y1: "3", x2: "13", y2: "13" }),
+            /* @__PURE__ */ u("line", { x1: "13", y1: "3", x2: "3", y2: "13" })
+          ]
+        }
+      );
+    }
+    function ResetIcon() {
+      return /* @__PURE__ */ u(
+        "svg",
+        {
+          viewBox: "0 0 16 16",
+          fill: "none",
+          stroke: "currentColor",
+          "stroke-width": "1.8",
+          "stroke-linecap": "round",
+          "stroke-linejoin": "round",
+          children: [
+            /* @__PURE__ */ u("path", { d: "M2.5 8a5.5 5.5 0 1 1 1.8 4.07" }),
+            /* @__PURE__ */ u("polyline", { points: "2.3,4.5 2.5,8 6,7.6" })
+          ]
+        }
+      );
+    }
+    function ProfileSettingsModal({
+      open,
+      mode,
+      colors,
+      onClose,
+      onSelect,
+      onColorChange,
+      onColorReset,
+      onResetAllColors,
+      onApplyPreset
+    }) {
+      if (!open) return null;
+      const hasCustomColors = ACCENT_KEYS.some((key) => colors[key]);
+      return /* @__PURE__ */ u(
+        "div",
+        {
+          class: "hps-modal-backdrop",
+          onClick: (e2) => {
+            if (e2.target === e2.currentTarget) onClose();
+          },
+          children: /* @__PURE__ */ u("div", { class: "hps-modal", children: [
+            /* @__PURE__ */ u("div", { class: "hps-modal-head", children: [
+              /* @__PURE__ */ u("div", { children: [
+                /* @__PURE__ */ u("div", { class: "hps-modal-title", children: "User Config" }),
+                /* @__PURE__ */ u("div", { class: "hps-modal-subtitle", children: "Personal preferences for Hubble" })
+              ] }),
+              /* @__PURE__ */ u("button", { type: "button", class: "hps-close-btn", onClick: onClose, children: [
+                /* @__PURE__ */ u(CloseIcon, {}),
+                " Close"
+              ] })
+            ] }),
+            /* @__PURE__ */ u("div", { class: "hps-modal-body", children: [
+              /* @__PURE__ */ u("div", { class: "hps-section", children: [
+                /* @__PURE__ */ u("div", { class: "hps-section-title", children: "Appearance" }),
+                /* @__PURE__ */ u("div", { class: "hps-theme-grid", children: MODES.map((m2) => /* @__PURE__ */ u(
+                  "button",
+                  {
+                    type: "button",
+                    class: `hps-theme-card${m2 === mode ? " hps-theme-card-active" : ""}`,
+                    onClick: () => onSelect(m2),
+                    title: MODE_LABELS[m2].title,
+                    children: [
+                      /* @__PURE__ */ u("span", { class: "hps-theme-swatch", style: { background: PREVIEW[m2].bg }, children: PREVIEW[m2].dots.map((color, i2) => /* @__PURE__ */ u("span", { class: "hps-theme-dot", style: { background: color } }, i2)) }),
+                      /* @__PURE__ */ u("span", { class: "hps-theme-label", children: MODE_LABELS[m2].label })
+                    ]
+                  },
+                  m2
+                )) })
+              ] }),
+              /* @__PURE__ */ u("div", { class: "hps-section", children: [
+                /* @__PURE__ */ u("div", { class: "hps-section-title-row", children: [
+                  /* @__PURE__ */ u("div", { class: "hps-section-title", children: "Accent colors" }),
+                  hasCustomColors && /* @__PURE__ */ u("button", { type: "button", class: "hps-reset-all-btn", onClick: onResetAllColors, children: "Reset all" })
+                ] }),
+                /* @__PURE__ */ u("div", { class: "hps-preset-row", children: PRESETS.map((preset) => /* @__PURE__ */ u(
+                  "button",
+                  {
+                    type: "button",
+                    class: `hps-preset-btn${presetsMatch(colors, preset.colors) ? " hps-preset-btn-active" : ""}`,
+                    onClick: () => onApplyPreset(preset),
+                    title: preset.label,
+                    children: [
+                      /* @__PURE__ */ u("span", { class: "hps-preset-dots", children: ["green", "cyan", "pink", "orange"].map((key) => /* @__PURE__ */ u(
+                        "span",
+                        {
+                          class: "hps-preset-dot",
+                          style: { background: preset.colors[key] || getEffectiveColor(key) }
+                        },
+                        key
+                      )) }),
+                      /* @__PURE__ */ u("span", { class: "hps-preset-label", children: preset.label })
+                    ]
+                  },
+                  preset.key
+                )) }),
+                /* @__PURE__ */ u("div", { class: "hps-color-grid", children: ACCENT_KEYS.map((key) => {
+                  const isCustom = !!colors[key];
+                  return /* @__PURE__ */ u("div", { class: "hps-color-row", children: [
+                    /* @__PURE__ */ u("label", { class: "hps-color-swatch", children: /* @__PURE__ */ u(
+                      "input",
+                      {
+                        type: "color",
+                        value: colors[key] || getEffectiveColor(key),
+                        onInput: (e2) => onColorChange(key, e2.target.value)
+                      }
+                    ) }),
+                    /* @__PURE__ */ u("span", { class: "hps-color-label", children: ACCENT_LABELS[key] }),
+                    isCustom && /* @__PURE__ */ u(
+                      "button",
+                      {
+                        type: "button",
+                        class: "hps-color-reset-btn",
+                        title: `Reset ${ACCENT_LABELS[key]} to theme default`,
+                        onClick: () => onColorReset(key),
+                        children: /* @__PURE__ */ u(ResetIcon, {})
+                      }
+                    )
+                  ] }, key);
+                }) })
+              ] })
+            ] })
+          ] })
+        }
+      );
+    }
+    let root = null;
+    let state = {
+      open: false,
+      mode: getStoredMode(),
+      colors: getCustomColors()
+    };
+    function renderModal() {
+      if (!root) return;
+      R(
         /* @__PURE__ */ u(
-          "svg",
+          ProfileSettingsModal,
           {
-            width: "15",
-            height: "15",
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: "currentColor",
-            "stroke-width": "2.5",
-            "stroke-linecap": "round",
-            "stroke-linejoin": "round",
-            children: [
-              /* @__PURE__ */ u("circle", { cx: "12", cy: "12", r: "10" }),
-              /* @__PURE__ */ u("polyline", { points: "12 6 12 12 16 14" })
-            ]
+            open: state.open,
+            mode: state.mode,
+            colors: state.colors,
+            onClose: () => {
+              state = { ...state, open: false };
+              renderModal();
+            },
+            onSelect: (m2) => {
+              setMode(m2);
+              state = { ...state, mode: m2 };
+              renderModal();
+            },
+            onColorChange: (key, hex) => {
+              setCustomColor(key, hex);
+              state = { ...state, colors: { ...state.colors, [key]: hex } };
+              renderModal();
+            },
+            onColorReset: (key) => {
+              setCustomColor(key, null);
+              const colors = { ...state.colors };
+              delete colors[key];
+              state = { ...state, colors };
+              renderModal();
+            },
+            onResetAllColors: () => {
+              resetCustomColors();
+              state = { ...state, colors: {} };
+              renderModal();
+            },
+            onApplyPreset: (preset) => {
+              if (preset.key === "default") resetCustomColors();
+              else setCustomColors(preset.colors);
+              state = { ...state, colors: preset.colors };
+              renderModal();
+            }
           }
         ),
-        /* @__PURE__ */ u("span", { id: "attendance-btn-time", children: "--:-- --" })
-      ] });
+        root
+      );
     }
-    function RemainingStat({
-      remainingMinutes,
-      remH,
-      remM
-    }) {
-      if (remainingMinutes > 0) {
-        return /* @__PURE__ */ u(S, { children: [
-          /* @__PURE__ */ u("div", { class: "aw-stat-value", children: [
-            remH > 0 ? `${remH}h` : "",
-            remM,
-            "m"
-          ] }),
-          /* @__PURE__ */ u("div", { class: "aw-stat-sub", children: "remaining" })
-        ] });
-      }
-      return /* @__PURE__ */ u("div", { class: "aw-done-state", children: [
-        /* @__PURE__ */ u("div", { class: "aw-done-icon", children: "✓" }),
-        /* @__PURE__ */ u("div", { class: "aw-done-text", children: "Done!" })
-      ] });
-    }
-    function Panel({
-      checkoutFormatted,
-      checkoutAmPm,
-      remLabel,
-      checkInFormatted,
-      progress,
-      workedH,
-      workedM,
-      remH,
-      remM,
-      remainingMinutes,
-      breakMinutes,
-      workedPct,
-      breakPct,
-      remPct,
-      requiredWorkHours
-    }) {
-      return /* @__PURE__ */ u(S, { children: [
-        /* @__PURE__ */ u("div", { class: "aw-header", children: [
-          /* @__PURE__ */ u("div", { class: "aw-header-aurora" }),
-          /* @__PURE__ */ u("div", { class: "aw-header-grid" }),
-          /* @__PURE__ */ u("div", { class: "aw-label", children: "Recommended Checkout" }),
-          /* @__PURE__ */ u("div", { class: "aw-checkout-row", children: [
-            /* @__PURE__ */ u("div", { class: "aw-checkout-time", children: checkoutFormatted }),
-            /* @__PURE__ */ u("div", { class: "aw-checkout-ampm", children: checkoutAmPm }),
-            /* @__PURE__ */ u("div", { class: "aw-checkin-badge", children: remLabel })
-          ] }),
-          /* @__PURE__ */ u("div", { class: "aw-progress-wrap", children: [
-            /* @__PURE__ */ u("div", { class: "aw-progress-labels", children: [
-              /* @__PURE__ */ u("span", { children: checkInFormatted }),
-              /* @__PURE__ */ u("span", { children: [
-                Math.round(progress),
-                "%"
-              ] })
-            ] }),
-            /* @__PURE__ */ u("div", { class: "aw-progress-track", children: /* @__PURE__ */ u("div", { class: "aw-progress-fill", style: `width:${progress}%`, children: /* @__PURE__ */ u("div", { class: "aw-progress-dot" }) }) })
-          ] })
-        ] }),
-        /* @__PURE__ */ u("div", { class: "aw-body", children: [
-          /* @__PURE__ */ u("div", { class: "aw-stats-row", children: [
-            /* @__PURE__ */ u("div", { class: "aw-stat", children: [
-              /* @__PURE__ */ u("div", { class: "aw-stat-glow" }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-label", children: "Worked" }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-value", children: [
-                workedH,
-                "h ",
-                workedM,
-                "m"
-              ] }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-sub", children: "elapsed" })
-            ] }),
-            /* @__PURE__ */ u("div", { class: "aw-stat", children: [
-              /* @__PURE__ */ u("div", { class: "aw-stat-glow" }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-label", children: "Left" }),
-              /* @__PURE__ */ u(RemainingStat, { remainingMinutes, remH, remM })
-            ] }),
-            /* @__PURE__ */ u("div", { class: "aw-stat", children: [
-              /* @__PURE__ */ u("div", { class: "aw-stat-glow" }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-label", children: "Break" }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-value", children: [
-                breakMinutes,
-                "m"
-              ] }),
-              /* @__PURE__ */ u("div", { class: "aw-stat-sub", children: "deducted" })
-            ] })
-          ] }),
-          /* @__PURE__ */ u("div", { class: "aw-timeline", children: [
-            /* @__PURE__ */ u("div", { class: "aw-tl-axis", children: "DAY" }),
-            /* @__PURE__ */ u("div", { class: "aw-tl-inner", children: [
-              /* @__PURE__ */ u("div", { class: "aw-tl-segs", children: [
-                /* @__PURE__ */ u("div", { class: "aw-tl-seg aw-tl-work", style: `flex:${workedPct}` }),
-                parseFloat(breakPct) > 0 && /* @__PURE__ */ u("div", { class: "aw-tl-seg aw-tl-break", style: `flex:${breakPct}` }),
-                parseFloat(remPct) > 0 && /* @__PURE__ */ u("div", { class: "aw-tl-seg aw-tl-rem", style: `flex:${remPct}` })
-              ] }),
-              /* @__PURE__ */ u("div", { class: "aw-tl-labels", children: [
-                /* @__PURE__ */ u("span", { children: checkInFormatted }),
-                breakMinutes > 0 ? /* @__PURE__ */ u("span", { children: [
-                  breakMinutes,
-                  "m break"
-                ] }) : /* @__PURE__ */ u("span", {}),
-                /* @__PURE__ */ u("span", { children: [
-                  checkoutFormatted,
-                  " ",
-                  checkoutAmPm
-                ] })
-              ] })
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ u("div", { class: "aw-footer", children: [
-          /* @__PURE__ */ u("div", { class: "aw-live", children: [
-            /* @__PURE__ */ u("div", { class: "aw-live-dot" }),
-            /* @__PURE__ */ u("span", { id: "aw-live-clock", children: "--:--:--" })
-          ] }),
-          /* @__PURE__ */ u("div", { class: "aw-footer-right", children: /* @__PURE__ */ u("div", { class: "aw-req-chip", children: [
-            requiredWorkHours,
-            " hrs / day"
-          ] }) })
-        ] })
-      ] });
-    }
-    (function() {
-      window.addEventListener("load", () => {
-        setTimeout(initWidget, 2e3);
+    function ensureRoot() {
+      if (root) return;
+      root = document.createElement("div");
+      root.id = MODAL_ROOT_ID;
+      document.body.appendChild(root);
+      document.addEventListener("keydown", (e2) => {
+        if (e2.key === "Escape" && state.open) {
+          state = { ...state, open: false };
+          renderModal();
+        }
       });
-      function initWidget() {
-        if (document.getElementById("attendance-toggle-btn")) return;
-        const REQUIRED_WORK_HOURS = WORK_DAY_MINUTES / 60;
-        const root = document.createElement("div");
-        root.id = "advanced-attendance-widget";
-        document.body.appendChild(root);
-        const btn = document.createElement("button");
-        btn.id = "attendance-toggle-btn";
-        R(/* @__PURE__ */ u(ButtonContent, {}), btn);
-        root.appendChild(btn);
-        const panel = document.createElement("div");
-        panel.id = "attendance-panel";
-        root.appendChild(panel);
-        function positionPanelNearButton() {
-          const rect = btn.getBoundingClientRect();
-          const gap = 14;
-          const panelWidth = 340;
-          let left = rect.left;
-          let top = rect.bottom + gap;
-          if (left + panelWidth > window.innerWidth - 12) left = window.innerWidth - panelWidth - 12;
-          if (left < 12) left = 12;
-          const estimatedHeight = 440;
-          if (top + estimatedHeight > window.innerHeight) top = rect.top - estimatedHeight - gap;
-          if (top < 12) top = 12;
-          panel.style.left = `${left}px`;
-          panel.style.top = `${top}px`;
-          panel.style.right = "unset";
-        }
-        let wasDragging = false;
-        (function makeButtonDraggable() {
-          let isDragging = false;
-          let offsetX = 0, offsetY = 0;
-          const saved = localStorage.getItem("attendance-widget-btn-position");
-          if (saved) {
-            try {
-              const pos = JSON.parse(saved);
-              btn.style.left = pos.left;
-              btn.style.top = pos.top;
-              btn.style.right = "unset";
-            } catch {
-            }
-          }
-          btn.addEventListener("mousedown", (e2) => {
-            isDragging = false;
-            const rect = btn.getBoundingClientRect();
-            offsetX = e2.clientX - rect.left;
-            offsetY = e2.clientY - rect.top;
-            const startX = e2.clientX, startY = e2.clientY;
-            const onMouseMove = (mv) => {
-              if (Math.abs(mv.clientX - startX) > 3 || Math.abs(mv.clientY - startY) > 3) {
-                isDragging = true;
-                wasDragging = true;
-              }
-              if (!isDragging) return;
-              btn.style.left = `${mv.clientX - offsetX}px`;
-              btn.style.top = `${mv.clientY - offsetY}px`;
-              btn.style.right = "unset";
-              btn.style.cursor = "grabbing";
-              if (panel.style.display === "block") positionPanelNearButton();
-            };
-            const onMouseUp = () => {
-              document.removeEventListener("mousemove", onMouseMove);
-              document.removeEventListener("mouseup", onMouseUp);
-              btn.style.cursor = "grab";
-              if (isDragging) {
-                localStorage.setItem(
-                  "attendance-widget-btn-position",
-                  JSON.stringify({
-                    left: btn.style.left,
-                    top: btn.style.top
-                  })
-                );
-                setTimeout(() => {
-                  wasDragging = false;
-                }, 120);
-              }
-            };
-            document.addEventListener("mousemove", onMouseMove);
-            document.addEventListener("mouseup", onMouseUp);
-          });
-        })();
-        let clockInterval = null;
-        function startClock() {
-          updateClock();
-          clockInterval = setInterval(updateClock, 1e3);
-        }
-        function stopClock() {
-          if (clockInterval) clearInterval(clockInterval);
-          clockInterval = null;
-        }
-        function updateClock() {
-          const el = document.getElementById("aw-live-clock");
-          if (!el) return;
-          el.textContent = (/* @__PURE__ */ new Date()).toLocaleTimeString("en-IN", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true
-          });
-        }
-        async function getTodayAttendanceData() {
-          try {
-            const today = moment().format("YYYY-MM-DD");
-            const response = await $.ajax({
-              url: "/attendance/get-my-check-in-data",
-              type: "GET",
-              data: { start_date: today, end_date: today }
-            });
-            return (response == null ? void 0 : response.data) || null;
-          } catch (error) {
-            console.error("Attendance fetch failed", error);
-            return null;
-          }
-        }
-        async function renderWidget() {
-          const data = await getTodayAttendanceData();
-          if (!data) return;
-          const todayKey = Object.keys(data)[0];
-          const rows = data[todayKey] || [];
-          const checkInRow = rows.find((r2) => r2.type === "Check In" || r2.type === "login");
-          if (!checkInRow) return;
-          const checkIn = checkInRow.start_time;
-          let breakMinutes = 0;
-          rows.forEach((r2) => {
-            if (["Short Break", "Long Break", "break", "lunch"].includes(r2.type) && r2.start_time && r2.end_time) {
-              breakMinutes += moment(r2.end_time, "HH:mm").diff(
-                moment(r2.start_time, "HH:mm"),
-                "minutes"
-              );
-            }
-          });
-          let timeOffMinutes = 0;
-          rows.forEach((r2) => {
-            if (["Time Off", "Attendance Time Off"].includes(r2.type) && r2.start_time && r2.end_time) {
-              timeOffMinutes += moment(r2.end_time, "HH:mm").diff(
-                moment(r2.start_time, "HH:mm"),
-                "minutes"
-              );
-            }
-          });
-          const startMoment = moment(checkIn, "HH:mm");
-          const now = moment();
-          const requiredMinutes = REQUIRED_WORK_HOURS * 60 - timeOffMinutes;
-          const effectiveWorked = now.diff(startMoment, "minutes") - breakMinutes + timeOffMinutes;
-          const remainingMinutes = Math.max(requiredMinutes - effectiveWorked, 0);
-          const checkoutMoment = now.clone().add(remainingMinutes, "minutes");
-          const workedH = Math.floor(Math.max(effectiveWorked, 0) / 60);
-          const workedM = Math.max(effectiveWorked, 0) % 60;
-          const remH = Math.floor(remainingMinutes / 60);
-          const remM = remainingMinutes % 60;
-          const progress = Math.min(effectiveWorked / requiredMinutes * 100, 100);
-          const checkoutFormatted = checkoutMoment.format("hh:mm");
-          const checkoutAmPm = checkoutMoment.format("A");
-          const checkInFormatted = startMoment.format("hh:mm A");
-          const remLabel = remainingMinutes > 0 ? `in ${remH > 0 ? remH + "h " : ""}${remM}m` : "✓ done";
-          const btnTime = document.getElementById("attendance-btn-time");
-          if (btnTime) btnTime.textContent = checkoutFormatted + " " + checkoutAmPm;
-          const totalMinutes = REQUIRED_WORK_HOURS * 60;
-          const workedPct = Math.min(effectiveWorked / totalMinutes * 100, 100).toFixed(1);
-          const breakPct = Math.min(breakMinutes / totalMinutes * 100, 100).toFixed(1);
-          const remPct = Math.max(100 - parseFloat(workedPct) - parseFloat(breakPct), 0).toFixed(1);
-          R(
-            /* @__PURE__ */ u(
-              Panel,
-              {
-                checkoutFormatted,
-                checkoutAmPm,
-                remLabel,
-                checkInFormatted,
-                progress,
-                workedH,
-                workedM,
-                remH,
-                remM,
-                remainingMinutes,
-                breakMinutes,
-                workedPct,
-                breakPct,
-                remPct,
-                requiredWorkHours: REQUIRED_WORK_HOURS
-              }
-            ),
-            panel
-          );
-          startClock();
-        }
-        renderWidget();
-        setInterval(() => {
-          renderWidget();
-        }, 6e4);
-        btn.addEventListener("click", async () => {
-          if (wasDragging) return;
-          const isOpen = panel.style.display === "block";
-          if (isOpen) {
-            panel.style.display = "none";
-            stopClock();
-          } else {
-            positionPanelNearButton();
-            panel.style.display = "block";
-            await renderWidget();
-          }
-        });
-        document.addEventListener("click", (e2) => {
-          if (!btn.contains(e2.target) && !panel.contains(e2.target)) {
-            panel.style.display = "none";
-            stopClock();
-          }
-        });
-        console.log("✅ Attendance Assistant v9.2 Ready");
-      }
-    })();
+    }
+    function openProfileSettingsModal() {
+      ensureRoot();
+      state = { open: true, mode: getStoredMode(), colors: getCustomColors() };
+      renderModal();
+    }
+    initTheme();
+    const SIDEBAR_SELECTOR = ".profile_sidebar";
+    const ITEM_CLASS = "hps-sidebar-item";
+    function SidebarItem() {
+      return /* @__PURE__ */ u("button", { type: "button", class: "hps-sidebar-btn", onClick: () => openProfileSettingsModal(), children: /* @__PURE__ */ u("span", { class: "hps-sidebar-link", children: /* @__PURE__ */ u("span", { children: "User Config" }) }) });
+    }
+    function injectSidebarItem(sidebar) {
+      if (sidebar.querySelector(`.${ITEM_CLASS}`)) return;
+      const li = document.createElement("li");
+      li.className = ITEM_CLASS;
+      sidebar.appendChild(li);
+      R(/* @__PURE__ */ u(SidebarItem, {}), li);
+    }
+    function boot() {
+      waitForElement(SIDEBAR_SELECTOR, injectSidebarItem);
+    }
+    function init() {
+      if (window.__hubbleProfileSettingsInit) return;
+      window.__hubbleProfileSettingsInit = true;
+      if (document.body) boot();
+      else document.addEventListener("DOMContentLoaded", boot);
+    }
+    init();
 
   })();
 

@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Check-in summary with compensation V2
 // @namespace    https://hubble.mallow-tech.com
-// @version      1.0.0
+// @version      1.0.1
 // @author       Neon Raven
 // @description  Work log summary with month filter, tooltips, and mini-modals
+// @license      Unlicense
 // @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
 // @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/check-in-summary-with-compensation-v2.user.js
 // @match        https://hubble.mallow-tech.com/attendance/my-check-in-data*
@@ -384,12 +385,12 @@
   function D(n2, t2) {
     return "function" == typeof t2 ? t2(n2) : t2;
   }
-  const icons = {
+  const ICONS = {
     check: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,8 6,11.5 13.5,4.5"/></svg>',
     warn: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2L14.5 13H1.5L8 2z"/><line x1="8" y1="7" x2="8" y2="10"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>',
     error: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>',
     muted: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="9"/><circle cx="8" cy="11.5" r="0.5" fill="currentColor"/></svg>',
-    refresh: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5A7 7 0 1 0 14 9"/><polyline points="14,2.5 13.5,6 10,5.5"/></svg>',
+    refresh: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6" stroke-dasharray="28.3 12"/><polyline points="5,0 8,2 5,4"/></svg>',
     list: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="4" y1="12" x2="8" y2="12"/></svg>',
     close: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>',
     clock: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10.5,10"/></svg>',
@@ -400,13 +401,17 @@
     entries: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 2H4a1.5 1.5 0 0 0-1.5 1.5v9A1.5 1.5 0 0 0 4 14h8a1.5 1.5 0 0 0 1.5-1.5V7L9 2z"/><polyline points="9,2 9,7 13.5,7"/></svg>',
     chevron: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,6 8,10 12,6"/></svg>'
   };
+  const icon = (name, size = 14) => {
+    const s2 = size;
+    return `<span style="display:inline-flex;width:${s2}px;height:${s2}px;flex-shrink:0;align-items:center;justify-content:center">${ICONS[name] || ""}</span>`;
+  };
   function Icon({ name, size = 14 }) {
     return /* @__PURE__ */ u$1(
       "span",
       {
         class: "wls-icon",
         style: `display:inline-flex;width:${size}px;height:${size}px;flex-shrink:0;align-items:center;justify-content:center`,
-        dangerouslySetInnerHTML: { __html: icons[name] || "" }
+        dangerouslySetInnerHTML: { __html: ICONS[name] || "" }
       }
     );
   }
@@ -736,59 +741,48 @@
     else document.addEventListener("DOMContentLoaded", boot);
   }
   const STORAGE_KEY = "hubble-theme";
-  const MODES = ["system", "dark", "light"];
-  const SWITCHER_ID = "hubble-theme-switcher";
+  const MODES = ["system", "dark", "light", "ayu-mirage"];
   function getStoredMode() {
     const stored = localStorage.getItem(STORAGE_KEY);
     return MODES.includes(stored || "") ? stored : "system";
   }
   function applyTheme(mode) {
     document.documentElement.dataset.hubbleTheme = mode;
-    const root = document.getElementById(SWITCHER_ID);
-    if (root) {
-      root.querySelectorAll("[data-mode]").forEach((btn) => {
-        btn.classList.toggle("hts-active", btn.dataset.mode === mode);
-      });
+  }
+  const COLORS_STORAGE_KEY = "hubble-custom-colors";
+  const ACCENT_KEYS = ["cyan", "purple", "pink", "green", "red", "yellow", "orange"];
+  const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
+  function getCustomColors() {
+    let parsed;
+    try {
+      parsed = JSON.parse(localStorage.getItem(COLORS_STORAGE_KEY) || "{}");
+    } catch {
+      return {};
+    }
+    if (!parsed || typeof parsed !== "object") return {};
+    const result = {};
+    for (const key of ACCENT_KEYS) {
+      const value = parsed[key];
+      if (typeof value === "string" && HEX_COLOR_RE.test(value)) result[key] = value;
+    }
+    return result;
+  }
+  function applyCustomColors(colors = getCustomColors()) {
+    const style = document.documentElement.style;
+    for (const key of ACCENT_KEYS) {
+      const value = colors[key];
+      if (value) style.setProperty(`--dr-${key}`, value);
+      else style.removeProperty(`--dr-${key}`);
     }
   }
-  function setMode(mode) {
-    if (!MODES.includes(mode)) return;
-    localStorage.setItem(STORAGE_KEY, mode);
-    applyTheme(mode);
-  }
-  const MODE_LABELS = {
-    system: { label: "Auto", title: "System theme" },
-    dark: { label: "Dark", title: "Dark Dracula" },
-    light: { label: "Light", title: "Light Dracula" }
-  };
-  function ThemeSwitcher() {
-    return /* @__PURE__ */ u$1(S, { children: MODES.map((mode) => /* @__PURE__ */ u$1(
-      "button",
-      {
-        type: "button",
-        "data-mode": mode,
-        title: MODE_LABELS[mode].title,
-        onClick: () => setMode(mode),
-        children: MODE_LABELS[mode].label
-      },
-      mode
-    )) });
-  }
-  function ensureSwitcher() {
-    if (document.getElementById(SWITCHER_ID)) return;
-    const root = document.createElement("div");
-    root.id = SWITCHER_ID;
-    document.body.appendChild(root);
-    R(/* @__PURE__ */ u$1(ThemeSwitcher, {}), root);
+  function initTheme() {
+    if (window.__hubbleThemeInit) return;
+    window.__hubbleThemeInit = true;
     applyTheme(getStoredMode());
-  }
-  function initThemeSwitcher() {
-    if (window.__hubbleThemeSwitcherInit) return;
-    window.__hubbleThemeSwitcherInit = true;
-    applyTheme(getStoredMode());
+    applyCustomColors();
     const boot = () => {
-      ensureSwitcher();
       applyTheme(getStoredMode());
+      applyCustomColors();
       initTimelineTheme();
     };
     if (document.body) boot();
@@ -1145,26 +1139,6 @@
         message: err instanceof Error ? err.message : "Unable to calculate work log summary."
       };
     }
-  };
-  const ICONS = {
-    check: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,8 6,11.5 13.5,4.5"/></svg>',
-    warn: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2L14.5 13H1.5L8 2z"/><line x1="8" y1="7" x2="8" y2="10"/><circle cx="8" cy="12" r="0.5" fill="currentColor"/></svg>',
-    error: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>',
-    muted: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="9"/><circle cx="8" cy="11.5" r="0.5" fill="currentColor"/></svg>',
-    refresh: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5A7 7 0 1 0 14 9"/><polyline points="14,2.5 13.5,6 10,5.5"/></svg>',
-    list: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="4" y1="12" x2="8" y2="12"/></svg>',
-    close: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>',
-    clock: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10.5,10"/></svg>',
-    report: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="2" width="10" height="12" rx="1.5"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="9" x2="10" y2="9"/><line x1="6" y1="12" x2="8" y2="12"/></svg>',
-    table: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="1.5"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="2" y1="10" x2="14" y2="10"/><line x1="7" y1="6" x2="7" y2="14"/></svg>',
-    plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>',
-    cal: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="12" height="11" rx="1.5"/><line x1="2" y1="7" x2="14" y2="7"/><line x1="5" y1="2" x2="5" y2="4"/><line x1="11" y1="2" x2="11" y2="4"/></svg>',
-    entries: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 2H4a1.5 1.5 0 0 0-1.5 1.5v9A1.5 1.5 0 0 0 4 14h8a1.5 1.5 0 0 0 1.5-1.5V7L9 2z"/><polyline points="9,2 9,7 13.5,7"/></svg>',
-    chevron: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,6 8,10 12,6"/></svg>'
-  };
-  const icon = (name, size = 14) => {
-    const s2 = size;
-    return `<span style="display:inline-flex;width:${s2}px;height:${s2}px;flex-shrink:0;align-items:center;justify-content:center">${ICONS[name] || ""}</span>`;
   };
   const renderTable = ({
     columns,
@@ -2081,7 +2055,13 @@
                 /* @__PURE__ */ u$1(Icon, { name: status.icon, size: 11 }),
                 status.label
               ] }),
-              /* @__PURE__ */ u$1("span", { dangerouslySetInnerHTML: { __html: status.message } })
+              /* @__PURE__ */ u$1(
+                "span",
+                {
+                  class: "wls-status-message",
+                  dangerouslySetInnerHTML: { __html: status.message }
+                }
+              )
             ] }),
             /* @__PURE__ */ u$1("div", { class: "wls-exp-actions", children: /* @__PURE__ */ u$1(
               "button",
@@ -2145,7 +2125,7 @@
     }
     return /* @__PURE__ */ u$1("div", { ref: cardRef, children: content });
   }
-  initThemeSwitcher();
+  initTheme();
   initDom();
   const card = document.getElementById(CONFIG.cardId);
   if (card) {

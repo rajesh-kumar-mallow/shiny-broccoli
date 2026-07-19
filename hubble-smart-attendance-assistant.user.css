@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Hubble Smart Attendance Assistant (styles)
 @namespace      https://hubble.mallow-tech.com
-@version        1.0.0
+@version        1.0.1
 @description    Styles for Hubble Smart Attendance Assistant widget
 @updateURL      https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.css
 @downloadURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-smart-attendance-assistant.user.css
@@ -89,13 +89,9 @@
   user-select: none;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   overflow: hidden;
 }
-
 #attendance-toggle-btn::before {
   content: "";
   position: absolute;
@@ -103,16 +99,11 @@
   background: var(--aw-btn-glow);
   pointer-events: none;
 }
-
 #attendance-toggle-btn:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--dr-fg) 18%, transparent);
-  box-shadow:
-    0 14px 40px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent),
-    0 0 24px color-mix(in srgb, var(--dr-purple) 20%, transparent),
-    0 1px 0 color-mix(in srgb, var(--dr-fg) 12%, transparent) inset;
+  box-shadow: 0 14px 40px color-mix(in srgb, var(--dr-bg-tertiary) 60%, transparent), 0 0 24px color-mix(in srgb, var(--dr-purple) 20%, transparent), 0 1px 0 color-mix(in srgb, var(--dr-fg) 12%, transparent) inset;
 }
-
 #attendance-toggle-btn svg {
   flex-shrink: 0;
   color: color-mix(in srgb, var(--dr-cyan) 80%, transparent);
@@ -128,8 +119,6 @@
   background-clip: text;
   position: relative;
 }
-
-/* ── PANEL ──────────────────────────────────── */
 
 #attendance-panel {
   position: fixed;
@@ -157,9 +146,6 @@
     transform: translateY(0) scale(1);
   }
 }
-
-/* ── HEADER ─────────────────────────────────── */
-
 .aw-header {
   padding: 26px 24px 22px;
   position: relative;
@@ -177,9 +163,7 @@
 .aw-header-grid {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(var(--aw-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--aw-grid) 1px, transparent 1px);
+  background-image: linear-gradient(var(--aw-grid) 1px, transparent 1px), linear-gradient(90deg, var(--aw-grid) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
   mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0.1));
@@ -234,8 +218,6 @@
   letter-spacing: 0.5px;
 }
 
-/* ── PROGRESS ───────────────────────────────── */
-
 .aw-progress-wrap {
   position: relative;
 }
@@ -263,9 +245,7 @@
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--dr-purple), var(--dr-cyan));
-  box-shadow:
-    0 0 14px color-mix(in srgb, var(--dr-purple) 70%, transparent),
-    0 0 6px color-mix(in srgb, var(--dr-cyan) 50%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--dr-purple) 70%, transparent), 0 0 6px color-mix(in srgb, var(--dr-cyan) 50%, transparent);
   position: relative;
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -279,19 +259,13 @@
   height: 11px;
   border-radius: 50%;
   background: var(--dr-cyan);
-  box-shadow:
-    0 0 10px color-mix(in srgb, var(--dr-cyan) 85%, transparent),
-    0 0 0 2.5px color-mix(in srgb, var(--dr-bg-secondary) 95%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dr-cyan) 85%, transparent), 0 0 0 2.5px color-mix(in srgb, var(--dr-bg-secondary) 95%, transparent);
 }
-
-/* ── BODY ───────────────────────────────────── */
 
 .aw-body {
   padding: 18px;
   background: var(--aw-body-bg);
 }
-
-/* ── STAT CARDS ─────────────────────────────── */
 
 .aw-stats-row {
   display: grid;
@@ -307,14 +281,26 @@
   padding: 14px 12px;
   position: relative;
   overflow: hidden;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
-
 .aw-stat:hover {
   background: var(--aw-stat-bg-hover);
   border-color: var(--aw-stat-border-h);
+}
+.aw-stat:nth-child(1) .aw-stat-glow {
+  background: var(--dr-purple);
+}
+.aw-stat:nth-child(2) .aw-stat-glow {
+  background: var(--dr-cyan);
+}
+.aw-stat:nth-child(3) .aw-stat-glow {
+  background: var(--dr-pink);
+}
+.aw-stat:nth-child(2) .aw-stat-value {
+  color: var(--dr-cyan);
+}
+.aw-stat:nth-child(3) .aw-stat-value {
+  color: var(--dr-pink);
 }
 
 .aw-stat-label {
@@ -353,28 +339,9 @@
   filter: blur(12px);
 }
 
-html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
+html[data-hubble-theme=light] #advanced-attendance-widget .aw-stat-glow {
   opacity: 0.1;
 }
-
-.aw-stat:nth-child(1) .aw-stat-glow {
-  background: var(--dr-purple);
-}
-.aw-stat:nth-child(2) .aw-stat-glow {
-  background: var(--dr-cyan);
-}
-.aw-stat:nth-child(3) .aw-stat-glow {
-  background: var(--dr-pink);
-}
-
-.aw-stat:nth-child(2) .aw-stat-value {
-  color: var(--dr-cyan);
-}
-.aw-stat:nth-child(3) .aw-stat-value {
-  color: var(--dr-pink);
-}
-
-/* ── TIMELINE BAR ───────────────────────────── */
 
 .aw-timeline {
   background: var(--aw-tl-bg);
@@ -410,11 +377,7 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
 }
 
 .aw-tl-work {
-  background: linear-gradient(
-    90deg,
-    var(--dr-purple),
-    color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan))
-  );
+  background: linear-gradient(90deg, var(--dr-purple), color-mix(in srgb, var(--dr-purple) 70%, var(--dr-cyan)));
   box-shadow: 0 0 8px color-mix(in srgb, var(--dr-purple) 45%, transparent);
 }
 
@@ -436,8 +399,6 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
   color: var(--aw-tl-labels);
   margin-top: 7px;
 }
-
-/* ── FOOTER ─────────────────────────────────── */
 
 .aw-footer {
   padding: 13px 18px 17px;
@@ -461,7 +422,6 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
   background: var(--aw-live-dot);
   position: relative;
 }
-
 .aw-live-dot::after {
   content: "";
   position: absolute;
@@ -472,8 +432,7 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
 }
 
 @keyframes aw-pulse {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -482,7 +441,6 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
     transform: scale(2);
   }
 }
-
 #aw-live-clock {
   font-family: "SF Mono", "Fira Code", "Consolas", "Menlo", "Courier New", monospace;
   font-size: 13px;
@@ -507,8 +465,6 @@ html[data-hubble-theme="light"] #advanced-attendance-widget .aw-stat-glow {
   border-radius: 8px;
   padding: 5px 11px;
 }
-
-/* ── DONE STATE ─────────────────────────────── */
 
 .aw-done-state {
   display: flex;
