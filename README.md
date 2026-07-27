@@ -43,7 +43,7 @@ Theme switching lives in the **User Config** entry added to the sidebar on any `
 
 ## Updates
 
-Your userscript manager and Stylus auto-update from the `gh-pages` branch when they check for updates (enabled by default). Update detection is driven entirely by the `@version` header — all 5 userscripts share the single `version` in `package.json`, so **bumping `package.json`'s version is what makes existing installs notice an update.** Pushing to `main` without a version bump still redeploys `gh-pages`, but installed users won't be prompted to refresh.
+Your userscript manager and Stylus auto-update from the `gh-pages` branch when they check for updates (enabled by default). Update detection is driven entirely by the `@version` header — every userscript shares the single `version` in `package.json`, so **bumping `package.json`'s version is what makes existing installs notice an update.** Pushing to `main` without a version bump still redeploys `gh-pages`, but installed users won't be prompted to refresh.
 
 After merging to `main`, GitHub Actions:
 
