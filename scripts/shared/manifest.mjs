@@ -81,6 +81,23 @@ export const PLAIN_SCRIPTS = [
       tag: ["theme"],
     },
   },
+  {
+    entry: "src/TimesheetAutoApprove.tsx",
+    fileName: "hubble-timesheet-auto-approve.user.js",
+    userscript: {
+      name: "Hubble Timesheet Auto Approve (Hidden)",
+      namespace: "https://hubble.mallow-tech.com",
+      description:
+        'Hidden "Auto Approve" button for the timesheet page. Inert unless the auto-approve flag ' +
+        "is turned on in User Config, which itself only appears after a secret key is set in " +
+        "localStorage.",
+      author: "Neon Raven",
+      match: ["https://hubble.mallow-tech.com/v2/timesheet"],
+      "run-at": "document-idle",
+      grant: "none",
+      tag: ["timesheet"],
+    },
+  },
 ];
 
 export const STYLES = [
@@ -111,6 +128,13 @@ export const STYLES = [
     src: "profile-settings.scss",
     document: 'domain("hubble.mallow-tech.com")',
     description: "Styles for the profile sidebar's User Config entry and settings modal",
+  },
+  {
+    name: "Hubble Timesheet Auto Approve (styles)",
+    file: "hubble-timesheet-auto-approve.user.css",
+    src: "timesheet-auto-approve.scss",
+    document: 'url-prefix("https://hubble.mallow-tech.com/v2/timesheet")',
+    description: "Styles for the hidden timesheet auto-approve button",
   },
 ];
 

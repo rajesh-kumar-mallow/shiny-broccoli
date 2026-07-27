@@ -13,6 +13,15 @@ import {
   type AccentKey,
   type CustomColors,
 } from "./theme-switcher";
+import {
+  isHiddenUnlocked,
+  isAutoApproveEnabled,
+  setAutoApproveEnabled,
+  isOnlyApproveEnabled,
+  setOnlyApproveEnabled,
+  isAutoAuthoriseEnabled,
+  setAutoAuthoriseEnabled,
+} from "../lib/feature-flags";
 
 const MODAL_ROOT_ID = "hubble-profile-settings-modal";
 
@@ -129,24 +138,36 @@ type ModalProps = {
   open: boolean;
   mode: ThemeMode;
   colors: CustomColors;
+  autoApprove: boolean;
+  onlyApprove: boolean;
+  autoAuthorise: boolean;
   onClose: () => void;
   onSelect: (mode: ThemeMode) => void;
   onColorChange: (key: AccentKey, hex: string) => void;
   onColorReset: (key: AccentKey) => void;
   onResetAllColors: () => void;
   onApplyPreset: (preset: Preset) => void;
+  onAutoApproveChange: (enabled: boolean) => void;
+  onOnlyApproveChange: (enabled: boolean) => void;
+  onAutoAuthoriseChange: (enabled: boolean) => void;
 };
 
 function ProfileSettingsModal({
   open,
   mode,
   colors,
+  autoApprove,
+  onlyApprove,
+  autoAuthorise,
   onClose,
   onSelect,
   onColorChange,
   onColorReset,
   onResetAllColors,
   onApplyPreset,
+  onAutoApproveChange,
+  onOnlyApproveChange,
+  onAutoAuthoriseChange,
 }: ModalProps) {
   if (!open) return null;
 
@@ -250,17 +271,82 @@ function ProfileSettingsModal({
               })}
             </div>
           </div>
+          {isHiddenUnlocked() && (
+            <div class="hps-section">
+              <div class="hps-section-title">Experimental</div>
+              <label class="hps-toggle-row">
+                <input
+                  type="checkbox"
+                  checked={autoApprove}
+                  onChange={(e) => onAutoApproveChange((e.target as HTMLInputElement).checked)}
+                />
+                <span class="hps-toggle-label">
+                  <span class="hps-toggle-title">Timesheet Auto-Approve</span>
+                  <span class="hps-toggle-desc">
+                    Adds an "Auto Approve" button on the timesheet page
+                  </span>
+                </span>
+              </label>
+              {autoApprove && (
+                <label class="hps-toggle-row hps-toggle-row-sub">
+                  <input
+                    type="checkbox"
+                    checked={onlyApprove}
+                    onChange={(e) => onOnlyApproveChange((e.target as HTMLInputElement).checked)}
+                  />
+                  <span class="hps-toggle-label">
+                    <span class="hps-toggle-title">Only Approve</span>
+                    <span class="hps-toggle-desc">
+                      Button only does the approve step, skips efficiency/authorise
+                    </span>
+                  </span>
+                </label>
+              )}
+              {autoApprove && onlyApprove && (
+                <label class="hps-toggle-row hps-toggle-row-sub hps-toggle-row-sub2">
+                  <input
+                    type="checkbox"
+                    checked={autoAuthorise}
+                    onChange={(e) => onAutoAuthoriseChange((e.target as HTMLInputElement).checked)}
+                  />
+                  <span class="hps-toggle-label">
+                    <span class="hps-toggle-title">Auto Authorise</span>
+                    <span class="hps-toggle-desc">
+                      Beta: shows two buttons on the timesheet page — "Just Approve" and "Approve &
+                      Authorise"
+                    </span>
+                  </span>
+                </label>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+type State = {
+  open: boolean;
+  mode: ThemeMode;
+  colors: CustomColors;
+  autoApprove: boolean;
+  onlyApprove: boolean;
+  autoAuthorise: boolean;
+};
+
+const getFlagsState = () => ({
+  autoApprove: isAutoApproveEnabled(),
+  onlyApprove: isOnlyApproveEnabled(),
+  autoAuthorise: isAutoAuthoriseEnabled(),
+});
+
 let root: HTMLElement | null = null;
-let state: { open: boolean; mode: ThemeMode; colors: CustomColors } = {
+let state: State = {
   open: false,
   mode: getStoredMode(),
   colors: getCustomColors(),
+  ...getFlagsState(),
 };
 
 function renderModal() {
@@ -270,6 +356,34 @@ function renderModal() {
       open={state.open}
       mode={state.mode}
       colors={state.colors}
+      autoApprove={state.autoApprove}
+      onlyApprove={state.onlyApprove}
+      autoAuthorise={state.autoAuthorise}
+      onAutoApproveChange={(enabled) => {
+        setAutoApproveEnabled(enabled);
+        if (!enabled) {
+          setOnlyApproveEnabled(false);
+          setAutoAuthoriseEnabled(false);
+        }
+        state = {
+          ...state,
+          autoApprove: enabled,
+          onlyApprove: enabled && state.onlyApprove,
+          autoAuthorise: enabled && state.autoAuthorise,
+        };
+        renderModal();
+      }}
+      onOnlyApproveChange={(enabled) => {
+        setOnlyApproveEnabled(enabled);
+        if (!enabled) setAutoAuthoriseEnabled(false);
+        state = { ...state, onlyApprove: enabled, autoAuthorise: enabled && state.autoAuthorise };
+        renderModal();
+      }}
+      onAutoAuthoriseChange={(enabled) => {
+        setAutoAuthoriseEnabled(enabled);
+        state = { ...state, autoAuthorise: enabled };
+        renderModal();
+      }}
       onClose={() => {
         state = { ...state, open: false };
         renderModal();
@@ -322,6 +436,11 @@ function ensureRoot() {
 
 export function openProfileSettingsModal() {
   ensureRoot();
-  state = { open: true, mode: getStoredMode(), colors: getCustomColors() };
+  state = {
+    open: true,
+    mode: getStoredMode(),
+    colors: getCustomColors(),
+    ...getFlagsState(),
+  };
   renderModal();
 }

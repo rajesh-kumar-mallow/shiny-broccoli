@@ -1,0 +1,49 @@
+@use "dracula" as dr;
+
+#hubble-auto-approve-widget {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.haa-btn {
+  border-radius: 14px;
+  padding: 10px 16px;
+  border: 1px solid var(--dr-border);
+  background: var(--dr-bg-secondary);
+  color: var(--dr-fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: var(--dr-bg-tertiary);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  &.haa-running {
+    @include dr.tint-bg("purple", 10%, 30%);
+    opacity: 1;
+  }
+
+  &.haa-done {
+    @include dr.tint-bg("green", 12%, 30%);
+    color: var(--dr-green);
+    opacity: 1;
+  }
+}

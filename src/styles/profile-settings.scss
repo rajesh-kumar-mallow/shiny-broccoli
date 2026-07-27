@@ -331,3 +331,51 @@
     color: var(--dr-fg);
   }
 }
+
+// ── Experimental (hidden) ──
+.hps-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--dr-border);
+  background: var(--dr-bg-tertiary);
+  cursor: pointer;
+
+  & + & {
+    margin-top: 6px;
+  }
+
+  input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+}
+
+.hps-toggle-row-sub {
+  margin-left: 20px;
+  background: var(--dr-bg-secondary);
+}
+
+.hps-toggle-row-sub2 {
+  margin-left: 40px;
+}
+
+.hps-toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hps-toggle-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dr-fg);
+}
+
+.hps-toggle-desc {
+  font-size: 12px;
+  color: var(--dr-comment);
+}
