@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name         Hubble Profile Settings
+// @name         Hubble Timesheet Auto Approve (Hidden)
 // @namespace    https://hubble.mallow-tech.com
 // @version      1.1.0
 // @author       Neon Raven
-// @description  Adds a "User Config" entry to the profile sidebar for theme/preferences
+// @description  Hidden "Auto Approve" button for the timesheet page. Inert unless the auto-approve flag is turned on in User Config, which itself only appears after a secret key is set in localStorage.
 // @license      Unlicense
-// @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-profile-settings.user.js
-// @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-profile-settings.user.js
-// @match        https://hubble.mallow-tech.com/users/*
-// @tag          theme
+// @downloadURL  https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-timesheet-auto-approve.user.js
+// @updateURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-timesheet-auto-approve.user.js
+// @match        https://hubble.mallow-tech.com/v2/timesheet
+// @tag          timesheet
 // @grant        none
 // @run-at       document-idle
 // ==/UserScript==
@@ -275,28 +275,6 @@
       if ("function" == typeof e2 && (a2 = e2.defaultProps)) for (c2 in a2) void 0 === p2[c2] && (p2[c2] = a2[c2]);
       return l.vnode && l.vnode(l$1), l$1;
     }
-    const pendingElementWaits = /* @__PURE__ */ new Set();
-    const waitForElement = (selector, onFound, timeoutMs = 1e4) => {
-      const existing = document.querySelector(selector);
-      if (existing) {
-        onFound(existing);
-        return;
-      }
-      if (pendingElementWaits.has(selector)) return;
-      pendingElementWaits.add(selector);
-      const stop = () => {
-        observer.disconnect();
-        pendingElementWaits.delete(selector);
-      };
-      const observer = new MutationObserver(() => {
-        const el = document.querySelector(selector);
-        if (!el) return;
-        stop();
-        onFound(el);
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-      window.setTimeout(stop, timeoutMs);
-    };
     const TIMELINE_CONTAINER_IDS = [
       "my-checkin-detail",
       "checkin-detail",
@@ -432,11 +410,6 @@
     function applyTheme(mode) {
       document.documentElement.dataset.hubbleTheme = mode;
     }
-    function setMode(mode) {
-      if (!MODES.includes(mode)) return;
-      localStorage.setItem(STORAGE_KEY, mode);
-      applyTheme(mode);
-    }
     const COLORS_STORAGE_KEY = "hubble-custom-colors";
     const ACCENT_KEYS = ["cyan", "purple", "pink", "green", "red", "yellow", "orange"];
     const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
@@ -463,32 +436,6 @@
         else style.removeProperty(`--dr-${key}`);
       }
     }
-    function setCustomColor(key, value) {
-      const colors = getCustomColors();
-      if (value && HEX_COLOR_RE.test(value)) colors[key] = value;
-      else delete colors[key];
-      localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(colors));
-      applyCustomColors(colors);
-    }
-    function setCustomColors(colors) {
-      const validated = {};
-      for (const key of ACCENT_KEYS) {
-        const value = colors[key];
-        if (value && HEX_COLOR_RE.test(value)) validated[key] = value;
-      }
-      localStorage.setItem(COLORS_STORAGE_KEY, JSON.stringify(validated));
-      applyCustomColors(validated);
-    }
-    function resetCustomColors() {
-      localStorage.removeItem(COLORS_STORAGE_KEY);
-      applyCustomColors({});
-    }
-    const MODE_LABELS = {
-      system: { label: "Auto", title: "System theme" },
-      dark: { label: "Dark", title: "Dark Dracula" },
-      light: { label: "Light", title: "Light Dracula" },
-      "ayu-mirage": { label: "Ayu", title: "Ayu Mirage" }
-    };
     function initTheme() {
       if (window.__hubbleThemeInit) return;
       window.__hubbleThemeInit = true;
@@ -515,403 +462,213 @@
     function isAutoApproveEnabled() {
       return isHiddenUnlocked() && localStorage.getItem(AUTO_APPROVE_ENABLED_KEY) === "1";
     }
-    function setAutoApproveEnabled(enabled) {
-      if (enabled) localStorage.setItem(AUTO_APPROVE_ENABLED_KEY, "1");
-      else localStorage.removeItem(AUTO_APPROVE_ENABLED_KEY);
-    }
     function isOnlyApproveEnabled() {
       return isAutoApproveEnabled() && localStorage.getItem(ONLY_APPROVE_ENABLED_KEY) === "1";
-    }
-    function setOnlyApproveEnabled(enabled) {
-      if (enabled) localStorage.setItem(ONLY_APPROVE_ENABLED_KEY, "1");
-      else localStorage.removeItem(ONLY_APPROVE_ENABLED_KEY);
     }
     function isAutoAuthoriseEnabled() {
       return isOnlyApproveEnabled() && localStorage.getItem(AUTO_AUTHORISE_ENABLED_KEY) === "1";
     }
-    function setAutoAuthoriseEnabled(enabled) {
-      if (enabled) localStorage.setItem(AUTO_AUTHORISE_ENABLED_KEY, "1");
-      else localStorage.removeItem(AUTO_AUTHORISE_ENABLED_KEY);
-    }
-    const MODAL_ROOT_ID = "hubble-profile-settings-modal";
-    const ACCENT_LABELS = {
-      cyan: "Cyan",
-      purple: "Purple",
-      pink: "Pink",
-      green: "Green",
-      red: "Red",
-      yellow: "Yellow",
-      orange: "Orange"
-    };
-    const PRESETS = [
-      { key: "default", label: "Default", colors: {} },
-      {
-        key: "dracula-classic",
-        label: "Dracula Classic",
-        colors: {
-          cyan: "#8be9fd",
-          purple: "#bd93f9",
-          pink: "#ff79c6",
-          green: "#50fa7b",
-          red: "#ff5555",
-          yellow: "#f1fa8c",
-          orange: "#ffb86c"
-        }
-      },
-      {
-        key: "nord",
-        label: "Nord",
-        colors: {
-          cyan: "#88c0d0",
-          purple: "#b48ead",
-          pink: "#d0819c",
-          green: "#a3be8c",
-          red: "#bf616a",
-          yellow: "#ebcb8b",
-          orange: "#d08770"
-        }
-      },
-      {
-        key: "monokai",
-        label: "Monokai",
-        colors: {
-          cyan: "#66d9ef",
-          purple: "#ae81ff",
-          pink: "#fd5ff0",
-          green: "#a6e22e",
-          red: "#f92672",
-          yellow: "#e6db74",
-          orange: "#fd971f"
-        }
+    const pendingElementWaits = /* @__PURE__ */ new Set();
+    const waitForElement = (selector, onFound, timeoutMs = 1e4) => {
+      const existing = document.querySelector(selector);
+      if (existing) {
+        onFound(existing);
+        return;
       }
-    ];
-    const presetsMatch = (a2, b2) => ACCENT_KEYS.every((key) => (a2[key] || "") === (b2[key] || ""));
-    const getEffectiveColor = (key) => getComputedStyle(document.documentElement).getPropertyValue(`--dr-${key}`).trim() || "#000000";
-    const PREVIEW = {
-      system: {
-        bg: "linear-gradient(135deg, #282a36 50%, #f8f8f2 50%)",
-        dots: ["#bd93f9", "#8be9fd", "#7c4dff"]
-      },
-      dark: { bg: "#282a36", dots: ["#bd93f9", "#8be9fd", "#ff79c6"] },
-      light: { bg: "#f8f8f2", dots: ["#7c4dff", "#0997b5", "#d63384"] },
-      "ayu-mirage": { bg: "#1f2430", dots: ["#dfbfff", "#95e6cb", "#ffa659"] }
-    };
-    function CloseIcon() {
-      return /* @__PURE__ */ u(
-        "svg",
-        {
-          viewBox: "0 0 16 16",
-          fill: "none",
-          stroke: "currentColor",
-          "stroke-width": "2",
-          "stroke-linecap": "round",
-          children: [
-            /* @__PURE__ */ u("line", { x1: "3", y1: "3", x2: "13", y2: "13" }),
-            /* @__PURE__ */ u("line", { x1: "13", y1: "3", x2: "3", y2: "13" })
-          ]
-        }
-      );
-    }
-    function ResetIcon() {
-      return /* @__PURE__ */ u(
-        "svg",
-        {
-          viewBox: "0 0 16 16",
-          fill: "none",
-          stroke: "currentColor",
-          "stroke-width": "1.8",
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
-          children: [
-            /* @__PURE__ */ u("path", { d: "M2.5 8a5.5 5.5 0 1 1 1.8 4.07" }),
-            /* @__PURE__ */ u("polyline", { points: "2.3,4.5 2.5,8 6,7.6" })
-          ]
-        }
-      );
-    }
-    function ProfileSettingsModal({
-      open,
-      mode,
-      colors,
-      autoApprove,
-      onlyApprove,
-      autoAuthorise,
-      onClose,
-      onSelect,
-      onColorChange,
-      onColorReset,
-      onResetAllColors,
-      onApplyPreset,
-      onAutoApproveChange,
-      onOnlyApproveChange,
-      onAutoAuthoriseChange
-    }) {
-      if (!open) return null;
-      const hasCustomColors = ACCENT_KEYS.some((key) => colors[key]);
-      return /* @__PURE__ */ u(
-        "div",
-        {
-          class: "hps-modal-backdrop",
-          onClick: (e2) => {
-            if (e2.target === e2.currentTarget) onClose();
-          },
-          children: /* @__PURE__ */ u("div", { class: "hps-modal", children: [
-            /* @__PURE__ */ u("div", { class: "hps-modal-head", children: [
-              /* @__PURE__ */ u("div", { children: [
-                /* @__PURE__ */ u("div", { class: "hps-modal-title", children: "User Config" }),
-                /* @__PURE__ */ u("div", { class: "hps-modal-subtitle", children: "Personal preferences for Hubble" })
-              ] }),
-              /* @__PURE__ */ u("button", { type: "button", class: "hps-close-btn", onClick: onClose, children: [
-                /* @__PURE__ */ u(CloseIcon, {}),
-                " Close"
-              ] })
-            ] }),
-            /* @__PURE__ */ u("div", { class: "hps-modal-body", children: [
-              /* @__PURE__ */ u("div", { class: "hps-section", children: [
-                /* @__PURE__ */ u("div", { class: "hps-section-title", children: "Appearance" }),
-                /* @__PURE__ */ u("div", { class: "hps-theme-grid", children: MODES.map((m2) => /* @__PURE__ */ u(
-                  "button",
-                  {
-                    type: "button",
-                    class: `hps-theme-card${m2 === mode ? " hps-theme-card-active" : ""}`,
-                    onClick: () => onSelect(m2),
-                    title: MODE_LABELS[m2].title,
-                    children: [
-                      /* @__PURE__ */ u("span", { class: "hps-theme-swatch", style: { background: PREVIEW[m2].bg }, children: PREVIEW[m2].dots.map((color, i2) => /* @__PURE__ */ u("span", { class: "hps-theme-dot", style: { background: color } }, i2)) }),
-                      /* @__PURE__ */ u("span", { class: "hps-theme-label", children: MODE_LABELS[m2].label })
-                    ]
-                  },
-                  m2
-                )) })
-              ] }),
-              /* @__PURE__ */ u("div", { class: "hps-section", children: [
-                /* @__PURE__ */ u("div", { class: "hps-section-title-row", children: [
-                  /* @__PURE__ */ u("div", { class: "hps-section-title", children: "Accent colors" }),
-                  hasCustomColors && /* @__PURE__ */ u("button", { type: "button", class: "hps-reset-all-btn", onClick: onResetAllColors, children: "Reset all" })
-                ] }),
-                /* @__PURE__ */ u("div", { class: "hps-preset-row", children: PRESETS.map((preset) => /* @__PURE__ */ u(
-                  "button",
-                  {
-                    type: "button",
-                    class: `hps-preset-btn${presetsMatch(colors, preset.colors) ? " hps-preset-btn-active" : ""}`,
-                    onClick: () => onApplyPreset(preset),
-                    title: preset.label,
-                    children: [
-                      /* @__PURE__ */ u("span", { class: "hps-preset-dots", children: ["green", "cyan", "pink", "orange"].map((key) => /* @__PURE__ */ u(
-                        "span",
-                        {
-                          class: "hps-preset-dot",
-                          style: { background: preset.colors[key] || getEffectiveColor(key) }
-                        },
-                        key
-                      )) }),
-                      /* @__PURE__ */ u("span", { class: "hps-preset-label", children: preset.label })
-                    ]
-                  },
-                  preset.key
-                )) }),
-                /* @__PURE__ */ u("div", { class: "hps-color-grid", children: ACCENT_KEYS.map((key) => {
-                  const isCustom = !!colors[key];
-                  return /* @__PURE__ */ u("div", { class: "hps-color-row", children: [
-                    /* @__PURE__ */ u("label", { class: "hps-color-swatch", children: /* @__PURE__ */ u(
-                      "input",
-                      {
-                        type: "color",
-                        value: colors[key] || getEffectiveColor(key),
-                        onInput: (e2) => onColorChange(key, e2.target.value)
-                      }
-                    ) }),
-                    /* @__PURE__ */ u("span", { class: "hps-color-label", children: ACCENT_LABELS[key] }),
-                    isCustom && /* @__PURE__ */ u(
-                      "button",
-                      {
-                        type: "button",
-                        class: "hps-color-reset-btn",
-                        title: `Reset ${ACCENT_LABELS[key]} to theme default`,
-                        onClick: () => onColorReset(key),
-                        children: /* @__PURE__ */ u(ResetIcon, {})
-                      }
-                    )
-                  ] }, key);
-                }) })
-              ] }),
-              isHiddenUnlocked() && /* @__PURE__ */ u("div", { class: "hps-section", children: [
-                /* @__PURE__ */ u("div", { class: "hps-section-title", children: "Experimental" }),
-                /* @__PURE__ */ u("label", { class: "hps-toggle-row", children: [
-                  /* @__PURE__ */ u(
-                    "input",
-                    {
-                      type: "checkbox",
-                      checked: autoApprove,
-                      onChange: (e2) => onAutoApproveChange(e2.target.checked)
-                    }
-                  ),
-                  /* @__PURE__ */ u("span", { class: "hps-toggle-label", children: [
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-title", children: "Timesheet Auto-Approve" }),
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-desc", children: 'Adds an "Auto Approve" button on the timesheet page' })
-                  ] })
-                ] }),
-                autoApprove && /* @__PURE__ */ u("label", { class: "hps-toggle-row hps-toggle-row-sub", children: [
-                  /* @__PURE__ */ u(
-                    "input",
-                    {
-                      type: "checkbox",
-                      checked: onlyApprove,
-                      onChange: (e2) => onOnlyApproveChange(e2.target.checked)
-                    }
-                  ),
-                  /* @__PURE__ */ u("span", { class: "hps-toggle-label", children: [
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-title", children: "Only Approve" }),
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-desc", children: "Button only does the approve step, skips efficiency/authorise" })
-                  ] })
-                ] }),
-                autoApprove && onlyApprove && /* @__PURE__ */ u("label", { class: "hps-toggle-row hps-toggle-row-sub hps-toggle-row-sub2", children: [
-                  /* @__PURE__ */ u(
-                    "input",
-                    {
-                      type: "checkbox",
-                      checked: autoAuthorise,
-                      onChange: (e2) => onAutoAuthoriseChange(e2.target.checked)
-                    }
-                  ),
-                  /* @__PURE__ */ u("span", { class: "hps-toggle-label", children: [
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-title", children: "Auto Authorise" }),
-                    /* @__PURE__ */ u("span", { class: "hps-toggle-desc", children: 'Beta: shows two buttons on the timesheet page — "Just Approve" and "Approve & Authorise"' })
-                  ] })
-                ] })
-              ] })
-            ] })
-          ] })
-        }
-      );
-    }
-    const getFlagsState = () => ({
-      autoApprove: isAutoApproveEnabled(),
-      onlyApprove: isOnlyApproveEnabled(),
-      autoAuthorise: isAutoAuthoriseEnabled()
-    });
-    let root = null;
-    let state = {
-      open: false,
-      mode: getStoredMode(),
-      colors: getCustomColors(),
-      ...getFlagsState()
-    };
-    function renderModal() {
-      if (!root) return;
-      R(
-        /* @__PURE__ */ u(
-          ProfileSettingsModal,
-          {
-            open: state.open,
-            mode: state.mode,
-            colors: state.colors,
-            autoApprove: state.autoApprove,
-            onlyApprove: state.onlyApprove,
-            autoAuthorise: state.autoAuthorise,
-            onAutoApproveChange: (enabled) => {
-              setAutoApproveEnabled(enabled);
-              if (!enabled) {
-                setOnlyApproveEnabled(false);
-                setAutoAuthoriseEnabled(false);
-              }
-              state = {
-                ...state,
-                autoApprove: enabled,
-                onlyApprove: enabled && state.onlyApprove,
-                autoAuthorise: enabled && state.autoAuthorise
-              };
-              renderModal();
-            },
-            onOnlyApproveChange: (enabled) => {
-              setOnlyApproveEnabled(enabled);
-              if (!enabled) setAutoAuthoriseEnabled(false);
-              state = { ...state, onlyApprove: enabled, autoAuthorise: enabled && state.autoAuthorise };
-              renderModal();
-            },
-            onAutoAuthoriseChange: (enabled) => {
-              setAutoAuthoriseEnabled(enabled);
-              state = { ...state, autoAuthorise: enabled };
-              renderModal();
-            },
-            onClose: () => {
-              state = { ...state, open: false };
-              renderModal();
-            },
-            onSelect: (m2) => {
-              setMode(m2);
-              state = { ...state, mode: m2 };
-              renderModal();
-            },
-            onColorChange: (key, hex) => {
-              setCustomColor(key, hex);
-              state = { ...state, colors: { ...state.colors, [key]: hex } };
-              renderModal();
-            },
-            onColorReset: (key) => {
-              setCustomColor(key, null);
-              const colors = { ...state.colors };
-              delete colors[key];
-              state = { ...state, colors };
-              renderModal();
-            },
-            onResetAllColors: () => {
-              resetCustomColors();
-              state = { ...state, colors: {} };
-              renderModal();
-            },
-            onApplyPreset: (preset) => {
-              if (preset.key === "default") resetCustomColors();
-              else setCustomColors(preset.colors);
-              state = { ...state, colors: preset.colors };
-              renderModal();
-            }
-          }
-        ),
-        root
-      );
-    }
-    function ensureRoot() {
-      if (root) return;
-      root = document.createElement("div");
-      root.id = MODAL_ROOT_ID;
-      document.body.appendChild(root);
-      document.addEventListener("keydown", (e2) => {
-        if (e2.key === "Escape" && state.open) {
-          state = { ...state, open: false };
-          renderModal();
-        }
-      });
-    }
-    function openProfileSettingsModal() {
-      ensureRoot();
-      state = {
-        open: true,
-        mode: getStoredMode(),
-        colors: getCustomColors(),
-        ...getFlagsState()
+      if (pendingElementWaits.has(selector)) return;
+      pendingElementWaits.add(selector);
+      const stop = () => {
+        observer.disconnect();
+        pendingElementWaits.delete(selector);
       };
-      renderModal();
+      const observer = new MutationObserver(() => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        stop();
+        onFound(el);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      window.setTimeout(stop, timeoutMs);
+    };
+    const MIN_DELAY = 250;
+    const MAX_DELAY = 700;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const humanDelay = () => sleep(MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY));
+    const clickWithDelay = async (el) => {
+      if (!el) return false;
+      await humanDelay();
+      el.click();
+      await humanDelay();
+      return true;
+    };
+    const findCheckbox = (container, attr, id) => {
+      const matches = container.querySelectorAll(`[${attr}="${id}"]`);
+      return Array.from(matches).find((el) => el.tagName !== "INPUT") || null;
+    };
+    async function runTimesheetAutoApprove(onProgress, runAuthoriseSteps = true) {
+      var _a;
+      const container = document.getElementById("timesheet-lists");
+      if (!container) {
+        console.warn("#timesheet-lists not found");
+        return { processed: 0, total: 0 };
+      }
+      const ids = Array.from(
+        new Set(
+          Array.from(container.querySelectorAll("[data-approve]")).map(
+            (el) => el.getAttribute("data-approve")
+          )
+        )
+      ).filter((id) => !!id);
+      console.log(`Found ${ids.length} timesheet row(s) to process.`);
+      let processed = 0;
+      for (const id of ids) {
+        console.log(`Processing timesheet ${id}`);
+        const approveDisplay = document.getElementById(`${id}_approve_display`);
+        const approveCheckbox = findCheckbox(container, "data-approve", id);
+        (_a = approveCheckbox || approveDisplay) == null ? void 0 : _a.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        await humanDelay();
+        if (approveCheckbox) {
+          if (approveDisplay && approveDisplay.classList.contains("hidden")) {
+            await clickWithDelay(approveCheckbox);
+          } else {
+            console.log(`  ${id}: already approved, skipping click, moving on`);
+          }
+        }
+        if (runAuthoriseSteps) {
+          const efficiencyCheckbox = findCheckbox(container, "data-efficiency", id);
+          await clickWithDelay(efficiencyCheckbox);
+          const authoriseSelect = document.getElementById(`${id}_authorise_select`);
+          if (authoriseSelect) {
+            const optionDiv = authoriseSelect.nextElementSibling;
+            if (optionDiv) {
+              await clickWithDelay(optionDiv);
+            } else {
+              console.log(`  ${id}: no option div found next to the authorise select`);
+            }
+          } else {
+            console.log(`  ${id}: no authorise select found`);
+          }
+        } else {
+          console.log(`  ${id}: only-approve mode, skipping efficiency/authorise steps`);
+        }
+        processed += 1;
+        onProgress == null ? void 0 : onProgress({ processed, total: ids.length, id });
+        await humanDelay();
+      }
+      console.log("Done processing all timesheet rows.");
+      return { processed, total: ids.length };
     }
     initTheme();
-    const SIDEBAR_SELECTOR = ".profile_sidebar";
-    const ITEM_CLASS = "hps-sidebar-item";
-    function SidebarItem() {
-      return /* @__PURE__ */ u("button", { type: "button", class: "hps-sidebar-btn", onClick: () => openProfileSettingsModal(), children: /* @__PURE__ */ u("span", { class: "hps-sidebar-link", children: /* @__PURE__ */ u("span", { children: "User Config" }) }) });
+    const CONTAINER_ID = "hubble-auto-approve-widget";
+    function ActionLabel({
+      state,
+      progress,
+      idleLabel
+    }) {
+      if (state === "running") {
+        return /* @__PURE__ */ u("span", { children: [
+          "Approving ",
+          progress ? `${progress.processed}/${progress.total}` : "…"
+        ] });
+      }
+      if (state === "done") {
+        return /* @__PURE__ */ u("span", { children: [
+          "✓ Done",
+          progress ? ` (${progress.total})` : ""
+        ] });
+      }
+      return /* @__PURE__ */ u("span", { children: idleLabel });
     }
-    function injectSidebarItem(sidebar) {
-      if (sidebar.querySelector(`.${ITEM_CLASS}`)) return;
-      const li = document.createElement("li");
-      li.className = ITEM_CLASS;
-      sidebar.appendChild(li);
-      R(/* @__PURE__ */ u(SidebarItem, {}), li);
+    function showBetaWarning() {
+      if (typeof Swal === "undefined") return;
+      Swal.fire({
+        icon: "warning",
+        title: "Beta feature",
+        text: 'Both "Only Approve" and "Auto Authorise" are on, so you get separate Approve / Approve & Authorise buttons on this page. This combination is experimental — use at your own risk.',
+        confirmButtonText: "Got it"
+      });
+    }
+    function initWidget() {
+      if (document.getElementById(CONTAINER_ID)) return;
+      const dualMode = isOnlyApproveEnabled() && isAutoAuthoriseEnabled();
+      const actions = dualMode ? [
+        { key: "approve", label: "⚡ Just Approve", runAuthoriseSteps: false },
+        { key: "approve-authorise", label: "⚡ Approve & Authorise", runAuthoriseSteps: true }
+      ] : [
+        {
+          key: "auto",
+          label: "⚡ Auto Approve",
+          runAuthoriseSteps: !isOnlyApproveEnabled() || isAutoAuthoriseEnabled()
+        }
+      ];
+      const container = document.createElement("div");
+      container.id = CONTAINER_ID;
+      document.body.appendChild(container);
+      const buttons = /* @__PURE__ */ new Map();
+      const runStates = /* @__PURE__ */ new Map();
+      let running = false;
+      const renderAction = (action) => {
+        const btn = buttons.get(action.key);
+        const runState = runStates.get(action.key);
+        if (!btn || !runState) return;
+        btn.disabled = running && runState.state !== "running";
+        btn.classList.toggle("haa-running", runState.state === "running");
+        btn.classList.toggle("haa-done", runState.state === "done");
+        R(
+          /* @__PURE__ */ u(ActionLabel, { state: runState.state, progress: runState.progress, idleLabel: action.label }),
+          btn
+        );
+      };
+      const renderAll = () => actions.forEach(renderAction);
+      actions.forEach((action) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "haa-btn";
+        container.appendChild(btn);
+        buttons.set(action.key, btn);
+        runStates.set(action.key, { state: "idle", progress: null });
+        btn.addEventListener("click", async () => {
+          var _a;
+          if (running) return;
+          running = true;
+          runStates.set(action.key, { state: "running", progress: null });
+          renderAll();
+          try {
+            const result = await runTimesheetAutoApprove((p2) => {
+              runStates.set(action.key, { state: "running", progress: p2 });
+              renderAction(action);
+            }, action.runAuthoriseSteps);
+            runStates.set(action.key, {
+              state: "done",
+              progress: { processed: result.processed, total: result.total, id: "" }
+            });
+          } catch (error) {
+            console.error("Timesheet auto-approve failed", error);
+            runStates.set(action.key, { state: "idle", progress: null });
+          }
+          running = false;
+          renderAll();
+          if (((_a = runStates.get(action.key)) == null ? void 0 : _a.state) === "done") {
+            setTimeout(() => {
+              runStates.set(action.key, { state: "idle", progress: null });
+              renderAction(action);
+            }, 3e3);
+          }
+        });
+      });
+      renderAll();
+      if (dualMode) showBetaWarning();
     }
     function boot() {
-      waitForElement(SIDEBAR_SELECTOR, injectSidebarItem);
+      if (!isAutoApproveEnabled()) return;
+      waitForElement("#timesheet-lists", initWidget);
     }
     function init() {
-      if (window.__hubbleProfileSettingsInit) return;
-      window.__hubbleProfileSettingsInit = true;
+      if (window.__hubbleAutoApproveInit) return;
+      window.__hubbleAutoApproveInit = true;
       if (document.body) boot();
       else document.addEventListener("DOMContentLoaded", boot);
     }

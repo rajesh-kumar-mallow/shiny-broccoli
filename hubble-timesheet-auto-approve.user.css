@@ -1,0 +1,53 @@
+/* ==UserStyle==
+@name           Hubble Timesheet Auto Approve (styles)
+@namespace      https://hubble.mallow-tech.com
+@version        1.1.0
+@description    Styles for the hidden timesheet auto-approve button
+@updateURL      https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-timesheet-auto-approve.user.css
+@downloadURL    https://raw.githubusercontent.com/rajesh-kumar-mallow/shiny-broccoli/gh-pages/hubble-timesheet-auto-approve.user.css
+==/UserStyle== */
+
+@-moz-document url-prefix("https://hubble.mallow-tech.com/v2/timesheet") {
+#hubble-auto-approve-widget {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.haa-btn {
+  border-radius: 14px;
+  padding: 10px 16px;
+  border: 1px solid var(--dr-border);
+  background: var(--dr-bg-secondary);
+  color: var(--dr-fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.haa-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: var(--dr-bg-tertiary);
+}
+.haa-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.haa-btn.haa-running {
+  background: color-mix(in srgb, var(--dr-purple) 10%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-purple) 30%, transparent);
+  opacity: 1;
+}
+.haa-btn.haa-done {
+  background: color-mix(in srgb, var(--dr-green) 12%, var(--dr-bg-secondary));
+  border-color: color-mix(in srgb, var(--dr-green) 30%, transparent);
+  color: var(--dr-green);
+  opacity: 1;
+}
+}

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hubble Smart Attendance Assistant
 // @namespace    https://hubble.mallow-tech.com
-// @version      1.0.1
+// @version      1.1.0
 // @author       Neon Raven
 // @description  Smart draggable checkout assistant with Dracula-themed UI
 // @license      Unlicense
@@ -20,7 +20,7 @@
   // ==UserScript==
   // @name         Check-in summary with compensation V2
   // @namespace    https://hubble.mallow-tech.com
-  // @version      1.0.1
+  // @version      1.1.0
   // @author       Neon Raven
   // @description  Work log summary with month filter, tooltips, and mini-modals
   // @license      Unlicense
